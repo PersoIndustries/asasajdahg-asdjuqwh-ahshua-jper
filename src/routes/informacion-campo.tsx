@@ -81,7 +81,7 @@ function InfoCampo() {
       </section>
 
       {tab === "calendario" && (
-        <Section eyebrow="Cuándo sembrar" title="Calendario Hortícola del Bajo Cinca" intro="Datos orientativos para nuestra comarca. Ajusta según microclima.">
+        <Section eyebrow="Cuándo sembrar" title="Calendario Horticola" intro="Datos orientativos">
           <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4 md:justify-between">
             <div>
               <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground mb-2">

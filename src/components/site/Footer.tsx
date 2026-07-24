@@ -7,10 +7,11 @@ export function Footer() {
       <div className="container-page py-16 grid gap-12 md:grid-cols-4">
         <div className="md:col-span-2 space-y-4">
           <div className="flex items-center gap-2">
-            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
-              <Leaf className="h-4 w-4" />
-            </span>
-            <span className="font-serif text-2xl font-semibold">Jardiper</span>
+            <img
+              src="/__l5e/assets-v1/9dc1fbad-40e6-47f7-ae1c-60f46ea57e2e/jardiper-logo.png"
+              alt="Jardiper"
+              className="h-10 w-auto object-contain"
+            />
           </div>
           <p className="text-muted-foreground max-w-md text-sm leading-relaxed">
             Vivero y garden center familiar en Fraga, Huesca. Más de 50 años cultivando
