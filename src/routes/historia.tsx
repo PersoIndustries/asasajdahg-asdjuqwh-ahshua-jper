@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { familia } from "@/lib/mock-data";
-import historiaImg from "@/assets/historia.jpg";
-import img1974 from "@/assets/historia-1974.jpg";
-import img1989 from "@/assets/historia-1989.jpg";
-import img2003 from "@/assets/historia-2003.jpg";
-import img2015 from "@/assets/historia-2015.jpg";
-import img2024 from "@/assets/historia-2024.jpg";
+import historiaImg from "@/assets/historia/portada.jpg";
+import img1974 from "@/assets/historia/1974.jpg";
+import img1989 from "@/assets/historia/1989.jpg";
+import img2003 from "@/assets/historia/2003.jpg";
+import img2015 from "@/assets/historia/2015.jpg";
+import img2024 from "@/assets/historia/2024.jpg";
 
 export const Route = createFileRoute("/historia")({
   head: () => ({
