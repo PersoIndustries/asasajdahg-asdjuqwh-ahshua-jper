@@ -64,21 +64,14 @@ const productos = [
   },
 ];
 
-// Compost profesional Liett Ibérica — big bags 1 m³.
+// Compost ECO Liett Ibérica — big bags 1 m³ y venta al por mayor.
 const composts = [
   {
-    nombre: "Compost de Estiércol de Vaca",
-    uso: "Huerto y enmienda de suelos agrícolas",
+    nombre: "Compost ECO",
+    uso: "Huerto, agricultura ecológica y enmienda de suelos",
     formato: "Big bag 1 m³",
-    detalle: "Rico en materia orgánica, mejora estructura y retención hídrica.",
+    detalle: "Materia orgánica compostada y certificada para uso ecológico. Mejora la estructura, fertilidad y retención hídrica del suelo.",
     imagen: uimg("1500595046743-cd271d694d30"),
-  },
-  {
-    nombre: "Compost de Gallinaza",
-    uso: "Aporte nitrogenado para huerto intensivo",
-    formato: "Big bag 1 m³",
-    detalle: "Alto contenido en N-P-K, ideal como abonado de fondo.",
-    imagen: uimg("1523348837708-15d4a09cfac2"),
   },
 ];
 
