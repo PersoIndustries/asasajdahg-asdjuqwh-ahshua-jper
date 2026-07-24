@@ -2,8 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Sprout, Sparkles } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { temporadaActual } from "@/lib/mock-data";
-import heroPlant from "@/assets/hero-plant.jpg";
-import vivero from "@/assets/vivero.jpg";
+import heroPlant from "@/assets/home/hero.jpg";
+import vivero from "@/assets/home/vivero.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
