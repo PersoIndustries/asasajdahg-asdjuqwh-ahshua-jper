@@ -77,44 +77,6 @@ function Hero() {
   );
 }
 
-function PoolPlantas({ onInfo }: { onInfo: (p: Plant) => void }) {
-  return (
-    <Section
-      eyebrow="Selección Jardiper"
-      title="Plantas destacadas esta semana"
-      intro="Una selección cuidada por nuestro equipo entre las variedades que mejor se comportan en el clima del Bajo Cinca."
-    >
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {plantasDestacadas.map((p) => (
-          <article key={p.id} className="group">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted mb-4">
-              <img
-                src={p.imagen}
-                alt={p.nombre}
-                loading="lazy"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <span className="absolute top-3 left-3 rounded-full bg-background/90 backdrop-blur px-3 py-1 text-xs capitalize">
-                {p.categoria}
-              </span>
-            </div>
-            <h3 className="font-serif text-xl text-foreground">{p.nombre}</h3>
-            {p.nombreCientifico && (
-              <p className="text-xs italic text-muted-foreground mt-0.5">{p.nombreCientifico}</p>
-            )}
-            <button
-              onClick={() => onInfo(p)}
-              className="mt-3 text-sm text-primary hover:text-accent inline-flex items-center gap-1 transition-colors"
-            >
-              Pedir más información <ArrowRight className="h-3 w-3" />
-            </button>
-          </article>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
 function TeAyudamos() {
   return (
     <section className="py-20 md:py-28 bg-primary text-primary-foreground">
@@ -205,36 +167,3 @@ function Temporada() {
   );
 }
 
-function InfoModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4 animate-in fade-in" onClick={onClose}>
-      <div
-        className="bg-background rounded-2xl max-w-lg w-full p-8 relative shadow-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted">
-          <X className="h-4 w-4" />
-        </button>
-        <p className="text-xs uppercase tracking-widest text-accent">Solicitar información</p>
-        <h3 className="font-serif text-3xl mt-2">{planta.nombre}</h3>
-        <p className="mt-4 text-muted-foreground leading-relaxed">{planta.descripcion}</p>
-        {/* TODO: conectar este formulario al backend cuando Lovable Cloud esté activado. */}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            alert("¡Gracias! Te contactaremos pronto (versión demo).");
-            onClose();
-          }}
-          className="mt-6 space-y-3"
-        >
-          <input required placeholder="Tu nombre" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
-          <input required type="email" placeholder="Email o teléfono" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
-          <textarea placeholder="¿En qué te podemos ayudar?" rows={3} className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
-          <button className="w-full rounded-full bg-primary text-primary-foreground py-3 text-sm font-medium hover:bg-primary/90">
-            Enviar solicitud
-          </button>
-        </form>
-      </div>
-    </div>
-  );
-}
