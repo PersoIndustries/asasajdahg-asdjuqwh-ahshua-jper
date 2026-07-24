@@ -192,3 +192,8 @@
     box-shadow: 0 20px 40px -20px oklch(0.42 0.055 145 / 0.25);
   }
 }
+
+@keyframes heroZoom {
+  from { transform: scale(1.05); }
+  to { transform: scale(1.15); }
+}
