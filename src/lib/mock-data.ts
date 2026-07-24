@@ -9,7 +9,7 @@ export type Plant = {
   imagen: string;
   descripcion: string;
   curiosidades: string;
-  enfermedades: { nombre: string; combate: string }[];
+  enfermedades: { nombre: string; combate: string; imagen?: string }[];
   temporada: string;
 };
 
@@ -27,7 +27,7 @@ export const plantasDestacadas: Plant[] = [
     descripcion: "Variedad autóctona aragonesa, carnoso, dulce y de gran calibre.",
     curiosidades: "Denominación de Origen protegida en el Somontano; se conserva desde principios del siglo XX.",
     enfermedades: [
-      { nombre: "Mildiu", combate: "Tratamientos preventivos con caldo bordelés y buena ventilación." },
+      { nombre: "Mildiu", combate: "Tratamientos preventivos con caldo bordelés y buena ventilación.", imagen: img("1591857177580-dc82b9ac4e1e", 400) },
       { nombre: "Araña roja", combate: "Aumentar humedad ambiental y aplicar jabón potásico." },
     ],
     temporada: "Mayo – Septiembre",
@@ -151,7 +151,13 @@ export type Guia = {
   categoria: string;
   imagen: string;
   contenido: string;
+  pdfUrl: string;
 };
+
+import pdfBoniatos from "@/assets/guias/plantar-boniatos.pdf.asset.json";
+import pdfCalcots from "@/assets/guias/cultivar-calcots.pdf.asset.json";
+import pdfCalabacines from "@/assets/guias/polinizacion-calabacines.pdf.asset.json";
+import pdfPoda from "@/assets/guias/poda-frutales.pdf.asset.json";
 
 export const guias: Guia[] = [
   {
@@ -163,6 +169,7 @@ export const guias: Guia[] = [
     imagen: img("1518977676601-b53f82aba655"),
     contenido:
       "El boniato prefiere suelos sueltos y soleados. Prepara caballones de 30 cm y planta los esquejes en mayo cuando el suelo supere los 18°C. Riego constante los primeros 20 días, luego espaciado. Cosecha antes de las primeras heladas, en octubre.",
+    pdfUrl: pdfBoniatos.url,
   },
   {
     id: "cultivar-calçots",
@@ -173,6 +180,7 @@ export const guias: Guia[] = [
     imagen: img("1615485499420-6d47c0cd5da5"),
     contenido:
       "Los calçots nacen de cebollas blancas plantadas en verano. La clave está en 'calzar' con tierra el tallo cada pocas semanas para que crezca blanco y tierno. Se cosechan de noviembre a marzo, cuando alcanzan un dedo de grosor.",
+    pdfUrl: pdfCalcots.url,
   },
   {
     id: "polinizacion-calabacines",
@@ -183,6 +191,7 @@ export const guias: Guia[] = [
     imagen: img("1610348725531-843dff563e2c"),
     contenido:
       "Identifica flores macho (tallo fino y largo) y hembra (con calabacín pequeño en la base). Con un pincel suave transfiere el polen del macho a la hembra a primera hora de la mañana. Repite cada 2-3 días.",
+    pdfUrl: pdfCalabacines.url,
   },
   {
     id: "poda-frutales",
@@ -193,6 +202,7 @@ export const guias: Guia[] = [
     imagen: img("1548613053-22087dd8edb8"),
     contenido:
       "La poda se realiza entre diciembre y febrero, en días sin heladas. Elimina ramas cruzadas, chupones y madera muerta. Sella cortes grandes con pasta cicatrizante y desinfecta las tijeras entre árbol y árbol.",
+    pdfUrl: pdfPoda.url,
   },
 ];
 

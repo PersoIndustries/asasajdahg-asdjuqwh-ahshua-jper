@@ -53,9 +53,13 @@ function ContactoPage() {
               <Clock className="h-6 w-6 text-primary shrink-0 mt-1" />
               <div>
                 <h3 className="font-serif text-xl">Horario</h3>
-                <p className="text-muted-foreground mt-1">
-                  Lunes a Sábado<br />9:00 – 13:30 · 16:00 – 20:00<br />Domingo cerrado
-                </p>
+                <div className="text-muted-foreground mt-1 space-y-3 text-sm">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-accent mb-1">Horario de verano</p>
+                    <p>Lunes a viernes<br />8:00 – 13:00 · 16:00 – 19:00</p>
+                  </div>
+                  <p className="text-xs">Sábados y domingos cerrado</p>
+                </div>
               </div>
             </div>
             <div className="flex gap-4">
@@ -63,7 +67,7 @@ function ContactoPage() {
               <div>
                 <h3 className="font-serif text-xl">Email</h3>
                 <p className="text-muted-foreground mt-1">
-                  <a href="mailto:hola@jardiper.es" className="hover:text-primary">hola@jardiper.es</a>
+                  <a href="mailto:correo@jardiper.es" className="hover:text-primary">correo@jardiper.es</a>
                 </p>
               </div>
             </div>
