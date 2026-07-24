@@ -11,6 +11,7 @@ export type Plant = {
   curiosidades: string;
   enfermedades: { nombre: string; combate: string; imagen?: string }[];
   temporada: string;
+  guiaId?: string;
 };
 
 // Imágenes botánicas placeholder (Unsplash CDN)
@@ -44,6 +45,7 @@ export const plantasDestacadas: Plant[] = [
       { nombre: "Roya", combate: "Rotación de cultivos y azufre en polvo." },
     ],
     temporada: "Noviembre – Marzo",
+    guiaId: "cultivar-calçots",
   },
   {
     id: "boniato",
@@ -57,6 +59,7 @@ export const plantasDestacadas: Plant[] = [
       { nombre: "Gusano del boniato", combate: "Trampas de feromonas y suelo bien drenado." },
     ],
     temporada: "Mayo – Octubre",
+    guiaId: "plantar-boniatos",
   },
   {
     id: "melocotonero",
@@ -70,6 +73,7 @@ export const plantasDestacadas: Plant[] = [
       { nombre: "Abolladura", combate: "Tratamiento cuprico en otoño y al inicio de la primavera." },
     ],
     temporada: "Cosecha Junio – Agosto",
+    guiaId: "poda-frutales",
   },
   {
     id: "lavanda",
