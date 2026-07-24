@@ -53,7 +53,7 @@ export function CookieConsent() {
               </a>.
             </p>
           </div>
- Germanized          <div className="flex flex-wrap items-center gap-3">
+ <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={() => save("rejected")}
               className="rounded-full px-4 py-2 text-sm font-medium border border-border bg-background hover:bg-accent transition-colors"
