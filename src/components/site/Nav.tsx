@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Menu, X, Leaf } from "lucide-react";
+import { Menu, X } from "lucide-react";
+import logoAsset from "@/assets/jardiper-logo.png.asset.json";
 
 const links = [
   { to: "/", label: "Inicio" },
@@ -31,11 +32,12 @@ export function Nav() {
       }`}
     >
       <div className="container-page flex h-16 md:h-20 items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 group">
-          <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground transition-transform group-hover:rotate-12">
-            <Leaf className="h-4 w-4" />
-          </span>
-          <span className="font-serif text-xl md:text-2xl font-semibold tracking-tight">Jardiper</span>
+        <Link to="/" className="flex items-center group" aria-label="Jardiper — Inicio">
+          <img
+            src={logoAsset.url}
+            alt="Jardiper — Jardinería, Viveros y Medio Ambiente"
+            className="h-9 md:h-11 w-auto transition-transform group-hover:scale-[1.03]"
+          />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8">
