@@ -49,15 +49,32 @@ function HistoriaPage() {
       </section>
 
       <Section eyebrow="Línea del tiempo" title="Momentos que nos han hecho">
-        <ol className="relative border-l-2 border-primary/20 ml-3 space-y-10">
-          {hitos.map((h) => (
-            <li key={h.año} className="pl-8 relative">
-              <span className="absolute -left-[11px] top-1 h-5 w-5 rounded-full bg-primary ring-4 ring-background" />
-              <p className="font-serif text-3xl text-primary">{h.año}</p>
-              <h3 className="font-serif text-xl mt-1">{h.titulo}</h3>
-              <p className="text-muted-foreground mt-1 max-w-lg">{h.texto}</p>
-            </li>
-          ))}
+        <ol className="relative border-l-2 border-primary/20 ml-3 md:ml-1/2 md:-translate-x-px space-y-14 md:space-y-20">
+          {hitos.map((h, i) => {
+            const isEven = i % 2 === 0;
+            return (
+              <li key={h.año} className="pl-8 md:pl-0 relative md:grid md:grid-cols-2 md:gap-12 md:items-center">
+                <span className="absolute -left-[11px] md:left-1/2 md:-translate-x-1/2 top-1 h-5 w-5 rounded-full bg-primary ring-4 ring-background z-10" />
+
+                <div className={`${isEven ? "md:col-start-1 md:text-right md:pr-8" : "md:col-start-2 md:pl-8"}`}>
+                  <p className="font-serif text-3xl text-primary">{h.año}</p>
+                  <h3 className="font-serif text-xl mt-1">{h.titulo}</h3>
+                  <p className="text-muted-foreground mt-1 max-w-md md:max-w-none">{h.texto}</p>
+                </div>
+
+                <div className={`mt-4 md:mt-0 ${isEven ? "md:col-start-2 md:pl-8" : "md:col-start-1 md:row-start-1 md:pr-8"}`}>
+                  <img
+                    src={h.img}
+                    alt={h.alt}
+                    width={1024}
+                    height={768}
+                    loading="lazy"
+                    className="rounded-2xl w-full h-auto shadow-lg object-cover aspect-[4/3] hover-lift"
+                  />
+                </div>
+              </li>
+            );
+          })}
         </ol>
       </Section>
 
