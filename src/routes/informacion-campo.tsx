@@ -45,6 +45,16 @@ function InfoCampo() {
   const [zona, setZona] = useState(zonas[0].id);
   const [busqueda, setBusqueda] = useState("");
   const [catFiltro, setCatFiltro] = useState<string>("todas");
+  const [tagGuia, setTagGuia] = useState<string>("todas");
+
+  const tagsGuias = useMemo(
+    () => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(),
+    [],
+  );
+  const guiasFiltradas = useMemo(
+    () => (tagGuia === "todas" ? guias : guias.filter((g) => g.tags.includes(tagGuia))),
+    [tagGuia],
+  );
 
   const listaBase = tab === "hortícolas" ? plantasHortícolas : plantasOrnamentales;
   const categoriasDisponibles = useMemo(
@@ -179,8 +189,38 @@ function InfoCampo() {
 
       {tab === "guias" && (
         <Section eyebrow="Guías de Cultivo" title="Aprende de nuestro equipo" intro="Prácticas, breves y probadas en el campo.">
+          <div className="mb-8 flex flex-wrap gap-2">
+            <button
+              onClick={() => setTagGuia("todas")}
+              className={`px-4 py-1.5 rounded-full text-xs transition-all ${
+                tagGuia === "todas"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-foreground/70 hover:bg-secondary/70"
+              }`}
+            >
+              Todas
+            </button>
+            {tagsGuias.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTagGuia(t)}
+                className={`px-4 py-1.5 rounded-full text-xs transition-all ${
+                  tagGuia === t
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-foreground/70 hover:bg-secondary/70"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
+          </div>
+          {guiasFiltradas.length === 0 && (
+            <p className="text-sm text-muted-foreground py-12 text-center">
+              No hay guías con esa etiqueta todavía.
+            </p>
+          )}
           <div className="grid md:grid-cols-2 gap-8">
-            {guias.map((g) => (
+            {guiasFiltradas.map((g) => (
               <article key={g.id} className="group cursor-pointer" onClick={() => setGuia(g)}>
                 <div className="relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
                   <img src={g.imagen} alt={g.titulo} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -190,6 +230,13 @@ function InfoCampo() {
                 </p>
                 <h3 className="font-serif text-2xl mt-2 group-hover:text-primary transition-colors">{g.titulo}</h3>
                 <p className="text-muted-foreground mt-2">{g.resumen}</p>
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {g.tags.map((t) => (
+                    <span key={t} className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-secondary text-foreground/70">
+                      {t}
+                    </span>
+                  ))}
+                </div>
                 <span className="mt-3 inline-flex items-center gap-1 text-sm text-primary">Leer guía <ChevronRight className="h-4 w-4" /></span>
               </article>
             ))}

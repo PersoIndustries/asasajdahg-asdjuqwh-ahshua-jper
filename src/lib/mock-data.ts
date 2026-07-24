@@ -152,6 +152,7 @@ export type Guia = {
   imagen: string;
   contenido: string;
   pdfUrl: string;
+  tags: string[];
 };
 
 import pdfBoniatos from "@/assets/guias/plantar-boniatos.pdf.asset.json";
@@ -170,6 +171,7 @@ export const guias: Guia[] = [
     contenido:
       "El boniato prefiere suelos sueltos y soleados. Prepara caballones de 30 cm y planta los esquejes en mayo cuando el suelo supere los 18°C. Riego constante los primeros 20 días, luego espaciado. Cosecha antes de las primeras heladas, en octubre.",
     pdfUrl: pdfBoniatos.url,
+    tags: ["Huerto", "Hortalizas", "Temporada"],
   },
   {
     id: "cultivar-calçots",
@@ -181,6 +183,7 @@ export const guias: Guia[] = [
     contenido:
       "Los calçots nacen de cebollas blancas plantadas en verano. La clave está en 'calzar' con tierra el tallo cada pocas semanas para que crezca blanco y tierno. Se cosechan de noviembre a marzo, cuando alcanzan un dedo de grosor.",
     pdfUrl: pdfCalcots.url,
+    tags: ["Huerto", "Tradicional", "Invierno"],
   },
   {
     id: "polinizacion-calabacines",
@@ -192,6 +195,7 @@ export const guias: Guia[] = [
     contenido:
       "Identifica flores macho (tallo fino y largo) y hembra (con calabacín pequeño en la base). Con un pincel suave transfiere el polen del macho a la hembra a primera hora de la mañana. Repite cada 2-3 días.",
     pdfUrl: pdfCalabacines.url,
+    tags: ["Huerto", "Técnicas", "Verano"],
   },
   {
     id: "poda-frutales",
@@ -203,6 +207,7 @@ export const guias: Guia[] = [
     contenido:
       "La poda se realiza entre diciembre y febrero, en días sin heladas. Elimina ramas cruzadas, chupones y madera muerta. Sella cortes grandes con pasta cicatrizante y desinfecta las tijeras entre árbol y árbol.",
     pdfUrl: pdfPoda.url,
+    tags: ["Jardín", "Frutales", "Invierno"],
   },
 ];
 
