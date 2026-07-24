@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { Clock, ChevronRight, X, MapPin } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Clock, ChevronRight, X, MapPin, Download, Search } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   calendario,
@@ -43,6 +43,25 @@ function InfoCampo() {
   const [ficha, setFicha] = useState<Plant | null>(null);
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
   const [zona, setZona] = useState(zonas[0].id);
+  const [busqueda, setBusqueda] = useState("");
+  const [catFiltro, setCatFiltro] = useState<string>("todas");
+
+  const listaBase = tab === "hortícolas" ? plantasHortícolas : plantasOrnamentales;
+  const categoriasDisponibles = useMemo(
+    () => Array.from(new Set(listaBase.map((p) => p.categoria))),
+    [listaBase],
+  );
+  const listaFiltrada = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return listaBase.filter((p) => {
+      const matchCat = catFiltro === "todas" || p.categoria === catFiltro;
+      const matchQ =
+        !q ||
+        p.nombre.toLowerCase().includes(q) ||
+        (p.nombreCientifico ?? "").toLowerCase().includes(q);
+      return matchCat && matchQ;
+    });
+  }, [listaBase, catFiltro, busqueda]);
 
   return (
     <SiteLayout>
@@ -184,8 +203,49 @@ function InfoCampo() {
           title={tab === "hortícolas" ? "Variedades Hortícolas" : "Ornamentales"}
           intro="Haz click en cualquier variedad para ver su ficha completa."
         >
+          <div className="mb-8 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
+            <div className="relative w-full md:max-w-sm">
+              <Search className="h-4 w-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+              <input
+                placeholder="Buscar por nombre o nombre científico…"
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                className="w-full rounded-full border border-input bg-background pl-11 pr-5 py-2.5 text-sm"
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => setCatFiltro("todas")}
+                className={`px-4 py-1.5 rounded-full text-xs transition-all capitalize ${
+                  catFiltro === "todas"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-secondary text-foreground/70 hover:bg-secondary/70"
+                }`}
+              >
+                Todas
+              </button>
+              {categoriasDisponibles.map((c) => (
+                <button
+                  key={c}
+                  onClick={() => setCatFiltro(c)}
+                  className={`px-4 py-1.5 rounded-full text-xs transition-all capitalize ${
+                    catFiltro === c
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-secondary text-foreground/70 hover:bg-secondary/70"
+                  }`}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+          </div>
+          {listaFiltrada.length === 0 && (
+            <p className="text-sm text-muted-foreground py-12 text-center">
+              No hay variedades que coincidan con tu búsqueda.
+            </p>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {(tab === "hortícolas" ? plantasHortícolas : plantasOrnamentales).map((p) => (
+            {listaFiltrada.map((p) => (
               <button key={p.id} onClick={() => setFicha(p)} className="text-left group">
                 <div className="aspect-square overflow-hidden rounded-2xl bg-muted mb-3">
                   <img src={p.imagen} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
@@ -223,11 +283,21 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
             </div>
             <div>
               <h4 className="font-serif text-lg mb-2">Enfermedades y cómo combatirlas</h4>
-              <ul className="space-y-2">
+              <ul className="space-y-4">
                 {planta.enfermedades.map((e) => (
-                  <li key={e.nombre} className="text-sm">
-                    <span className="font-medium text-foreground">{e.nombre}:</span>{" "}
-                    <span className="text-muted-foreground">{e.combate}</span>
+                  <li key={e.nombre} className="text-sm flex gap-3">
+                    {e.imagen && (
+                      <img
+                        src={e.imagen}
+                        alt={e.nombre}
+                        loading="lazy"
+                        className="h-16 w-16 rounded-lg object-cover shrink-0 border border-border"
+                      />
+                    )}
+                    <div>
+                      <span className="font-medium text-foreground">{e.nombre}:</span>{" "}
+                      <span className="text-muted-foreground">{e.combate}</span>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -245,15 +315,36 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
 function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full bg-background/80 hover:bg-muted z-10"><X className="h-4 w-4" /></button>
-        <img src={guia.imagen} alt={guia.titulo} className="w-full h-64 object-cover" />
-        <div className="p-8">
-          <p className="text-xs uppercase tracking-widest text-accent flex items-center gap-3">
-            {guia.categoria} <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal"><Clock className="h-3 w-3" /> {guia.minutos} min</span>
-          </p>
-          <h3 className="font-serif text-3xl mt-2">{guia.titulo}</h3>
-          <p className="mt-4 text-foreground/80 leading-relaxed whitespace-pre-line">{guia.contenido}</p>
+      <div className="bg-background rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col relative shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-start justify-between gap-4 p-6 border-b border-border">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-accent flex items-center gap-3">
+              {guia.categoria}
+              <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal">
+                <Clock className="h-3 w-3" /> {guia.minutos} min
+              </span>
+            </p>
+            <h3 className="font-serif text-2xl md:text-3xl mt-1">{guia.titulo}</h3>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <a
+              href={guia.pdfUrl}
+              download
+              className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors"
+            >
+              <Download className="h-4 w-4" /> Descargar PDF
+            </a>
+            <button onClick={onClose} className="p-2 rounded-full bg-secondary hover:bg-muted">
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+        <div className="flex-1 bg-muted min-h-[60vh]">
+          <iframe
+            title={guia.titulo}
+            src={guia.pdfUrl}
+            className="w-full h-full min-h-[60vh]"
+          />
         </div>
       </div>
     </div>
