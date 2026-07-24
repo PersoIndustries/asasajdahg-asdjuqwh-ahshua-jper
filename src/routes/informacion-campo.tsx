@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Clock, ChevronRight, X } from "lucide-react";
+import { Clock, ChevronRight, X, MapPin } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   calendario,
@@ -32,11 +32,17 @@ const colorByEstado: Record<MesEstado, string> = {
   "": "bg-muted/40",
 };
 
+const zonas = [
+  { id: "bajo-cinca", nombre: "Bajo Cinca, Lleida y alrededores" },
+];
+const SEMANAS_POR_MES = 4;
+
 function InfoCampo() {
   const [tab, setTab] = useState<"calendario" | "guias" | "hortícolas" | "ornamentales">("calendario");
   const [filtro, setFiltro] = useState("");
   const [ficha, setFicha] = useState<Plant | null>(null);
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
+  const [zona, setZona] = useState(zonas[0].id);
 
   return (
     <SiteLayout>
@@ -76,6 +82,28 @@ function InfoCampo() {
 
       {tab === "calendario" && (
         <Section eyebrow="Cuándo sembrar" title="Calendario Hortícola del Bajo Cinca" intro="Datos orientativos para nuestra comarca. Ajusta según microclima.">
+          <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4 md:justify-between">
+            <div>
+              <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground mb-2">
+                <MapPin className="h-3.5 w-3.5" /> Zona de cultivo
+              </label>
+              <select
+                value={zona}
+                onChange={(e) => setZona(e.target.value)}
+                className="rounded-full border border-input bg-background px-5 py-2.5 text-sm min-w-[280px]"
+              >
+                {zonas.map((z) => (
+                  <option key={z.id} value={z.id}>{z.nombre}</option>
+                ))}
+              </select>
+            </div>
+            <input
+              placeholder="Filtrar planta…"
+              value={filtro}
+              onChange={(e) => setFiltro(e.target.value)}
+              className="w-full md:w-64 rounded-full border border-input bg-background px-5 py-2.5 text-sm"
+            />
+          </div>
           <div className="flex flex-wrap gap-4 mb-6 text-xs">
             {[
               ["S", "Siembra"],
@@ -87,20 +115,23 @@ function InfoCampo() {
               </span>
             ))}
           </div>
-          <input
-            placeholder="Filtrar planta…"
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value)}
-            className="mb-6 w-full max-w-sm rounded-full border border-input bg-background px-5 py-2.5 text-sm"
-          />
           <div className="overflow-x-auto rounded-2xl border border-border">
-            <table className="min-w-full text-sm">
+            <table className="min-w-[1100px] text-sm">
               <thead>
                 <tr className="bg-secondary/60">
-                  <th className="text-left py-3 px-4 font-medium">Planta</th>
+                  <th rowSpan={2} className="text-left py-3 px-4 font-medium sticky left-0 bg-secondary/60 z-10">Planta</th>
                   {meses.map((m) => (
-                    <th key={m} className="py-3 px-2 font-medium text-muted-foreground text-xs">{m}</th>
+                    <th key={m} colSpan={SEMANAS_POR_MES} className="py-2 px-2 font-medium text-xs border-l border-border/40">{m}</th>
                   ))}
+                </tr>
+                <tr className="bg-secondary/40">
+                  {meses.flatMap((m) =>
+                    Array.from({ length: SEMANAS_POR_MES }, (_, i) => (
+                      <th key={`${m}-${i}`} className={`py-1.5 px-1 font-normal text-[10px] text-muted-foreground ${i === 0 ? "border-l border-border/40" : ""}`}>
+                        S{i + 1}
+                      </th>
+                    )),
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -108,19 +139,22 @@ function InfoCampo() {
                   .filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase()))
                   .map((row) => (
                     <tr key={row.planta} className="border-t border-border hover:bg-secondary/30 transition-colors">
-                      <td className="py-3 px-4 font-medium">{row.planta}</td>
-                      {row.meses.map((e, i) => (
-                        <td key={i} className="p-1">
-                          <div className={`h-8 rounded flex items-center justify-center text-[10px] font-semibold ${colorByEstado[e]}`}>
-                            {e}
-                          </div>
-                        </td>
-                      ))}
+                      <td className="py-3 px-4 font-medium sticky left-0 bg-background z-10 whitespace-nowrap">{row.planta}</td>
+                      {row.meses.flatMap((estado, mi) =>
+                        Array.from({ length: SEMANAS_POR_MES }, (_, wi) => (
+                          <td key={`${mi}-${wi}`} className={`p-0.5 ${wi === 0 ? "border-l border-border/40" : ""}`}>
+                            <div className={`h-7 rounded-sm flex items-center justify-center text-[9px] font-semibold ${colorByEstado[estado]}`}>
+                              {estado}
+                            </div>
+                          </td>
+                        )),
+                      )}
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
+          <p className="mt-4 text-xs text-muted-foreground">Vista semanal (4 semanas por mes) orientativa para la zona seleccionada.</p>
         </Section>
       )}
 
