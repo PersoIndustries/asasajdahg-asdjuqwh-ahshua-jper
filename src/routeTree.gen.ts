@@ -9,8 +9,38 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TierrasSustratosRouteImport } from './routes/tierras-sustratos'
+import { Route as LibroCampoRouteImport } from './routes/libro-campo'
+import { Route as InformacionCampoRouteImport } from './routes/informacion-campo'
+import { Route as HistoriaRouteImport } from './routes/historia'
+import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TierrasSustratosRoute = TierrasSustratosRouteImport.update({
+  id: '/tierras-sustratos',
+  path: '/tierras-sustratos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibroCampoRoute = LibroCampoRouteImport.update({
+  id: '/libro-campo',
+  path: '/libro-campo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InformacionCampoRoute = InformacionCampoRouteImport.update({
+  id: '/informacion-campo',
+  path: '/informacion-campo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HistoriaRoute = HistoriaRouteImport.update({
+  id: '/historia',
+  path: '/historia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactoRoute = ContactoRouteImport.update({
+  id: '/contacto',
+  path: '/contacto',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +49,102 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/contacto': typeof ContactoRoute
+  '/historia': typeof HistoriaRoute
+  '/informacion-campo': typeof InformacionCampoRoute
+  '/libro-campo': typeof LibroCampoRoute
+  '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/contacto': typeof ContactoRoute
+  '/historia': typeof HistoriaRoute
+  '/informacion-campo': typeof InformacionCampoRoute
+  '/libro-campo': typeof LibroCampoRoute
+  '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/contacto': typeof ContactoRoute
+  '/historia': typeof HistoriaRoute
+  '/informacion-campo': typeof InformacionCampoRoute
+  '/libro-campo': typeof LibroCampoRoute
+  '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/contacto'
+    | '/historia'
+    | '/informacion-campo'
+    | '/libro-campo'
+    | '/tierras-sustratos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/contacto'
+    | '/historia'
+    | '/informacion-campo'
+    | '/libro-campo'
+    | '/tierras-sustratos'
+  id:
+    | '__root__'
+    | '/'
+    | '/contacto'
+    | '/historia'
+    | '/informacion-campo'
+    | '/libro-campo'
+    | '/tierras-sustratos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContactoRoute: typeof ContactoRoute
+  HistoriaRoute: typeof HistoriaRoute
+  InformacionCampoRoute: typeof InformacionCampoRoute
+  LibroCampoRoute: typeof LibroCampoRoute
+  TierrasSustratosRoute: typeof TierrasSustratosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tierras-sustratos': {
+      id: '/tierras-sustratos'
+      path: '/tierras-sustratos'
+      fullPath: '/tierras-sustratos'
+      preLoaderRoute: typeof TierrasSustratosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/libro-campo': {
+      id: '/libro-campo'
+      path: '/libro-campo'
+      fullPath: '/libro-campo'
+      preLoaderRoute: typeof LibroCampoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/informacion-campo': {
+      id: '/informacion-campo'
+      path: '/informacion-campo'
+      fullPath: '/informacion-campo'
+      preLoaderRoute: typeof InformacionCampoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/historia': {
+      id: '/historia'
+      path: '/historia'
+      fullPath: '/historia'
+      preLoaderRoute: typeof HistoriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contacto': {
+      id: '/contacto'
+      path: '/contacto'
+      fullPath: '/contacto'
+      preLoaderRoute: typeof ContactoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,17 +157,12 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContactoRoute: ContactoRoute,
+  HistoriaRoute: HistoriaRoute,
+  InformacionCampoRoute: InformacionCampoRoute,
+  LibroCampoRoute: LibroCampoRoute,
+  TierrasSustratosRoute: TierrasSustratosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

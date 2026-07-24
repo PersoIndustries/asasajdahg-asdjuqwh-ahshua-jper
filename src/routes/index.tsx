@@ -1,24 +1,243 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { ArrowRight, Sprout, Sparkles, X } from "lucide-react";
+import { SiteLayout, Section } from "@/components/site/SiteLayout";
+import { plantasDestacadas, temporadaActual, type Plant } from "@/lib/mock-data";
+import heroPlant from "@/assets/hero-plant.jpg";
+import vivero from "@/assets/vivero.jpg";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Jardiper · Vivero familiar en Fraga, Bajo Cinca" },
+      { name: "description", content: "Plantas, huerto, sustratos y consejo experto. Más de 50 años cultivando en el Bajo Cinca (Fraga, Huesca)." },
+      { property: "og:title", content: "Jardiper · Vivero familiar en Fraga" },
+      { property: "og:description", content: "Plantas de temporada, guías de cultivo y sustratos Suliflor." },
+    ],
+  }),
+  component: Home,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Home() {
+  const [modal, setModal] = useState<Plant | null>(null);
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
+    <SiteLayout>
+      <Hero />
+      <PoolPlantas onInfo={setModal} />
+      <TeAyudamos />
+      <Temporada />
+      {modal && <InfoModal planta={modal} onClose={() => setModal(null)} />}
+    </SiteLayout>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+      <div className="absolute inset-0 -z-10">
+        <img
+          src={heroPlant}
+          alt="Vivero Jardiper"
+          className="h-full w-full object-cover"
+          width={1600}
+          height={1200}
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/20" />
+      </div>
+      <div className="container-page relative pt-24 pb-16">
+        <div className="max-w-2xl fade-up">
+          <p className="text-xs uppercase tracking-[0.25em] text-accent font-medium mb-6">
+            Fraga · Bajo Cinca · desde 1974
+          </p>
+          <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] font-medium text-foreground">
+            Cultivamos plantas.<br />
+            <span className="italic text-primary">Cultivamos historia.</span>
+          </h1>
+          <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed">
+            Vivero y garden center familiar con más de 50 años acompañando huertos,
+            jardines y balcones del Bajo Cinca.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <Link
+              to="/informacion-campo"
+              className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-medium hover:bg-primary/90 transition-all hover:gap-3"
+            >
+              Información de campo <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              to="/contacto"
+              className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-6 py-3 text-sm font-medium hover:bg-foreground hover:text-background transition-colors"
+            >
+              Visita el vivero
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="absolute bottom-8 right-8 hidden md:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground animate-pulse">
+        <span className="h-px w-8 bg-muted-foreground/60" /> Descubre
+      </div>
+    </section>
+  );
+}
+
+function PoolPlantas({ onInfo }: { onInfo: (p: Plant) => void }) {
+  return (
+    <Section
+      eyebrow="Selección Jardiper"
+      title="Plantas destacadas esta semana"
+      intro="Una selección cuidada por nuestro equipo entre las variedades que mejor se comportan en el clima del Bajo Cinca."
     >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {plantasDestacadas.map((p) => (
+          <article key={p.id} className="group">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-xl bg-muted mb-4">
+              <img
+                src={p.imagen}
+                alt={p.nombre}
+                loading="lazy"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+              <span className="absolute top-3 left-3 rounded-full bg-background/90 backdrop-blur px-3 py-1 text-xs capitalize">
+                {p.categoria}
+              </span>
+            </div>
+            <h3 className="font-serif text-xl text-foreground">{p.nombre}</h3>
+            {p.nombreCientifico && (
+              <p className="text-xs italic text-muted-foreground mt-0.5">{p.nombreCientifico}</p>
+            )}
+            <button
+              onClick={() => onInfo(p)}
+              className="mt-3 text-sm text-primary hover:text-accent inline-flex items-center gap-1 transition-colors"
+            >
+              Pedir más información <ArrowRight className="h-3 w-3" />
+            </button>
+          </article>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+function TeAyudamos() {
+  return (
+    <section className="py-20 md:py-28 bg-primary text-primary-foreground">
+      <div className="container-page grid md:grid-cols-2 gap-12 items-center">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-primary-foreground/70 mb-4">Te ayudamos</p>
+          <h2 className="font-serif text-4xl md:text-5xl leading-tight">
+            Cada planta viene con nuestro consejo.
+          </h2>
+          <p className="mt-6 text-primary-foreground/85 text-lg leading-relaxed max-w-lg">
+            Calendarios de siembra, guías paso a paso y fichas detalladas de cada
+            variedad. Todo lo que necesitas para que tu huerto o jardín prospere.
+          </p>
+          <Link
+            to="/informacion-campo"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary-foreground text-primary px-6 py-3 text-sm font-medium hover:gap-3 transition-all"
+          >
+            Ver Información de Campo <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { icon: Sprout, t: "Calendario", d: "Hortícola mes a mes" },
+            { icon: Sparkles, t: "Guías", d: "Cultivo paso a paso" },
+            { icon: Sprout, t: "Fichas", d: "Enfermedades y cuidados" },
+            { icon: Sparkles, t: "Consejo", d: "Del equipo Jardiper" },
+          ].map((f) => (
+            <div key={f.t} className="rounded-2xl bg-primary-foreground/10 p-6 backdrop-blur">
+              <f.icon className="h-5 w-5 mb-3" />
+              <p className="font-serif text-xl">{f.t}</p>
+              <p className="text-sm text-primary-foreground/70 mt-1">{f.d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function Temporada() {
+  return (
+    <Section
+      eyebrow="¿De qué es tiempo?"
+      title="Plantas de temporada en el Bajo Cinca"
+      intro="Estas variedades están en su mejor momento ahora mismo. Cultivarlas cuando toca es la mitad del éxito."
+    >
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6">
+        {temporadaActual.map((p, i) => (
+          <article
+            key={p.id}
+            className="relative aspect-square overflow-hidden rounded-2xl group hover-lift"
+            style={{ animationDelay: `${i * 60}ms` }}
+          >
+            <img src={p.imagen} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
+            <div className="absolute bottom-0 inset-x-0 p-5 text-white">
+              <p className="text-xs opacity-80">{p.temporada}</p>
+              <h3 className="font-serif text-2xl">{p.nombre}</h3>
+            </div>
+          </article>
+        ))}
+      </div>
+      <div className="mt-12 flex justify-center">
+        <Link
+          to="/informacion-campo"
+          hash="calendario"
+          className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-6 py-3 text-sm font-medium hover:bg-foreground hover:text-background transition-colors"
+        >
+          Ver Calendario Hortícola <ArrowRight className="h-4 w-4" />
+        </Link>
+      </div>
+
+      <div className="mt-24 grid md:grid-cols-2 gap-10 items-center">
+        <img src={vivero} alt="Vivero Jardiper" loading="lazy" className="rounded-2xl w-full h-auto" width={1600} height={1000} />
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">El vivero</p>
+          <h3 className="font-serif text-3xl md:text-4xl leading-tight">Ven a pasear entre plantas.</h3>
+          <p className="mt-4 text-muted-foreground leading-relaxed">
+            Miles de referencias, un equipo que conoce cada rincón de la comarca y el mejor
+            servicio técnico para tu huerto o jardín. Te esperamos en la A-131.
+          </p>
+          <Link to="/contacto" className="mt-6 inline-flex items-center gap-2 text-primary hover:gap-3 transition-all font-medium">
+            Cómo llegar <ArrowRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </div>
+    </Section>
+  );
+}
+
+function InfoModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4 animate-in fade-in" onClick={onClose}>
+      <div
+        className="bg-background rounded-2xl max-w-lg w-full p-8 relative shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full hover:bg-muted">
+          <X className="h-4 w-4" />
+        </button>
+        <p className="text-xs uppercase tracking-widest text-accent">Solicitar información</p>
+        <h3 className="font-serif text-3xl mt-2">{planta.nombre}</h3>
+        <p className="mt-4 text-muted-foreground leading-relaxed">{planta.descripcion}</p>
+        {/* TODO: conectar este formulario al backend cuando Lovable Cloud esté activado. */}
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            alert("¡Gracias! Te contactaremos pronto (versión demo).");
+            onClose();
+          }}
+          className="mt-6 space-y-3"
+        >
+          <input required placeholder="Tu nombre" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+          <input required type="email" placeholder="Email o teléfono" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+          <textarea placeholder="¿En qué te podemos ayudar?" rows={3} className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+          <button className="w-full rounded-full bg-primary text-primary-foreground py-3 text-sm font-medium hover:bg-primary/90">
+            Enviar solicitud
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
