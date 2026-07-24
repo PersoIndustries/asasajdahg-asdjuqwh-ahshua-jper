@@ -33,7 +33,7 @@ export function Footer() {
           </p>
           <p className="flex items-start gap-2 text-muted-foreground">
             <Clock className="h-4 w-4 mt-0.5" />
-            L–S · 9:00–13:30 y 16:00–20:00
+            Verano: L–V · 8:00–13:00 y 16:00–19:00
           </p>
         </div>
 
