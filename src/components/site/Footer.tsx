@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Leaf, MapPin, Phone, Clock } from "lucide-react";
+import logoAsset from "@/assets/brand/logo.png.asset.json";
 
 export function Footer() {
   return (
@@ -8,7 +9,7 @@ export function Footer() {
         <div className="md:col-span-2 space-y-4">
           <div className="flex items-center gap-2">
             <img
-              src="/__l5e/assets-v1/9dc1fbad-40e6-47f7-ae1c-60f46ea57e2e/jardiper-logo.png"
+              src={logoAsset.url}
               alt="Jardiper"
               className="h-10 w-auto object-contain"
             />

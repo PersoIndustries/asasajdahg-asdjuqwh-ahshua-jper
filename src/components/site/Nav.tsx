@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-import logoAsset from "@/assets/jardiper-logo.png.asset.json";
+import logoAsset from "@/assets/brand/logo.png.asset.json";
 
 const links = [
   { to: "/", label: "Inicio" },
