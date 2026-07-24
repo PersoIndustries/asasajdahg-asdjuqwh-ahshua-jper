@@ -169,27 +169,27 @@ function TierrasPage() {
             <p className="text-xs uppercase tracking-[0.2em] text-accent mb-4 font-medium">Distribuidor Liett Ibérica</p>
             <h2 className="font-serif text-4xl md:text-5xl font-medium leading-tight">
               Compost<br />
-              <span className="italic text-primary">en big bags de 1 m³</span>
+              <span className="italic text-primary">ECO en big bags de 1 m³</span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground leading-relaxed">
-              Trabajamos el compost de <strong className="text-foreground font-medium">Liett Ibérica</strong> para
-              huerto y agricultura: enmiendas orgánicas de estiércol de vaca y gallinaza, servidas en big bags de
-              un metro cúbico. Venta a particulares y al por mayor para viveros, cooperativas y explotaciones.
+              Distribuimos el <strong className="text-foreground font-medium">Compost ECO de Liett Ibérica</strong>,
+              un producto compostado y apto para agricultura ecológica. Disponible en big bags de un metro cúbico y
+              también al por mayor para viveros, cooperativas, ayuntamientos y explotaciones agrícolas.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <span className="inline-flex items-center gap-2 rounded-full bg-card border border-border px-4 py-2 text-sm">
-                <Leaf className="h-4 w-4 text-primary" /> 100% orgánico
+                <Leaf className="h-4 w-4 text-primary" /> Uso ecológico
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-card border border-border px-4 py-2 text-sm">
                 <Recycle className="h-4 w-4 text-primary" /> Compostaje controlado
               </span>
               <span className="inline-flex items-center gap-2 rounded-full bg-card border border-border px-4 py-2 text-sm">
-                <Truck className="h-4 w-4 text-primary" /> Servicio al por mayor
+                <Truck className="h-4 w-4 text-primary" /> Big bag y al por mayor
               </span>
             </div>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="max-w-3xl">
             {composts.map((c) => (
               <article key={c.nombre} className="group rounded-2xl border border-border overflow-hidden bg-card hover-lift flex flex-col md:flex-row">
                 <div className="relative md:w-2/5 aspect-[4/3] md:aspect-auto overflow-hidden bg-secondary">
