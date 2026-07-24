@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import { Nav } from "./Nav";
 import { Footer } from "./Footer";
+import { CookieConsent } from "./CookieConsent";
+import { WhatsAppButton } from "./WhatsAppButton";
 
 export function SiteLayout({ children }: { children: ReactNode }) {
   return (
@@ -8,6 +10,8 @@ export function SiteLayout({ children }: { children: ReactNode }) {
       <Nav />
       <main className="flex-1 pt-16 md:pt-20">{children}</main>
       <Footer />
+      <WhatsAppButton />
+      <CookieConsent />
     </div>
   );
 }
