@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowRight, Sprout, Sparkles, X } from "lucide-react";
+import { ArrowRight, Sprout, Sparkles } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
-import { plantasDestacadas, temporadaActual, type Plant } from "@/lib/mock-data";
+import { temporadaActual } from "@/lib/mock-data";
 import heroPlant from "@/assets/hero-plant.jpg";
 import vivero from "@/assets/vivero.jpg";
 
@@ -19,14 +18,11 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const [modal, setModal] = useState<Plant | null>(null);
   return (
     <SiteLayout>
       <Hero />
-      <PoolPlantas onInfo={setModal} />
       <TeAyudamos />
       <Temporada />
-      {modal && <InfoModal planta={modal} onClose={() => setModal(null)} />}
     </SiteLayout>
   );
 }
@@ -38,11 +34,12 @@ function Hero() {
         <img
           src={heroPlant}
           alt="Vivero Jardiper"
-          className="h-full w-full object-cover"
+          className="h-full w-full object-cover scale-105 animate-[heroZoom_20s_ease-in-out_infinite_alternate]"
           width={1600}
           height={1200}
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-background/20" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/60 to-background/10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/60" />
       </div>
       <div className="container-page relative pt-24 pb-16">
         <div className="max-w-2xl fade-up">
