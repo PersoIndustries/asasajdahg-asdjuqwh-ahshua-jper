@@ -9,7 +9,7 @@ export type Plant = {
   imagen: string;
   descripcion: string;
   curiosidades: string;
-  enfermedades: { nombre: string; combate: string }[];
+  enfermedades: { nombre: string; combate: string; imagen?: string }[];
   temporada: string;
 };
 
@@ -27,7 +27,7 @@ export const plantasDestacadas: Plant[] = [
     descripcion: "Variedad autóctona aragonesa, carnoso, dulce y de gran calibre.",
     curiosidades: "Denominación de Origen protegida en el Somontano; se conserva desde principios del siglo XX.",
     enfermedades: [
-      { nombre: "Mildiu", combate: "Tratamientos preventivos con caldo bordelés y buena ventilación." },
+      { nombre: "Mildiu", combate: "Tratamientos preventivos con caldo bordelés y buena ventilación.", imagen: img("1591857177580-dc82b9ac4e1e", 400) },
       { nombre: "Araña roja", combate: "Aumentar humedad ambiental y aplicar jabón potásico." },
     ],
     temporada: "Mayo – Septiembre",
