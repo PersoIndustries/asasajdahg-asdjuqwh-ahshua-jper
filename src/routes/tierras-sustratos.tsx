@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Check, Package, Truck, Sprout, Leaf, Recycle, Mountain, TreePine, Gem } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
-import sustratos from "@/assets/sustratos.jpg";
+import sustratos from "@/assets/tierras/sustratos.jpg";
 
 export const Route = createFileRoute("/tierras-sustratos")({
   head: () => ({
