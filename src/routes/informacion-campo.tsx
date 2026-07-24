@@ -312,6 +312,11 @@ function InfoCampo() {
 }
 
 function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
+  const guiaVinculada = planta.guiaId
+    ? guias.find((g) => g.id === planta.guiaId)
+    : undefined;
+  const [guiaOpen, setGuiaOpen] = useState<(typeof guias)[number] | null>(null);
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
@@ -334,12 +339,19 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 {planta.enfermedades.map((e) => (
                   <li key={e.nombre} className="text-sm flex gap-3">
                     {e.imagen && (
-                      <img
-                        src={e.imagen}
-                        alt={e.nombre}
-                        loading="lazy"
-                        className="h-16 w-16 rounded-lg object-cover shrink-0 border border-border"
-                      />
+                      <button
+                        type="button"
+                        onClick={() => setZoom({ src: e.imagen!, alt: e.nombre })}
+                        className="shrink-0 rounded-lg overflow-hidden border border-border hover:opacity-90 transition"
+                        aria-label={`Ampliar imagen de ${e.nombre}`}
+                      >
+                        <img
+                          src={e.imagen}
+                          alt={e.nombre}
+                          loading="lazy"
+                          className="h-16 w-16 object-cover"
+                        />
+                      </button>
                     )}
                     <div>
                       <span className="font-medium text-foreground">{e.nombre}:</span>{" "}
@@ -349,12 +361,57 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 ))}
               </ul>
             </div>
+            {guiaVinculada && (
+              <div>
+                <h4 className="font-serif text-lg mb-2">Guía de cultivo</h4>
+                <button
+                  type="button"
+                  onClick={() => setGuiaOpen(guiaVinculada)}
+                  className="w-full flex items-center gap-4 p-3 rounded-xl border border-border hover:bg-secondary/40 transition text-left"
+                >
+                  <img
+                    src={guiaVinculada.imagen}
+                    alt={guiaVinculada.titulo}
+                    className="h-16 w-24 object-cover rounded-lg shrink-0"
+                    loading="lazy"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] uppercase tracking-widest text-accent">{guiaVinculada.categoria}</p>
+                    <p className="font-serif text-base truncate">{guiaVinculada.titulo}</p>
+                    <p className="text-xs text-muted-foreground line-clamp-1">{guiaVinculada.resumen}</p>
+                  </div>
+                  <ChevronRight className="h-4 w-4 text-primary shrink-0" />
+                </button>
+              </div>
+            )}
             <div className="rounded-lg bg-secondary/60 px-4 py-3 text-sm">
               <span className="text-muted-foreground">Temporada:</span> <span className="font-medium">{planta.temporada}</span>
             </div>
           </div>
         </div>
       </div>
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/80 backdrop-blur-sm p-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            setZoom(null);
+          }}
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); setZoom(null); }}
+            className="absolute top-4 right-4 p-2 rounded-full bg-background/80 hover:bg-muted"
+            aria-label="Cerrar"
+          >
+            <X className="h-4 w-4" />
+          </button>
+          <figure className="max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
+            <img src={zoom.src} alt={zoom.alt} className="w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl" />
+            <figcaption className="mt-3 text-center text-sm text-white/90">{zoom.alt}</figcaption>
+          </figure>
+        </div>
+      )}
+      {guiaOpen && <GuiaModal guia={guiaOpen} onClose={() => setGuiaOpen(null)} />}
     </div>
   );
 }
