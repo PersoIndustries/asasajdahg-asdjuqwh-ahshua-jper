@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Leaf, MapPin, Phone, Clock } from "lucide-react";
+import { Instagram, MapPin, Phone, Clock } from "lucide-react";
 import logoAsset from "@/assets/brand/logo.png.asset.json";
 
 export function Footer() {
