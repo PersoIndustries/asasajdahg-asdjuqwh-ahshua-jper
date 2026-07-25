@@ -15,11 +15,14 @@ import {
 export const Route = createFileRoute("/informacion-campo")({
   head: () => ({
     meta: [
-      { title: "Información de Campo · Jardiper" },
-      { name: "description", content: "Calendario hortícola, guías de cultivo y catálogo de plantas del Bajo Cinca." },
-      { property: "og:title", content: "Información de Campo · Jardiper" },
-      { property: "og:description", content: "Calendario hortícola, guías y catálogo de plantas." },
+      { title: "Calendario Hortícola y Guías de Cultivo · Jardiper" },
+      { name: "description", content: "Calendario hortícola semanal del Bajo Cinca, guías de cultivo en PDF y catálogo de plantas hortícolas y ornamentales." },
+      { property: "og:title", content: "Calendario Hortícola y Guías de Cultivo · Jardiper" },
+      { property: "og:description", content: "Calendario semanal, guías PDF y catálogo de plantas del vivero Jardiper (Fraga)." },
+      { property: "og:url", content: "/informacion-campo" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/informacion-campo" }],
   }),
   component: InfoCampo,
 });

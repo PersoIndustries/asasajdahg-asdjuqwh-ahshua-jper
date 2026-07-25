@@ -77,13 +77,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Jardiper · Vivero y Garden Center en Fraga" },
-      { name: "description", content: "Más de 50 años cultivando en el Bajo Cinca. Plantas, sustratos Suliflor y consejo experto en Fraga, Huesca." },
+      { title: "Jardiper · Vivero y Garden Center en Fraga (Huesca)" },
+      { name: "description", content: "Vivero familiar en Fraga (Huesca) desde 1974. Plantas de huerto y jardín, sustratos Suliflor, compost ECO y consejo experto en el Bajo Cinca." },
       { name: "author", content: "Jardiper" },
-      { property: "og:title", content: "Jardiper · Vivero y Garden Center" },
+      { name: "robots", content: "index, follow, max-image-preview:large" },
+      { name: "theme-color", content: "#3d5a3d" },
+      { property: "og:site_name", content: "Jardiper" },
+      { property: "og:locale", content: "es_ES" },
+      { property: "og:title", content: "Jardiper · Vivero y Garden Center en Fraga" },
       { property: "og:description", content: "Plantas, huerto y jardinería con más de 50 años de historia familiar en el Bajo Cinca." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Jardiper · Vivero y Garden Center en Fraga" },
+      { name: "twitter:description", content: "Vivero familiar en Fraga (Huesca) desde 1974. Plantas, sustratos y consejo experto." },
     ],
     links: [
       {
@@ -95,6 +101,44 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@300;400;500;600;700&display=swap" },
     ],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "GardenStore",
+          name: "Jardiper",
+          description: "Vivero y garden center familiar en Fraga (Huesca) desde 1974. Plantas, sustratos, compost y consejo experto.",
+          telephone: "+34974472158",
+          email: "correo@jardiper.es",
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: "Carretera A-131 km 1,800",
+            addressLocality: "Fraga",
+            addressRegion: "Huesca",
+            postalCode: "22520",
+            addressCountry: "ES",
+          },
+          geo: { "@type": "GeoCoordinates", latitude: 41.5322, longitude: 0.3416 },
+          areaServed: ["Fraga", "Bajo Cinca", "Lleida", "Huesca"],
+          openingHoursSpecification: [
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              opens: "08:00",
+              closes: "13:00",
+            },
+            {
+              "@type": "OpeningHoursSpecification",
+              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+              opens: "16:00",
+              closes: "19:00",
+            },
+          ],
+          foundingDate: "1974",
+        }),
+      },
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
@@ -104,7 +148,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <head>
         <HeadContent />
       </head>

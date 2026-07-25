@@ -10,7 +10,10 @@ export const Route = createFileRoute("/tierras-sustratos")({
       { name: "description", content: "Sustratos Suliflor España, compost Liett Ibérica y complementos para el jardín: piedras, canto rodado, corteza y más. Venta al por mayor en Fraga." },
       { property: "og:title", content: "Tierras, Sustratos y Compost · Jardiper" },
       { property: "og:description", content: "Distribuidor oficial Suliflor y Liett Ibérica. Sustratos, compost y complementos para el jardín en Fraga, Huesca." },
+      { property: "og:url", content: "/tierras-sustratos" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/tierras-sustratos" }],
   }),
   component: TierrasPage,
 });
