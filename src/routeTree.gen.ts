@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TierrasSustratosRouteImport } from './routes/tierras-sustratos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as LibroCampoRouteImport } from './routes/libro-campo'
 import { Route as InformacionCampoRouteImport } from './routes/informacion-campo'
 import { Route as HistoriaRouteImport } from './routes/historia'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const TierrasSustratosRoute = TierrasSustratosRouteImport.update({
   id: '/tierras-sustratos',
   path: '/tierras-sustratos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LibroCampoRoute = LibroCampoRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/historia': typeof HistoriaRoute
   '/informacion-campo': typeof InformacionCampoRoute
   '/libro-campo': typeof LibroCampoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/historia': typeof HistoriaRoute
   '/informacion-campo': typeof InformacionCampoRoute
   '/libro-campo': typeof LibroCampoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRoutesById {
@@ -70,6 +78,7 @@ export interface FileRoutesById {
   '/historia': typeof HistoriaRoute
   '/informacion-campo': typeof InformacionCampoRoute
   '/libro-campo': typeof LibroCampoRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRouteTypes {
@@ -80,6 +89,7 @@ export interface FileRouteTypes {
     | '/historia'
     | '/informacion-campo'
     | '/libro-campo'
+    | '/sitemap.xml'
     | '/tierras-sustratos'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -88,6 +98,7 @@ export interface FileRouteTypes {
     | '/historia'
     | '/informacion-campo'
     | '/libro-campo'
+    | '/sitemap.xml'
     | '/tierras-sustratos'
   id:
     | '__root__'
@@ -96,6 +107,7 @@ export interface FileRouteTypes {
     | '/historia'
     | '/informacion-campo'
     | '/libro-campo'
+    | '/sitemap.xml'
     | '/tierras-sustratos'
   fileRoutesById: FileRoutesById
 }
@@ -105,6 +117,7 @@ export interface RootRouteChildren {
   HistoriaRoute: typeof HistoriaRoute
   InformacionCampoRoute: typeof InformacionCampoRoute
   LibroCampoRoute: typeof LibroCampoRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TierrasSustratosRoute: typeof TierrasSustratosRoute
 }
 
@@ -115,6 +128,13 @@ declare module '@tanstack/react-router' {
       path: '/tierras-sustratos'
       fullPath: '/tierras-sustratos'
       preLoaderRoute: typeof TierrasSustratosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/libro-campo': {
@@ -161,18 +181,9 @@ const rootRouteChildren: RootRouteChildren = {
   HistoriaRoute: HistoriaRoute,
   InformacionCampoRoute: InformacionCampoRoute,
   LibroCampoRoute: LibroCampoRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TierrasSustratosRoute: TierrasSustratosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
