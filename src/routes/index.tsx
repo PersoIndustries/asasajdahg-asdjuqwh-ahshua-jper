@@ -12,7 +12,10 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Plantas, huerto, sustratos y consejo experto. Más de 50 años cultivando en el Bajo Cinca (Fraga, Huesca)." },
       { property: "og:title", content: "Jardiper · Vivero familiar en Fraga" },
       { property: "og:description", content: "Plantas de temporada, guías de cultivo y sustratos Suliflor." },
+      { property: "og:url", content: "/" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/" }],
   }),
   component: Home,
 });

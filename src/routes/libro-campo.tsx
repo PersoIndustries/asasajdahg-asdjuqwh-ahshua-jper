@@ -9,7 +9,10 @@ export const Route = createFileRoute("/libro-campo")({
       { name: "description", content: "Tu cuaderno digital del huerto: siembras, cosechas, tratamientos y observaciones. Próximamente disponible." },
       { property: "og:title", content: "Libro de Campo · Jardiper" },
       { property: "og:description", content: "El cuaderno digital de tu huerto." },
+      { property: "og:url", content: "/libro-campo" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/libro-campo" }],
   }),
   component: LibroCampo,
 });

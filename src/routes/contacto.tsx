@@ -10,7 +10,10 @@ export const Route = createFileRoute("/contacto")({
       { name: "description", content: "Visita Jardiper en Carretera A-131 km 1,800, Fraga. Horarios, teléfonos y formulario de contacto." },
       { property: "og:title", content: "Contacto · Jardiper" },
       { property: "og:description", content: "Cómo llegar, horarios y contacto directo." },
+      { property: "og:url", content: "/contacto" },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: "/contacto" }],
   }),
   component: ContactoPage,
 });

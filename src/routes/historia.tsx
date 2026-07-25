@@ -15,7 +15,10 @@ export const Route = createFileRoute("/historia")({
       { name: "description", content: "De Horticultura Peralta a Jardiper. Más de 50 años de historia familiar en Fraga." },
       { property: "og:title", content: "Historia · Jardiper" },
       { property: "og:description", content: "50 años cultivando plantas y comunidad en el Bajo Cinca." },
+      { property: "og:url", content: "/historia" },
+      { property: "og:type", content: "article" },
     ],
+    links: [{ rel: "canonical", href: "/historia" }],
   }),
   component: HistoriaPage,
 });
