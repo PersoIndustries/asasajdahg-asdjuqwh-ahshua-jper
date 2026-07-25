@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Leaf, MapPin, Phone, Clock } from "lucide-react";
+import { Instagram, MapPin, Phone, Clock } from "lucide-react";
 import logoAsset from "@/assets/brand/logo.png.asset.json";
 
 export function Footer() {
@@ -32,6 +32,14 @@ export function Footer() {
           <p className="flex items-center gap-2 text-muted-foreground">
             <Phone className="h-4 w-4" /> 611 32 16 20
           </p>
+          <a
+            href="https://instagram.com/jardiper"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+          >
+            <Instagram className="h-4 w-4" /> @jardiper
+          </a>
           <p className="flex items-start gap-2 text-muted-foreground">
             <Clock className="h-4 w-4 mt-0.5" />
             Verano: L–V · 8:00–13:00 y 16:00–19:00
