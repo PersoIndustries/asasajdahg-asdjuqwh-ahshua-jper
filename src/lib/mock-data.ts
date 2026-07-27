@@ -175,6 +175,8 @@ import pdfPoda from "@/assets/guias/poda-frutales.pdf.asset.json";
 import imgCalendarioPrimavera from "@/assets/guias/calendario-primavera.jpg";
 import imgSustratos from "@/assets/guias/sustratos.jpg";
 import imgCompostaje from "@/assets/guias/compostaje.jpg";
+import imgCalcots from "@/assets/guias/calcots.jpg";
+
 
 
 export const guias: Guia[] = [
