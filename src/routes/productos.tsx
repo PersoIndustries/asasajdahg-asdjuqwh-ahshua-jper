@@ -710,5 +710,3 @@ function CalendarioCultivo({ planta }: { planta: Plant }) {
     </div>
   );
 }
-
-}
