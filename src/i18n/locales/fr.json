@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "products": "Produits",
+    "garden": "Votre Jardin",
+    "history": "Histoire",
+    "contact": "Contact",
+    "visitUs": "Nous rendre visite",
+    "openMenu": "Ouvrir le menu",
+    "language": "Langue"
+  },
+  "footer": {
+    "tagline": "Jardinerie et pépinière familiale à Fraga, Huesca. Plus de 50 ans à cultiver des plantes et à conseiller les jardins et potagers du Bajo Cinca.",
+    "visitUs": "Nous rendre visite",
+    "explore": "Explorer",
+    "schedule": "Lun–Ven · 8h00–13h00 et 16h00–19h00",
+    "saturday": "Samedis · 9h00–13h00",
+    "closed": "Fermé les dimanches et jours fériés",
+    "rights": "Tous droits réservés"
+  },
+  "cookies": {
+    "title": "Nous utilisons des cookies",
+    "text": "Nous utilisons des cookies pour améliorer votre expérience et analyser le trafic. Vous pouvez accepter ou refuser les non essentiels.",
+    "accept": "Accepter",
+    "reject": "Refuser"
+  },
+  "home": {
+    "eyebrow": "Fraga · Bajo Cinca · depuis 1974",
+    "titleA": "Nous cultivons des plantes.",
+    "titleB": "Nous cultivons l'histoire.",
+    "subtitle": "Jardinerie familiale avec plus de 50 ans à accompagner les jardins, potagers et balcons du Bajo Cinca.",
+    "ctaGarden": "Votre jardin",
+    "ctaVisit": "Visitez la pépinière",
+    "discover": "Découvrir"
+  },
+  "products": {
+    "eyebrow": "Notre catalogue",
+    "titleA": "Tout ce dont votre",
+    "titleB": "jardin et potager",
+    "titleC": "ont besoin",
+    "subtitle": "Des milliers de références : plantes potagères et ornementales, substrats professionnels, compost écologique, pierres décoratives et pots de tous styles et tailles.",
+    "tabs": {
+      "horticolas": "Potagères",
+      "ornamentales": "Ornementales",
+      "tierras": "Terres et substrats",
+      "material": "Matériel de jardinage"
+    }
+  },
+  "garden": {
+    "eyebrow": "Votre Jardin",
+    "title": "Calendrier, guides et carnet de champ"
+  },
+  "history": {
+    "eyebrow": "Notre histoire",
+    "title": "Cinq décennies à cultiver le Bajo Cinca"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Venez nous voir ou écrivez-nous.",
+    "nursery": "Pépinière Jardiper",
+    "phones": "Téléphones",
+    "schedule": "Horaires",
+    "summer": "Horaires d'été",
+    "weekdays": "Du lundi au vendredi",
+    "saturday": "Samedis",
+    "closed": "Fermé les dimanches et jours fériés",
+    "email": "Email",
+    "writeUs": "Écrivez-nous",
+    "replyTime": "Nous répondons sous 24–48 h ouvrées.",
+    "sent": "Message envoyé !",
+    "sentDetail": "Nous vous contacterons bientôt. (version démo)",
+    "form": {
+      "name": "Prénom",
+      "surname": "Nom",
+      "email": "Email",
+      "phone": "Téléphone (facultatif)",
+      "subjectGeneral": "Demande générale",
+      "subjectOrder": "Commande de plantes",
+      "subjectWholesale": "Substrats en gros",
+      "subjectAdvice": "Conseil technique",
+      "message": "Racontez-nous…",
+      "submit": "Envoyer le message"
+    }
+  }
+}
