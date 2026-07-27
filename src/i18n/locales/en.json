@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Home",
+    "products": "Products",
+    "garden": "Your Garden",
+    "history": "History",
+    "contact": "Contact",
+    "visitUs": "Visit us",
+    "openMenu": "Open menu",
+    "language": "Language"
+  },
+  "footer": {
+    "tagline": "Family-run garden centre and nursery in Fraga, Huesca. Over 50 years growing plants and sharing expert advice for gardens and vegetable plots in Bajo Cinca.",
+    "visitUs": "Visit us",
+    "explore": "Explore",
+    "schedule": "Mon–Fri · 8:00–13:00 & 16:00–19:00",
+    "saturday": "Saturdays · 9:00–13:00",
+    "closed": "Closed on Sundays and public holidays",
+    "rights": "All rights reserved"
+  },
+  "cookies": {
+    "title": "We use cookies",
+    "text": "We use cookies to improve your experience and analyse traffic. You can accept or reject non-essential ones.",
+    "accept": "Accept",
+    "reject": "Reject"
+  },
+  "home": {
+    "eyebrow": "Fraga · Bajo Cinca · since 1974",
+    "titleA": "We grow plants.",
+    "titleB": "We grow history.",
+    "subtitle": "Family-run garden centre with more than 50 years caring for gardens, vegetable plots and balconies across Bajo Cinca.",
+    "ctaGarden": "Your garden",
+    "ctaVisit": "Visit the nursery",
+    "discover": "Discover"
+  },
+  "products": {
+    "eyebrow": "Our catalogue",
+    "titleA": "Everything your",
+    "titleB": "garden and vegetable plot",
+    "titleC": "need",
+    "subtitle": "Thousands of references: vegetable and ornamental plants, professional substrates, organic compost, decorative stones and pots of every style and size.",
+    "tabs": {
+      "horticolas": "Vegetable",
+      "ornamentales": "Ornamental",
+      "tierras": "Soils & substrates",
+      "material": "Gardening supplies"
+    }
+  },
+  "garden": {
+    "eyebrow": "Your Garden",
+    "title": "Calendar, guides and field notebook"
+  },
+  "history": {
+    "eyebrow": "Our history",
+    "title": "Five decades cultivating Bajo Cinca"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Come visit, or write to us.",
+    "nursery": "Jardiper Nursery",
+    "phones": "Phones",
+    "schedule": "Opening hours",
+    "summer": "Summer hours",
+    "weekdays": "Monday to Friday",
+    "saturday": "Saturdays",
+    "closed": "Closed on Sundays and public holidays",
+    "email": "Email",
+    "writeUs": "Write to us",
+    "replyTime": "We reply within 24–48 working hours.",
+    "sent": "Message sent!",
+    "sentDetail": "We will contact you soon. (demo version)",
+    "form": {
+      "name": "First name",
+      "surname": "Last name",
+      "email": "Email",
+      "phone": "Phone (optional)",
+      "subjectGeneral": "General enquiry",
+      "subjectOrder": "Plant order",
+      "subjectWholesale": "Wholesale substrates",
+      "subjectAdvice": "Technical advice",
+      "message": "Tell us…",
+      "submit": "Send message"
+    }
+  }
+}
