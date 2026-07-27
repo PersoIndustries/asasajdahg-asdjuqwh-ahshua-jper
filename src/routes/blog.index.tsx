@@ -1,23 +1,47 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Clock, Search, ArrowRight } from "lucide-react";
+import { Clock, Search, ArrowRight, Calendar } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
-import { guias } from "@/lib/mock-data";
+import {
+  categoriasNoticias,
+  noticiasOrdenadas,
+  formatearFecha,
+  type CategoriaNoticia,
+} from "@/lib/noticias";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
       { title: "Blog · Noticias y curiosidades del vivero · Jardiper" },
-      { name: "description", content: "Noticias del vivero, curiosidades del mundo vegetal y apuntes del equipo de Jardiper en Fraga (Huesca)." },
-      { name: "keywords", content: "blog jardinería, noticias vivero Fraga, curiosidades plantas, Bajo Cinca" },
+      { name: "description", content: "Novedades del vivero Jardiper: nuevas secciones de la web, visitas a ferias del sector, plantel de temporada y curiosidades del mundo vegetal en Fraga (Huesca)." },
+      { name: "keywords", content: "blog jardinería, noticias vivero Fraga, ferias jardinería, curiosidades plantas, Bajo Cinca" },
       { property: "og:title", content: "Blog · Noticias y curiosidades del vivero · Jardiper" },
-      { property: "og:description", content: "Noticias del vivero y curiosidades del mundo vegetal en el Bajo Cinca." },
+      { property: "og:description", content: "Novedades, ferias, temporada y curiosidades del vivero Jardiper en el Bajo Cinca." },
       { property: "og:url", content: "/blog" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/blog" }],
     scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Blog",
+          name: "Blog de Jardiper",
+          description: "Noticias y curiosidades del vivero Jardiper en Fraga (Huesca).",
+          url: "/blog",
+          blogPost: noticiasOrdenadas().map((n) => ({
+            "@type": "BlogPosting",
+            headline: n.titulo,
+            description: n.resumen,
+            datePublished: n.fecha,
+            author: { "@type": "Organization", name: n.autor },
+            url: `/blog/${n.slug}`,
+          })),
+        }),
+      },
       {
         type: "application/ld+json",
         children: JSON.stringify({
@@ -34,21 +58,23 @@ export const Route = createFileRoute("/blog/")({
   component: BlogPage,
 });
 
-const categorias = ["Todas", "Huerto", "Jardín", "Frutales", "Sustratos", "Compost"] as const;
-
 function BlogPage() {
   const { t } = useTranslation();
   const [busqueda, setBusqueda] = useState("");
-  const [categoria, setCategoria] = useState<(typeof categorias)[number]>("Todas");
+  const [categoria, setCategoria] = useState<CategoriaNoticia | "Todas">("Todas");
 
-  const guiasFiltradas = useMemo(() => {
-    return guias.filter((g) => {
-      const coincideCategoria = categoria === "Todas" || g.categoria === categoria;
-      const texto = `${g.titulo} ${g.resumen} ${g.tags.join(" ")}`.toLowerCase();
-      const coincideBusqueda = texto.includes(busqueda.toLowerCase().trim());
-      return coincideCategoria && coincideBusqueda;
+  const todas = useMemo(() => noticiasOrdenadas(), []);
+  const filtradas = useMemo(() => {
+    const q = busqueda.toLowerCase().trim();
+    return todas.filter((n) => {
+      const coincideCategoria = categoria === "Todas" || n.categoria === categoria;
+      const texto = `${n.titulo} ${n.resumen} ${n.tags.join(" ")}`.toLowerCase();
+      return coincideCategoria && texto.includes(q);
     });
-  }, [busqueda, categoria]);
+  }, [todas, busqueda, categoria]);
+
+  const destacada = filtradas[0];
+  const resto = filtradas.slice(1);
 
   return (
     <SiteLayout>
@@ -61,9 +87,9 @@ function BlogPage() {
       </section>
 
       <Section>
-        <div className="mb-8 flex flex-col md:flex-row md:items-center gap-4 md:justify-between">
+        <div className="mb-10 flex flex-col md:flex-row md:items-center gap-4 md:justify-between">
           <div className="flex flex-wrap gap-2">
-            {categorias.map((c) => (
+            {(["Todas", ...categoriasNoticias] as const).map((c) => (
               <button
                 key={c}
                 onClick={() => setCategoria(c)}
@@ -89,41 +115,89 @@ function BlogPage() {
           </div>
         </div>
 
-        {guiasFiltradas.length === 0 && (
+        {filtradas.length === 0 && (
           <p className="py-16 text-center text-muted-foreground">{t("blog.noResults")}</p>
         )}
 
+        {destacada && (
+          <article className="group grid md:grid-cols-2 gap-8 items-center mb-16 pb-16 border-b border-border/60">
+            <Link
+              to="/blog/$slug"
+              params={{ slug: destacada.slug }}
+              className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted"
+            >
+              <img
+                src={destacada.imagen}
+                alt={destacada.titulo}
+                width={1600}
+                height={1000}
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+              />
+            </Link>
+            <div>
+              <p className="text-xs uppercase tracking-widest text-accent flex flex-wrap items-center gap-3">
+                {destacada.categoria}
+                <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal">
+                  <Calendar className="h-3 w-3" /> {formatearFecha(destacada.fecha)}
+                </span>
+                <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal">
+                  <Clock className="h-3 w-3" /> {destacada.minutos} min
+                </span>
+              </p>
+              <Link to="/blog/$slug" params={{ slug: destacada.slug }}>
+                <h2 className="font-serif text-3xl md:text-4xl mt-3 leading-tight group-hover:text-primary transition-colors">
+                  {destacada.titulo}
+                </h2>
+              </Link>
+              <p className="text-muted-foreground mt-4 text-lg leading-relaxed">{destacada.resumen}</p>
+              <Link
+                to="/blog/$slug"
+                params={{ slug: destacada.slug }}
+                className="mt-6 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
+              >
+                {t("blog.read")} <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </article>
+        )}
+
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {guiasFiltradas.map((g) => (
-            <article key={g.id} className="group flex flex-col">
-              <Link to="/blog/$slug" params={{ slug: g.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
+          {resto.map((n) => (
+            <article key={n.id} className="group flex flex-col">
+              <Link
+                to="/blog/$slug"
+                params={{ slug: n.slug }}
+                className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4"
+              >
                 <img
-                  src={g.imagen}
-                  alt={g.titulo}
+                  src={n.imagen}
+                  alt={n.titulo}
                   loading="lazy"
+                  width={1600}
+                  height={1000}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
               </Link>
-              <p className="text-xs uppercase tracking-widest text-accent flex items-center gap-3">
-                {g.categoria}
+              <p className="text-xs uppercase tracking-widest text-accent flex flex-wrap items-center gap-3">
+                {n.categoria}
                 <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal">
-                  <Clock className="h-3 w-3" /> {g.minutos} min
+                  <Calendar className="h-3 w-3" /> {formatearFecha(n.fecha)}
                 </span>
               </p>
-              <Link to="/blog/$slug" params={{ slug: g.slug }}>
-                <h3 className="font-serif text-2xl mt-2 group-hover:text-primary transition-colors">{g.titulo}</h3>
+              <Link to="/blog/$slug" params={{ slug: n.slug }}>
+                <h3 className="font-serif text-2xl mt-2 group-hover:text-primary transition-colors">{n.titulo}</h3>
               </Link>
-              <p className="text-muted-foreground mt-2 flex-1">{g.resumen}</p>
+              <p className="text-muted-foreground mt-2 flex-1">{n.resumen}</p>
               <div className="mt-3 flex flex-wrap gap-1.5">
-                {g.tags.slice(0, 3).map((t) => (
-                  <span key={t} className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-secondary text-foreground/70">
-                    {t}
+                {n.tags.slice(0, 3).map((tag) => (
+                  <span key={tag} className="text-[10px] uppercase tracking-widest px-2 py-1 rounded-full bg-secondary text-foreground/70">
+                    {tag}
                   </span>
                 ))}
               </div>
               <Link
                 to="/blog/$slug"
-                params={{ slug: g.slug }}
+                params={{ slug: n.slug }}
                 className="mt-4 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
               >
                 {t("blog.read")} <ArrowRight className="h-4 w-4" />

@@ -7,7 +7,8 @@ import {
 } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
-  guias, plantasHortícolas, plantasOrnamentales, type Plant,
+  guias, plantasHortícolas, plantasOrnamentales, meses,
+  getCalendarioPlanta, leyendaCalendario, type Plant, type MesEstado,
 } from "@/lib/mock-data";
 import sustratos from "@/assets/tierras/sustratos.jpg";
 import imgPlaceholder from "@/assets/placeholder/under-construction-square.jpg";
@@ -420,9 +421,11 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 </button>
               </div>
             )}
+            <CalendarioCultivo planta={planta} />
             <div className="rounded-lg bg-secondary/60 px-4 py-3 text-sm">
               <span className="text-muted-foreground">Temporada:</span> <span className="font-medium">{planta.temporada}</span>
             </div>
+
           </div>
         </div>
       </div>
@@ -472,6 +475,57 @@ function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: (
           <iframe title={guia.titulo} src={guia.pdfUrl} className="w-full h-full min-h-[60vh]" />
         </div>
       </div>
+    </div>
+  );
+}
+const estadoEstilos: Record<Exclude<MesEstado, "">, { clase: string; etiqueta: string }> = {
+  S: { clase: "bg-accent/20 text-accent-foreground border-accent/40", etiqueta: "Siembra" },
+  T: { clase: "bg-primary/20 text-primary border-primary/40", etiqueta: "Trasplante" },
+  C: { clase: "bg-secondary text-foreground border-border", etiqueta: "Cosecha" },
+  SC: { clase: "bg-primary/30 text-primary border-primary/50", etiqueta: "Siembra y cosecha" },
+};
+
+function CalendarioCultivo({ planta }: { planta: Plant }) {
+  const fila = getCalendarioPlanta(planta);
+  if (!fila) return null;
+
+  const usados = leyendaCalendario.filter((l) => fila.meses.includes(l.codigo));
+
+  return (
+    <div>
+      <h4 className="font-serif text-lg mb-2">Calendario de cultivo</h4>
+      <div className="rounded-xl border border-border overflow-hidden">
+        <div className="grid grid-cols-12 text-center">
+          {meses.map((m) => (
+            <div key={m} className="text-[10px] uppercase tracking-wide text-muted-foreground py-1.5 border-b border-border">
+              {m}
+            </div>
+          ))}
+          {fila.meses.map((estado, i) => (
+            <div key={i} className="p-0.5">
+              <div
+                title={estado ? `${meses[i]}: ${estadoEstilos[estado].etiqueta}` : `${meses[i]}: sin actividad`}
+                className={`h-7 flex items-center justify-center rounded-md text-[10px] font-semibold border ${
+                  estado ? estadoEstilos[estado].clase : "bg-muted/40 border-transparent text-transparent"
+                }`}
+              >
+                {estado || "·"}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        {usados.map((l) => (
+          <span key={l.codigo} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <span className={`inline-block h-3 w-3 rounded border ${estadoEstilos[l.codigo].clase}`} />
+            {l.codigo} · {l.etiqueta}
+          </span>
+        ))}
+      </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">
+        Fechas orientativas para el clima del Bajo Cinca; pueden variar según la variedad y la meteorología.
+      </p>
     </div>
   );
 }

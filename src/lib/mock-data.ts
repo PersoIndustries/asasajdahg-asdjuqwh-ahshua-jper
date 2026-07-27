@@ -12,6 +12,9 @@ export type Plant = {
   enfermedades: { nombre: string; combate: string; imagen?: string }[];
   temporada: string;
   guiaId?: string;
+  /** Clave opcional para enlazar con una fila del calendario de cultivo.
+   *  Si se omite, se intenta emparejar automáticamente por nombre. */
+  calendarioKey?: string;
 };
 
 // Imágenes botánicas placeholder (Unsplash CDN)
@@ -485,4 +488,37 @@ export const familia = [
   { nombre: "María Peralta", rol: "Gerente", bio: "Segunda generación. Especialista en ornamentales y sustratos." },
   { nombre: "Jordi Peralta", rol: "Responsable de Huerto", bio: "Tercera generación. Coordina las variedades autóctonas y el calendario hortícola." },
   { nombre: "Laura Peralta", rol: "Comunicación y Libro de Campo", bio: "Impulsa la digitalización del vivero y las guías de cultivo." },
+];
+// ── Calendario de cultivo por planta ──────────────────────────────────────────
+// Pensado para escalar: al añadir una planta nueva al catálogo basta con que su
+// nombre contenga (o empiece por) el nombre de una fila del `calendario`, o bien
+// con indicar `calendarioKey` en la ficha de la planta.
+
+const normalizar = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+export type FilaCalendario = { planta: string; meses: MesEstado[] };
+
+/** Devuelve la fila del calendario que corresponde a una planta del catálogo. */
+export function getCalendarioPlanta(planta: Plant): FilaCalendario | undefined {
+  const clave = normalizar(planta.calendarioKey ?? planta.nombre);
+  const filas = calendario.map((f) => ({ fila: f, key: normalizar(f.planta) }));
+
+  return (
+    filas.find((f) => f.key === clave)?.fila ??
+    filas.find((f) => clave.startsWith(f.key) || clave.includes(` ${f.key} `))?.fila ??
+    filas.find((f) => clave.includes(f.key))?.fila
+  );
+}
+
+export const leyendaCalendario: { codigo: Exclude<MesEstado, "">; etiqueta: string }[] = [
+  { codigo: "S", etiqueta: "Siembra" },
+  { codigo: "T", etiqueta: "Trasplante" },
+  { codigo: "C", etiqueta: "Cosecha" },
+  { codigo: "SC", etiqueta: "Siembra y cosecha" },
 ];
