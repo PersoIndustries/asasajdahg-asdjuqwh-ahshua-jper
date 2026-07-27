@@ -146,7 +146,16 @@ function TuHuertoPage() {
               </tbody>
             </table>
           </div>
-          <p className="mt-4 text-xs text-muted-foreground">Vista semanal (4 semanas por mes) orientativa para la zona seleccionada.</p>
+          <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
+            <a
+              href="/descargas/fechas-aconsejables-trasplante.pdf"
+              download
+              className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors self-start"
+            >
+              <Download className="h-4 w-4" /> Descarga de Fechas aconsejables de Trasplante
+            </a>
+            <p className="text-xs text-muted-foreground">Vista semanal (4 semanas por mes) orientativa para la zona seleccionada.</p>
+          </div>
         </Section>
       )}
 

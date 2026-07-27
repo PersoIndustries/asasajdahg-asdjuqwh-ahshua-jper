@@ -137,6 +137,17 @@ function ProductosPage() {
               </button>
             ))}
           </div>
+
+          <div className="mt-8 max-w-3xl rounded-2xl border border-border bg-secondary/40 p-5 flex items-start gap-3">
+            <Info className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <strong className="text-foreground font-medium">Aviso:</strong> nuestros catálogos son orientativos y
+              pueden estar incompletos o desactualizados. La disponibilidad varía según la temporada, por lo que
+              siempre es mejor{" "}
+              <a href="tel:+34974472158" className="text-primary underline underline-offset-4">contactar con nosotros</a>{" "}
+              para confirmar existencias, formatos y precios.
+            </p>
+          </div>
         </div>
       </section>
 
