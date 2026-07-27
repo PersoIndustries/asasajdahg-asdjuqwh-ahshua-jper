@@ -109,7 +109,7 @@ function TuHuertoPage() {
           <div className="flex flex-wrap gap-4 mb-6 text-xs">
             {[["S", "Siembra"], ["T", "Trasplante"], ["C", "Cosecha"]].map(([k, l]) => (
               <span key={k} className="flex items-center gap-2">
-                <span className={`inline-block h-4 w-4 rounded ${colorByEstado[k as MesEstado]}`} /> {l}
+                <span className={`inline-block h-4 w-4 rounded ${colorByActividad[k]}`} /> {l}
               </span>
             ))}
           </div>
