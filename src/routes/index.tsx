@@ -2,8 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Sprout, Sparkles } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { temporadaActual } from "@/lib/mock-data";
-import heroPlant from "@/assets/home/hero.jpg";
+import heroAsset from "@/assets/home/hero.jpg.asset.json";
 import vivero from "@/assets/home/vivero.jpg";
+
+const heroPlant = heroAsset.url;
+const heroAbsoluteUrl = `https://project--ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2.lovable.app${heroAsset.url}`;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -14,6 +17,11 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Plantas de temporada, guías de cultivo y sustratos Suliflor." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: heroAbsoluteUrl },
+      { property: "og:image:width", content: "1600" },
+      { property: "og:image:height", content: "1200" },
+      { property: "og:image:alt", content: "Vivero Jardiper en Fraga (Huesca)" },
+      { name: "twitter:image", content: heroAbsoluteUrl },
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
