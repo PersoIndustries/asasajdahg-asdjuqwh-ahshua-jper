@@ -2,10 +2,10 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Clock, Calendar, Download, ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
-import { guias } from "@/lib/mock-data";
+import { guias, type Guia, type GuiaSection } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/guias/$slug")({
-  loader: ({ params }) => {
+  loader: ({ params }): Guia => {
     const guia = guias.find((g) => g.slug === params.slug);
     if (!guia) throw notFound();
     return guia;
@@ -71,9 +71,9 @@ function GuiaDetailPage() {
   const { t } = useTranslation();
   const guia = Route.useLoaderData();
 
-  const relacionadas = guia.relacionados
-    ? guia.relacionados.map((slug) => guias.find((g) => g.slug === slug)).filter(Boolean)
-    : guias.filter((g) => g.categoria === guia.categoria && g.slug !== guia.slug).slice(0, 3);
+  const relacionadas: Guia[] = guia.relacionados
+    ? (guias.filter((g) => guia.relacionados!.includes(g.slug)) as Guia[])
+    : (guias.filter((g) => g.categoria === guia.categoria && g.slug !== guia.slug).slice(0, 3) as Guia[]);
 
   const fechaFormateada = new Date(guia.fechaPublicacion).toLocaleDateString("es-ES", {
     year: "numeric",
@@ -113,12 +113,12 @@ function GuiaDetailPage() {
         <div className="prose prose-lg max-w-none">
           <p className="text-xl leading-relaxed text-foreground/90">{guia.contenido}</p>
 
-          {guia.secciones.map((seccion, i) => (
+          {guia.secciones.map((seccion: GuiaSection, i: number) => (
             <div key={i} className="mt-10">
               {seccion.titulo && (
                 <h2 className="font-serif text-2xl md:text-3xl text-foreground mb-4">{seccion.titulo}</h2>
               )}
-              {seccion.parrafos.map((parrafo, j) => (
+              {seccion.parrafos.map((parrafo: string, j: number) => (
                 <p key={j} className="text-muted-foreground leading-relaxed mb-4 last:mb-0">
                   {parrafo}
                 </p>
@@ -142,7 +142,7 @@ function GuiaDetailPage() {
         )}
 
         <div className="mt-12 flex flex-wrap gap-2">
-          {guia.tags.map((tag) => (
+          {guia.tags.map((tag: string) => (
             <span
               key={tag}
               className="text-xs uppercase tracking-widest px-3 py-1.5 rounded-full bg-secondary text-foreground/70"
@@ -156,23 +156,23 @@ function GuiaDetailPage() {
       {relacionadas.length > 0 && (
         <Section eyebrow={t("guides.relatedEyebrow")} title={t("guides.relatedTitle")}>
           <div className="grid md:grid-cols-3 gap-8">
-            {relacionadas.map((g) => (
-              <article key={g!.id} className="group">
-                <Link to="/guias/$slug" params={{ slug: g!.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
+            {relacionadas.map((g: Guia) => (
+              <article key={g.id} className="group">
+                <Link to="/guias/$slug" params={{ slug: g.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
                   <img
-                    src={g!.imagen}
-                    alt={g!.titulo}
+                    src={g.imagen}
+                    alt={g.titulo}
                     loading="lazy"
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </Link>
-                <p className="text-xs uppercase tracking-widest text-accent">{g!.categoria}</p>
-                <Link to="/guias/$slug" params={{ slug: g!.slug }}>
-                  <h3 className="font-serif text-xl mt-2 group-hover:text-primary transition-colors">{g!.titulo}</h3>
+                <p className="text-xs uppercase tracking-widest text-accent">{g.categoria}</p>
+                <Link to="/guias/$slug" params={{ slug: g.slug }}>
+                  <h3 className="font-serif text-xl mt-2 group-hover:text-primary transition-colors">{g.titulo}</h3>
                 </Link>
                 <Link
                   to="/guias/$slug"
-                  params={{ slug: g!.slug }}
+                  params={{ slug: g.slug }}
                   className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
                 >
                   {t("guides.read")} <ArrowRight className="h-4 w-4" />
