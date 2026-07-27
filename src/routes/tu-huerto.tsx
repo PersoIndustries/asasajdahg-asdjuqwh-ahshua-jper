@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
-import { calendario, meses, guias, type MesEstado } from "@/lib/mock-data";
+import { calendario, meses, guias, laboresEnQuincena, quincenaLabel } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/tu-huerto")({
   head: () => ({
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/tu-huerto")({
   component: TuHuertoPage,
 });
 
-const colorByEstado: Record<MesEstado, string> = {
+const colorByActividad: Record<string, string> = {
   S: "bg-sage/60 text-primary",
   T: "bg-accent/70 text-white",
   C: "bg-primary text-primary-foreground",
@@ -44,6 +44,7 @@ const colorByEstado: Record<MesEstado, string> = {
 
 const zonas = [{ id: "bajo-cinca", nombre: "Bajo Cinca, Lleida y alrededores" }];
 const SEMANAS_POR_MES = 4;
+
 
 type Tab = "calendario" | "guias" | "libro";
 
@@ -108,7 +109,7 @@ function TuHuertoPage() {
           <div className="flex flex-wrap gap-4 mb-6 text-xs">
             {[["S", "Siembra"], ["T", "Trasplante"], ["C", "Cosecha"]].map(([k, l]) => (
               <span key={k} className="flex items-center gap-2">
-                <span className={`inline-block h-4 w-4 rounded ${colorByEstado[k as MesEstado]}`} /> {l}
+                <span className={`inline-block h-4 w-4 rounded ${colorByActividad[k]}`} /> {l}
               </span>
             ))}
           </div>
@@ -132,18 +133,32 @@ function TuHuertoPage() {
               <tbody>
                 {calendario
                   .filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase()))
-                  .map((row) => (
-                    <tr key={row.planta} className="border-t border-border hover:bg-secondary/30 transition-colors">
-                      <td className="py-3 px-4 font-medium sticky left-0 bg-background z-10 whitespace-nowrap">{row.planta}</td>
+                  .map((row, ri) => (
+                    <tr key={`${row.planta}-${row.ciclo ?? ri}`} className="border-t border-border hover:bg-secondary/30 transition-colors">
+                      <td className="py-3 px-4 font-medium sticky left-0 bg-background z-10 whitespace-nowrap">
+                        {row.planta}
+                        {row.ciclo && <span className="block text-[10px] font-normal text-muted-foreground">{row.ciclo}</span>}
+                      </td>
                       {row.meses.flatMap((estado, mi) =>
-                        Array.from({ length: SEMANAS_POR_MES }, (_, wi) => (
-                          <td key={`${mi}-${wi}`} className={`p-0.5 ${wi === 0 ? "border-l border-border/40" : ""}`}>
-                            <div className={`h-7 rounded-sm flex items-center justify-center text-[9px] font-semibold ${colorByEstado[estado]}`}>{estado}</div>
-                          </td>
-                        )),
+                        Array.from({ length: SEMANAS_POR_MES }, (_, wi) => {
+                          // semanas 1-2 → 1ª quincena, semanas 3-4 → 2ª quincena
+                          const labores = laboresEnQuincena(estado, wi < 2 ? 1 : 2);
+                          const codigo = labores.map((l) => l.actividad).join("");
+                          return (
+                            <td key={`${mi}-${wi}`} className={`p-0.5 ${wi === 0 ? "border-l border-border/40" : ""}`}>
+                              <div
+                                title={labores.length ? `${meses[mi]} · ${quincenaLabel[wi < 2 ? 1 : 2]}` : undefined}
+                                className={`h-7 rounded-sm flex items-center justify-center text-[9px] font-semibold ${colorByActividad[codigo] ?? colorByActividad[labores[0]?.actividad ?? ""]}`}
+                              >
+                                {codigo}
+                              </div>
+                            </td>
+                          );
+                        }),
                       )}
                     </tr>
                   ))}
+
               </tbody>
             </table>
           </div>

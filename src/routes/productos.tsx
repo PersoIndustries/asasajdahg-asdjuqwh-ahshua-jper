@@ -8,9 +8,11 @@ import {
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   guias, plantasHortícolas, plantasOrnamentales, meses,
-  getCalendarioPlanta, leyendaCalendario, actividadesEnRango, actividadesLabel,
-  type Plant, type MesEstado, type Actividad,
+  getCalendariosPlanta, leyendaCalendario, actividadesEnRango, actividadesLabel,
+  parseCelda, laboresEnQuincena, quincenaLabel,
+  type Plant, type Actividad,
 } from "@/lib/mock-data";
+
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
 import imgPlaceholder from "@/assets/placeholder/under-construction-square.jpg";
@@ -525,11 +527,13 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           <p className="text-sm italic text-muted-foreground">{planta.nombreCientifico}</p>
           <p className="mt-4 text-foreground/80 leading-relaxed">{planta.descripcion}</p>
 
-          <div className="mt-6 grid gap-4">
-            <div>
-              <h4 className="font-serif text-lg mb-1">Curiosidades</h4>
-              <p className="text-sm text-muted-foreground">{planta.curiosidades}</p>
-            </div>
+          <div className="mt-4 rounded-lg bg-secondary/60 px-4 py-3 text-sm">
+            <span className="text-muted-foreground">Temporada:</span> <span className="font-medium">{planta.temporada}</span>
+          </div>
+
+          <div className="mt-6 grid gap-6">
+            <CalendarioCultivo planta={planta} />
+
             <div>
               <h4 className="font-serif text-lg mb-2">Enfermedades y cómo combatirlas</h4>
               <ul className="space-y-4">
@@ -553,6 +557,14 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 ))}
               </ul>
             </div>
+
+            {planta.comoSeCome && (
+              <div>
+                <h4 className="font-serif text-lg mb-1">Cómo se come</h4>
+                <p className="text-sm text-muted-foreground">{planta.comoSeCome}</p>
+              </div>
+            )}
+
             {guiaVinculada && (
               <div>
                 <h4 className="font-serif text-lg mb-2">Guía de cultivo</h4>
@@ -571,12 +583,13 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 </button>
               </div>
             )}
-            <CalendarioCultivo planta={planta} />
-            <div className="rounded-lg bg-secondary/60 px-4 py-3 text-sm">
-              <span className="text-muted-foreground">Temporada:</span> <span className="font-medium">{planta.temporada}</span>
-            </div>
 
+            <div>
+              <h4 className="font-serif text-lg mb-1">Curiosidades</h4>
+              <p className="text-sm text-muted-foreground">{planta.curiosidades}</p>
+            </div>
           </div>
+
         </div>
       </div>
       {zoom && (
@@ -628,42 +641,70 @@ function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: (
     </div>
   );
 }
-const estadoEstilos: Record<Exclude<MesEstado, "">, { clase: string; etiqueta: string }> = {
+const estadoEstilos: Record<Actividad, { clase: string; etiqueta: string }> = {
   S: { clase: "bg-accent/20 text-accent-foreground border-accent/40", etiqueta: "Siembra" },
   T: { clase: "bg-primary/20 text-primary border-primary/40", etiqueta: "Trasplante" },
   C: { clase: "bg-secondary text-foreground border-border", etiqueta: "Cosecha" },
-  SC: { clase: "bg-primary/30 text-primary border-primary/50", etiqueta: "Siembra y cosecha" },
 };
 
-function CalendarioCultivo({ planta }: { planta: Plant }) {
-  const fila = getCalendarioPlanta(planta);
-  if (!fila) return null;
+/** Media casilla de mes (1ª o 2ª quincena). */
+function MediaCasilla({ mesIdx, estado, quincena }: { mesIdx: number; estado: string | undefined; quincena: 1 | 2 }) {
+  const labores = laboresEnQuincena(estado, quincena);
+  const principal = labores[0];
+  const titulo = labores.length
+    ? `${meses[mesIdx]}, ${quincenaLabel[quincena]}: ${labores.map((l) => estadoEstilos[l.actividad].etiqueta).join(" y ")}`
+    : `${meses[mesIdx]}, ${quincenaLabel[quincena]}: sin labores`;
 
-  const usados = leyendaCalendario.filter((l) => fila.meses.includes(l.codigo));
+  return (
+    <div
+      title={titulo}
+      className={`h-7 flex items-center justify-center text-[9px] font-semibold border ${
+        quincena === 1 ? "rounded-l-md border-r-0" : "rounded-r-md"
+      } ${principal ? estadoEstilos[principal.actividad].clase : "bg-muted/40 border-transparent text-transparent"}`}
+    >
+      {labores.map((l) => l.actividad).join("") || "·"}
+    </div>
+  );
+}
+
+function CalendarioCultivo({ planta }: { planta: Plant }) {
+  const filas = getCalendariosPlanta(planta);
+  if (!filas.length) return null;
+
+  const usados = leyendaCalendario.filter((l) =>
+    filas.some((f) => f.meses.some((m) => parseCelda(m).some((x) => x.actividad === l.codigo))),
+  );
 
   return (
     <div>
       <h4 className="font-serif text-lg mb-2">Calendario de cultivo</h4>
-      <div className="rounded-xl border border-border overflow-hidden">
-        <div className="grid grid-cols-12 text-center">
-          {meses.map((m) => (
-            <div key={m} className="text-[10px] uppercase tracking-wide text-muted-foreground py-1.5 border-b border-border">
-              {m}
+      <div className="space-y-3">
+        {filas.map((fila, fi) => (
+          <div key={`${fila.planta}-${fila.ciclo ?? fi}`} className="rounded-xl border border-border overflow-hidden">
+            {fila.ciclo && (
+              <p className="px-3 py-1.5 bg-secondary/50 text-[11px] uppercase tracking-widest text-muted-foreground border-b border-border">
+                {fila.ciclo}
+              </p>
+            )}
+            <div className="grid grid-cols-12 text-center">
+              {meses.map((m) => (
+                <div key={m} className="text-[10px] uppercase tracking-wide text-muted-foreground py-1.5 border-b border-border">
+                  {m}
+                </div>
+              ))}
+              {fila.meses.map((estado, i) => (
+                <div key={i} className="p-0.5 flex">
+                  <div className="flex-1 min-w-0">
+                    <MediaCasilla mesIdx={i} estado={estado} quincena={1} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <MediaCasilla mesIdx={i} estado={estado} quincena={2} />
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
-          {fila.meses.map((estado, i) => (
-            <div key={i} className="p-0.5">
-              <div
-                title={estado ? `${meses[i]}: ${estadoEstilos[estado].etiqueta}` : `${meses[i]}: sin actividad`}
-                className={`h-7 flex items-center justify-center rounded-md text-[10px] font-semibold border ${
-                  estado ? estadoEstilos[estado].clase : "bg-muted/40 border-transparent text-transparent"
-                }`}
-              >
-                {estado || "·"}
-              </div>
-            </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
         {usados.map((l) => (
@@ -674,7 +715,8 @@ function CalendarioCultivo({ planta }: { planta: Plant }) {
         ))}
       </div>
       <p className="mt-2 text-[11px] text-muted-foreground">
-        Fechas orientativas para el clima del Bajo Cinca; pueden variar según la variedad y la meteorología.
+        Cada mes se divide en dos mitades (1ª y 2ª quincena). Fechas orientativas para el clima del
+        Bajo Cinca; pueden variar según la variedad y la meteorología.
       </p>
     </div>
   );
