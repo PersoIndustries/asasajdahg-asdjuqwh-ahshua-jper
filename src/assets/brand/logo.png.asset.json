@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "9dc1fbad-40e6-47f7-ae1c-60f46ea57e2e",
-  "project_id": "ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2",
-  "url": "/__l5e/assets-v1/9dc1fbad-40e6-47f7-ae1c-60f46ea57e2e/jardiper-logo.png",
-  "r2_key": "a/v1/ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2/9dc1fbad-40e6-47f7-ae1c-60f46ea57e2e/jardiper-logo.png",
-  "original_filename": "jardiper-logo.png",
-  "size": 3848,
   "content_type": "image/png",
-  "created_at": "2026-07-24T11:18:03Z"
+  "created_at": "2026-07-24T11:18:03Z",
+  "original_filename": "jardiper-logo.png",
+  "project_id": "2500996a-99e2-45fa-991f-e37c672500a4",
+  "r2_key": "a/v1/2500996a-99e2-45fa-991f-e37c672500a4/9dc1fbad-40e6-47f7-ae1c-60f46ea57e2e/jardiper-logo.png",
+  "size": 3848,
+  "url": "/__l5e/assets-v1/9dc1fbad-40e6-47f7-ae1c-60f46ea57e2e/jardiper-logo.png",
+  "version": 1
 }

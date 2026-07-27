@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "2f541cdd-533c-4aab-b54b-3b535fb4fadd",
-  "project_id": "ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2",
-  "url": "/__l5e/assets-v1/2f541cdd-533c-4aab-b54b-3b535fb4fadd/plantar-boniatos.pdf",
-  "r2_key": "a/v1/ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2/2f541cdd-533c-4aab-b54b-3b535fb4fadd/plantar-boniatos.pdf",
-  "original_filename": "plantar-boniatos.pdf",
-  "size": 23595,
   "content_type": "application/pdf",
-  "created_at": "2026-07-24T14:32:24Z"
+  "created_at": "2026-07-24T14:32:24Z",
+  "original_filename": "plantar-boniatos.pdf",
+  "project_id": "2500996a-99e2-45fa-991f-e37c672500a4",
+  "r2_key": "a/v1/2500996a-99e2-45fa-991f-e37c672500a4/2f541cdd-533c-4aab-b54b-3b535fb4fadd/plantar-boniatos.pdf",
+  "size": 23595,
+  "url": "/__l5e/assets-v1/2f541cdd-533c-4aab-b54b-3b535fb4fadd/plantar-boniatos.pdf",
+  "version": 1
 }
