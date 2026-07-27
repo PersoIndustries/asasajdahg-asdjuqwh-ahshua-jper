@@ -467,38 +467,55 @@ export const plantasOrnamentales = plantasDestacadas.filter((p) =>
 
 export const temporadaActual: Plant[] = plantasDestacadas.slice(0, 6);
 
-// Calendario hortícola — filas plantas, columnas meses (S = siembra, T = trasplante, C = cosecha)
-export type MesEstado = "S" | "T" | "C" | "SC" | "";
+// ── Calendario hortícola ──────────────────────────────────────────────────────
+// Cada celda es un mes y admite varias labores con precisión de quincena:
+//   "S"   → siembra durante todo el mes
+//   "T1"  → trasplante en la 1ª quincena (inicios de mes)
+//   "C2"  → cosecha en la 2ª quincena (finales de mes)
+//   "S1C2"→ varias labores en el mismo mes
+// Una misma planta puede tener VARIAS filas (ciclos distintos: primavera,
+// otoño, cultivo temprano/tardío…) usando la misma clave en `planta` y una
+// etiqueta en `ciclo`.
+export type MesEstado = string;
 export const meses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"];
 
-export const calendario: { planta: string; meses: MesEstado[] }[] = [
-  { planta: "Tomate",       meses: ["", "S", "S", "T", "T", "C", "C", "C", "C", "", "", ""] },
-  { planta: "Pimiento",     meses: ["", "S", "S", "T", "T", "", "C", "C", "C", "C", "", ""] },
-  { planta: "Calabacín",    meses: ["", "", "S", "T", "T", "C", "C", "C", "C", "", "", ""] },
-  { planta: "Lechuga",      meses: ["S", "S", "S", "T", "C", "C", "", "S", "T", "C", "C", ""] },
-  { planta: "Boniato",      meses: ["", "", "", "S", "T", "T", "", "", "", "C", "C", ""] },
-  { planta: "Calçot",       meses: ["", "", "", "", "", "", "S", "S", "T", "T", "C", "C"] },
-  { planta: "Ajo",          meses: ["", "", "", "", "", "C", "C", "", "", "S", "S", ""] },
-  { planta: "Cebolla",      meses: ["S", "S", "T", "T", "", "C", "C", "C", "", "S", "S", ""] },
-  { planta: "Zanahoria",    meses: ["", "S", "S", "S", "C", "C", "C", "S", "S", "C", "C", ""] },
-  { planta: "Habas",        meses: ["", "", "", "C", "C", "", "", "", "", "S", "S", "S"] },
-  { planta: "Judía verde",  meses: ["", "", "", "S", "S", "C", "C", "C", "C", "", "", ""] },
-  { planta: "Espinaca",     meses: ["C", "C", "S", "", "", "", "", "", "S", "S", "C", "C"] },
-  { planta: "Coliflor",     meses: ["C", "C", "", "", "", "S", "S", "T", "T", "C", "C", "C"] },
-  { planta: "Brócoli",      meses: ["C", "C", "", "", "", "S", "S", "T", "T", "C", "C", "C"] },
-  { planta: "Repollo",      meses: ["C", "C", "", "", "", "S", "S", "T", "T", "C", "C", "C"] },
-  { planta: "Col rizada",   meses: ["C", "C", "C", "C", "", "", "S", "S", "T", "T", "C", "C"] },
-  { planta: "Escarola",     meses: ["C", "C", "", "", "", "", "S", "S", "T", "C", "C", "C"] },
-  { planta: "Berenjena",    meses: ["", "S", "S", "T", "T", "", "C", "C", "C", "C", "", ""] },
-  { planta: "Pepino",       meses: ["", "", "S", "S", "T", "C", "C", "C", "C", "", "", ""] },
-  { planta: "Acelga",       meses: ["C", "C", "S", "T", "C", "C", "C", "S", "T", "C", "C", "C"] },
-  { planta: "Apio",         meses: ["C", "", "", "S", "S", "T", "T", "", "C", "C", "C", "C"] },
-  { planta: "Puerro",       meses: ["C", "C", "S", "S", "", "T", "T", "", "", "C", "C", "C"] },
-  { planta: "Rábano",       meses: ["", "", "S", "SC", "SC", "C", "", "", "S", "SC", "C", ""] },
-  { planta: "Guisante",     meses: ["", "", "", "C", "C", "", "", "", "", "S", "S", "S"] },
-  { planta: "Fresa",        meses: ["", "", "T", "C", "C", "C", "", "", "T", "T", "", ""] },
-
+export const calendario: { planta: string; ciclo?: string; meses: MesEstado[] }[] = [
+  { planta: "Tomate",       ciclo: "Ciclo temprano",   meses: ["", "S1", "S", "T1", "T", "C2", "C", "C", "", "", "", ""] },
+  { planta: "Tomate",       ciclo: "Ciclo tardío",     meses: ["", "", "S2", "S", "T2", "T1", "", "C2", "C", "C1", "", ""] },
+  { planta: "Pimiento",     ciclo: "Ciclo principal",  meses: ["", "S", "S", "T2", "T", "", "C2", "C", "C", "C1", "", ""] },
+  { planta: "Berenjena",    ciclo: "Ciclo principal",  meses: ["", "S", "S", "T2", "T", "", "C2", "C", "C", "C1", "", ""] },
+  { planta: "Calabacín",    ciclo: "Primavera",        meses: ["", "", "S2", "T1", "T", "C", "C", "C", "", "", "", ""] },
+  { planta: "Calabacín",    ciclo: "Verano",           meses: ["", "", "", "", "", "S2", "T1", "C", "C", "C1", "", ""] },
+  { planta: "Pepino",       ciclo: "Primavera",        meses: ["", "", "S2", "S", "T1", "C", "C", "C", "C1", "", "", ""] },
+  { planta: "Lechuga",      ciclo: "Primavera",        meses: ["S2", "S", "S", "T1", "C", "C1", "", "", "", "", "", ""] },
+  { planta: "Lechuga",      ciclo: "Otoño-invierno",   meses: ["", "", "", "", "", "", "S2", "S", "T1", "T2", "C", "C"] },
+  { planta: "Escarola",     ciclo: "Otoño",            meses: ["C1", "C", "", "", "", "", "S2", "S", "T1", "T2", "C", "C"] },
+  { planta: "Acelga",       ciclo: "Primavera",        meses: ["", "S2", "S", "T1", "C", "C", "C", "C", "", "", "", ""] },
+  { planta: "Acelga",       ciclo: "Otoño",            meses: ["C", "C", "", "", "", "", "S2", "S", "T1", "C", "C", "C"] },
+  { planta: "Espinaca",     ciclo: "Otoño-invierno",   meses: ["C", "C", "S1", "", "", "", "", "S2", "S", "S", "C", "C"] },
+  { planta: "Coliflor",     ciclo: "Ciclo de otoño",   meses: ["C", "C1", "", "", "", "S2", "S", "T1", "T2", "C", "C", "C"] },
+  { planta: "Brócoli",      ciclo: "Ciclo de otoño",   meses: ["C", "C1", "", "", "", "S2", "S", "T1", "T2", "C", "C", "C"] },
+  { planta: "Repollo",      ciclo: "Ciclo de otoño",   meses: ["C", "C1", "", "", "", "S2", "S", "T1", "T2", "C", "C", "C"] },
+  { planta: "Repollo",      ciclo: "Ciclo de primavera", meses: ["S2", "S", "T1", "T", "C2", "C", "", "", "", "", "", ""] },
+  { planta: "Col rizada",   ciclo: "Ciclo de otoño",   meses: ["C", "C", "C", "C1", "", "", "S1", "S", "T1", "T2", "C", "C"] },
+  { planta: "Cebolla",      ciclo: "Cebolla temprana", meses: ["S", "S2", "T1", "T", "", "C2", "C", "", "", "", "", ""] },
+  { planta: "Cebolla",      ciclo: "Cebolla tardía",   meses: ["", "", "", "", "", "", "C1", "C", "", "S2", "S", ""] },
+  { planta: "Calçot",       ciclo: "Ciclo tradicional", meses: ["C", "C", "", "", "", "", "S2", "S", "T1", "T", "C2", "C"] },
+  { planta: "Puerro",       ciclo: "Ciclo principal",  meses: ["C", "C1", "S1", "S", "", "T1", "T", "", "", "C2", "C", "C"] },
+  { planta: "Ajo",          ciclo: "Ciclo tradicional", meses: ["", "", "", "", "", "C2", "C1", "", "", "S2", "S", ""] },
+  { planta: "Boniato",      ciclo: "Ciclo principal",  meses: ["", "", "", "S1", "T1", "T2", "", "", "", "C1", "C", ""] },
+  { planta: "Zanahoria",    ciclo: "Primavera",        meses: ["", "S2", "S", "S", "C2", "C", "C", "", "", "", "", ""] },
+  { planta: "Zanahoria",    ciclo: "Otoño",            meses: ["", "", "", "", "", "", "", "S1", "S", "C2", "C", "C1"] },
+  { planta: "Rábano",       ciclo: "Primavera",        meses: ["", "", "S", "S1C2", "S1C", "C1", "", "", "", "", "", ""] },
+  { planta: "Rábano",       ciclo: "Otoño",            meses: ["", "", "", "", "", "", "", "", "S", "S1C2", "C", ""] },
+  { planta: "Habas",        ciclo: "Ciclo de invierno", meses: ["", "", "", "C1", "C", "", "", "", "", "S2", "S", "S1"] },
+  { planta: "Guisante",     ciclo: "Ciclo de invierno", meses: ["", "", "", "C1", "C", "", "", "", "", "S2", "S", "S1"] },
+  { planta: "Judía verde",  ciclo: "Primavera",        meses: ["", "", "", "S2", "S", "C2", "C", "C1", "", "", "", ""] },
+  { planta: "Judía verde",  ciclo: "Verano",           meses: ["", "", "", "", "", "S2", "S1", "C2", "C", "C1", "", ""] },
+  { planta: "Apio",         ciclo: "Ciclo principal",  meses: ["C1", "", "", "S", "S", "T1", "T", "", "C2", "C", "C", "C"] },
+  { planta: "Fresa",        ciclo: "Plantación de otoño", meses: ["", "", "C2", "C", "C", "C1", "", "", "T2", "T", "T1", ""] },
 ];
+
 
 export type GuiaSection = {
   titulo?: string;
