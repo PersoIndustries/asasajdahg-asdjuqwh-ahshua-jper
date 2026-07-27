@@ -527,11 +527,13 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           <p className="text-sm italic text-muted-foreground">{planta.nombreCientifico}</p>
           <p className="mt-4 text-foreground/80 leading-relaxed">{planta.descripcion}</p>
 
-          <div className="mt-6 grid gap-4">
-            <div>
-              <h4 className="font-serif text-lg mb-1">Curiosidades</h4>
-              <p className="text-sm text-muted-foreground">{planta.curiosidades}</p>
-            </div>
+          <div className="mt-4 rounded-lg bg-secondary/60 px-4 py-3 text-sm">
+            <span className="text-muted-foreground">Temporada:</span> <span className="font-medium">{planta.temporada}</span>
+          </div>
+
+          <div className="mt-6 grid gap-6">
+            <CalendarioCultivo planta={planta} />
+
             <div>
               <h4 className="font-serif text-lg mb-2">Enfermedades y cómo combatirlas</h4>
               <ul className="space-y-4">
@@ -555,6 +557,14 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 ))}
               </ul>
             </div>
+
+            {planta.comoSeCome && (
+              <div>
+                <h4 className="font-serif text-lg mb-1">Cómo se come</h4>
+                <p className="text-sm text-muted-foreground">{planta.comoSeCome}</p>
+              </div>
+            )}
+
             {guiaVinculada && (
               <div>
                 <h4 className="font-serif text-lg mb-2">Guía de cultivo</h4>
@@ -573,12 +583,13 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 </button>
               </div>
             )}
-            <CalendarioCultivo planta={planta} />
-            <div className="rounded-lg bg-secondary/60 px-4 py-3 text-sm">
-              <span className="text-muted-foreground">Temporada:</span> <span className="font-medium">{planta.temporada}</span>
-            </div>
 
+            <div>
+              <h4 className="font-serif text-lg mb-1">Curiosidades</h4>
+              <p className="text-sm text-muted-foreground">{planta.curiosidades}</p>
+            </div>
           </div>
+
         </div>
       </div>
       {zoom && (
