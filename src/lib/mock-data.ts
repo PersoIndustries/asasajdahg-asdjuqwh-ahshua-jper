@@ -38,7 +38,7 @@ export const plantasDestacadas: Plant[] = [
     nombre: "Calçot",
     nombreCientifico: "Allium cepa",
     categoria: "hortícola",
-    imagen: img("1595855759920-86582396756a"),
+    imagen: imgCalcots,
     descripcion: "Cebolla tierna típica del noreste peninsular, ideal para brasa.",
     curiosidades: "Se planta en verano y se cosecha en invierno tras varias 'calzadas' de tierra.",
     enfermedades: [
@@ -301,7 +301,7 @@ export const guias: Guia[] = [
     resumen: "Del semillero al brasero: la técnica tradicional de las 'calzadas'.",
     minutos: 8,
     categoria: "Huerto",
-    imagen: img("1615485499420-6d47c0cd5da5"),
+    imagen: imgCalcots,
     contenido:
       "Los calçots nacen de cebollas blancas plantadas en verano. La clave está en 'calzar' con tierra el tallo cada pocas semanas para que crezca blanco y tierno.",
     secciones: [
