@@ -82,5 +82,20 @@
       "message": "Tell us…",
       "submit": "Send message"
     }
+  },
+  "guides": {
+    "eyebrow": "Gardening blog",
+    "title": "Growing guides and tips",
+    "subtitle": "Learn with the Jardiper team: vegetable calendars, growing techniques, substrates and composting for Bajo Cinca.",
+    "all": "All",
+    "searchPlaceholder": "Search guides…",
+    "noResults": "No guides match those criteria.",
+    "read": "Read guide",
+    "back": "Back to guides",
+    "downloadTitle": "Download the PDF guide",
+    "downloadText": "Take a printable version to check in the garden.",
+    "download": "Download PDF",
+    "relatedEyebrow": "You may also like",
+    "relatedTitle": "More gardening guides"
   }
 }

@@ -82,5 +82,20 @@
       "message": "Cuéntanos…",
       "submit": "Enviar mensaje"
     }
+  },
+  "guides": {
+    "eyebrow": "Blog de jardinería",
+    "title": "Guías de cultivo y consejos",
+    "subtitle": "Aprende con el equipo de Jardiper: calendarios del huerto, técnicas de cultivo, sustratos y compostaje para el Bajo Cinca.",
+    "all": "Todas",
+    "searchPlaceholder": "Buscar guía…",
+    "noResults": "No encontramos guías con esos criterios.",
+    "read": "Leer guía",
+    "back": "Volver a guías",
+    "downloadTitle": "Descarga la guía en PDF",
+    "downloadText": "Llévate una versión imprimible para consultarla en el huerto.",
+    "download": "Descargar PDF",
+    "relatedEyebrow": "También te puede interesar",
+    "relatedTitle": "Más guías de jardinería"
   }
 }
