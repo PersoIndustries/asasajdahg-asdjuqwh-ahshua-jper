@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Start",
+    "products": "Produkte",
+    "garden": "Dein Garten",
+    "history": "Geschichte",
+    "contact": "Kontakt",
+    "visitUs": "Besuch uns",
+    "openMenu": "Menü öffnen",
+    "language": "Sprache"
+  },
+  "footer": {
+    "tagline": "Familiengeführtes Gartencenter und Baumschule in Fraga, Huesca. Über 50 Jahre Pflanzen und Fachberatung für Gärten und Gemüsebeete im Bajo Cinca.",
+    "visitUs": "Besuch uns",
+    "explore": "Entdecken",
+    "schedule": "Mo–Fr · 8:00–13:00 und 16:00–19:00",
+    "saturday": "Samstags · 9:00–13:00",
+    "closed": "Sonn- und Feiertags geschlossen",
+    "rights": "Alle Rechte vorbehalten"
+  },
+  "cookies": {
+    "title": "Wir verwenden Cookies",
+    "text": "Wir verwenden Cookies, um dein Erlebnis zu verbessern und den Verkehr zu analysieren. Du kannst nicht essentielle Cookies akzeptieren oder ablehnen.",
+    "accept": "Akzeptieren",
+    "reject": "Ablehnen"
+  },
+  "home": {
+    "eyebrow": "Fraga · Bajo Cinca · seit 1974",
+    "titleA": "Wir züchten Pflanzen.",
+    "titleB": "Wir gestalten Geschichte.",
+    "subtitle": "Familiengeführtes Gartencenter mit über 50 Jahren Erfahrung für Gärten, Gemüsebeete und Balkone im Bajo Cinca.",
+    "ctaGarden": "Dein Garten",
+    "ctaVisit": "Baumschule besuchen",
+    "discover": "Entdecken"
+  },
+  "products": {
+    "eyebrow": "Unser Katalog",
+    "titleA": "Alles, was dein",
+    "titleB": "Garten und Gemüsebeet",
+    "titleC": "brauchen",
+    "subtitle": "Tausende Referenzen: Gemüse- und Zierpflanzen, professionelle Substrate, Bio-Kompost, dekorative Steine und Töpfe in jedem Stil und jeder Größe.",
+    "tabs": {
+      "horticolas": "Gemüse",
+      "ornamentales": "Zierpflanzen",
+      "tierras": "Erden & Substrate",
+      "material": "Gartenbedarf"
+    }
+  },
+  "garden": {
+    "eyebrow": "Dein Garten",
+    "title": "Kalender, Anleitungen und Feldbuch"
+  },
+  "history": {
+    "eyebrow": "Unsere Geschichte",
+    "title": "Fünf Jahrzehnte Anbau im Bajo Cinca"
+  },
+  "contact": {
+    "eyebrow": "Kontakt",
+    "title": "Besuch uns oder schreib uns.",
+    "nursery": "Baumschule Jardiper",
+    "phones": "Telefone",
+    "schedule": "Öffnungszeiten",
+    "summer": "Sommeröffnungszeiten",
+    "weekdays": "Montag bis Freitag",
+    "saturday": "Samstags",
+    "closed": "Sonn- und Feiertags geschlossen",
+    "email": "E-Mail",
+    "writeUs": "Schreib uns",
+    "replyTime": "Wir antworten innerhalb von 24–48 Werkstunden.",
+    "sent": "Nachricht gesendet!",
+    "sentDetail": "Wir melden uns bald. (Demo-Version)",
+    "form": {
+      "name": "Vorname",
+      "surname": "Nachname",
+      "email": "E-Mail",
+      "phone": "Telefon (optional)",
+      "subjectGeneral": "Allgemeine Anfrage",
+      "subjectOrder": "Pflanzenbestellung",
+      "subjectWholesale": "Substrate im Großhandel",
+      "subjectAdvice": "Technische Beratung",
+      "message": "Erzähl uns…",
+      "submit": "Nachricht senden"
+    }
+  }
+}
