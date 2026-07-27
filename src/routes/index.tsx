@@ -67,10 +67,10 @@ function Hero() {
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
-              to="/informacion-campo"
+              to="/tu-huerto"
               className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-medium hover:bg-primary/90 transition-all hover:gap-3"
             >
-              Información de campo <ArrowRight className="h-4 w-4" />
+              Tu huerto <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/contacto"
@@ -102,10 +102,10 @@ function TeAyudamos() {
             variedad. Todo lo que necesitas para que tu huerto o jardín prospere.
           </p>
           <Link
-            to="/informacion-campo"
+            to="/tu-huerto"
             className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary-foreground text-primary px-6 py-3 text-sm font-medium hover:gap-3 transition-all"
           >
-            Ver Información de Campo <ArrowRight className="h-4 w-4" />
+            Ver Tu Huerto <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-4">
@@ -152,7 +152,7 @@ function Temporada() {
       </div>
       <div className="mt-12 flex justify-center">
         <Link
-          to="/informacion-campo"
+          to="/tu-huerto"
           hash="calendario"
           className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-6 py-3 text-sm font-medium hover:bg-foreground hover:text-background transition-colors"
         >

@@ -9,17 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TierrasSustratosRouteImport } from './routes/tierras-sustratos'
+import { Route as TuHuertoRouteImport } from './routes/tu-huerto'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as LibroCampoRouteImport } from './routes/libro-campo'
-import { Route as InformacionCampoRouteImport } from './routes/informacion-campo'
+import { Route as ProductosRouteImport } from './routes/productos'
 import { Route as HistoriaRouteImport } from './routes/historia'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as IndexRouteImport } from './routes/index'
 
-const TierrasSustratosRoute = TierrasSustratosRouteImport.update({
-  id: '/tierras-sustratos',
-  path: '/tierras-sustratos',
+const TuHuertoRoute = TuHuertoRouteImport.update({
+  id: '/tu-huerto',
+  path: '/tu-huerto',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
@@ -27,14 +26,9 @@ const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const LibroCampoRoute = LibroCampoRouteImport.update({
-  id: '/libro-campo',
-  path: '/libro-campo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InformacionCampoRoute = InformacionCampoRouteImport.update({
-  id: '/informacion-campo',
-  path: '/informacion-campo',
+const ProductosRoute = ProductosRouteImport.update({
+  id: '/productos',
+  path: '/productos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoriaRoute = HistoriaRouteImport.update({
@@ -57,29 +51,26 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/historia': typeof HistoriaRoute
-  '/informacion-campo': typeof InformacionCampoRoute
-  '/libro-campo': typeof LibroCampoRoute
+  '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tierras-sustratos': typeof TierrasSustratosRoute
+  '/tu-huerto': typeof TuHuertoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/historia': typeof HistoriaRoute
-  '/informacion-campo': typeof InformacionCampoRoute
-  '/libro-campo': typeof LibroCampoRoute
+  '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tierras-sustratos': typeof TierrasSustratosRoute
+  '/tu-huerto': typeof TuHuertoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/historia': typeof HistoriaRoute
-  '/informacion-campo': typeof InformacionCampoRoute
-  '/libro-campo': typeof LibroCampoRoute
+  '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tierras-sustratos': typeof TierrasSustratosRoute
+  '/tu-huerto': typeof TuHuertoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -87,47 +78,43 @@ export interface FileRouteTypes {
     | '/'
     | '/contacto'
     | '/historia'
-    | '/informacion-campo'
-    | '/libro-campo'
+    | '/productos'
     | '/sitemap.xml'
-    | '/tierras-sustratos'
+    | '/tu-huerto'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/contacto'
     | '/historia'
-    | '/informacion-campo'
-    | '/libro-campo'
+    | '/productos'
     | '/sitemap.xml'
-    | '/tierras-sustratos'
+    | '/tu-huerto'
   id:
     | '__root__'
     | '/'
     | '/contacto'
     | '/historia'
-    | '/informacion-campo'
-    | '/libro-campo'
+    | '/productos'
     | '/sitemap.xml'
-    | '/tierras-sustratos'
+    | '/tu-huerto'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContactoRoute: typeof ContactoRoute
   HistoriaRoute: typeof HistoriaRoute
-  InformacionCampoRoute: typeof InformacionCampoRoute
-  LibroCampoRoute: typeof LibroCampoRoute
+  ProductosRoute: typeof ProductosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TierrasSustratosRoute: typeof TierrasSustratosRoute
+  TuHuertoRoute: typeof TuHuertoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tierras-sustratos': {
-      id: '/tierras-sustratos'
-      path: '/tierras-sustratos'
-      fullPath: '/tierras-sustratos'
-      preLoaderRoute: typeof TierrasSustratosRouteImport
+    '/tu-huerto': {
+      id: '/tu-huerto'
+      path: '/tu-huerto'
+      fullPath: '/tu-huerto'
+      preLoaderRoute: typeof TuHuertoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -137,18 +124,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/libro-campo': {
-      id: '/libro-campo'
-      path: '/libro-campo'
-      fullPath: '/libro-campo'
-      preLoaderRoute: typeof LibroCampoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/informacion-campo': {
-      id: '/informacion-campo'
-      path: '/informacion-campo'
-      fullPath: '/informacion-campo'
-      preLoaderRoute: typeof InformacionCampoRouteImport
+    '/productos': {
+      id: '/productos'
+      path: '/productos'
+      fullPath: '/productos'
+      preLoaderRoute: typeof ProductosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/historia': {
@@ -179,10 +159,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContactoRoute: ContactoRoute,
   HistoriaRoute: HistoriaRoute,
-  InformacionCampoRoute: InformacionCampoRoute,
-  LibroCampoRoute: LibroCampoRoute,
+  ProductosRoute: ProductosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TierrasSustratosRoute: TierrasSustratosRoute,
+  TuHuertoRoute: TuHuertoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
