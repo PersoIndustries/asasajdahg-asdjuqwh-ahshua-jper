@@ -869,38 +869,70 @@ const normalizar = (s: string) =>
     .replace(/[^a-z0-9]+/g, " ")
     .trim();
 
-export type FilaCalendario = { planta: string; meses: MesEstado[] };
+export type FilaCalendario = { planta: string; ciclo?: string; meses: MesEstado[] };
 
-/** Devuelve la fila del calendario que corresponde a una planta del catálogo. */
-export function getCalendarioPlanta(planta: Plant): FilaCalendario | undefined {
+/** Todas las filas (ciclos) del calendario que corresponden a una planta. */
+export function getCalendariosPlanta(planta: Plant): FilaCalendario[] {
   const clave = normalizar(planta.calendarioKey ?? planta.nombre);
   const filas = calendario.map((f) => ({ fila: f, key: normalizar(f.planta) }));
 
-  return (
-    filas.find((f) => f.key === clave)?.fila ??
-    filas.find((f) => clave.startsWith(f.key) || clave.includes(` ${f.key} `))?.fila ??
-    filas.find((f) => clave.includes(f.key))?.fila
-  );
+  const exactas = filas.filter((f) => f.key === clave);
+  if (exactas.length) return exactas.map((f) => f.fila);
+
+  const prefijo = filas.filter((f) => clave.startsWith(f.key) || clave.includes(` ${f.key} `));
+  if (prefijo.length) return prefijo.map((f) => f.fila);
+
+  return filas.filter((f) => clave.includes(f.key)).map((f) => f.fila);
 }
 
-export const leyendaCalendario: { codigo: Exclude<MesEstado, "">; etiqueta: string }[] = [
-  { codigo: "S", etiqueta: "Siembra" },
-  { codigo: "T", etiqueta: "Trasplante" },
-  { codigo: "C", etiqueta: "Cosecha" },
-  { codigo: "SC", etiqueta: "Siembra y cosecha" },
-];
+/** Primera fila del calendario de una planta (compatibilidad). */
+export function getCalendarioPlanta(planta: Plant): FilaCalendario | undefined {
+  return getCalendariosPlanta(planta)[0];
+}
 
 // ── Filtros por mes / rango de meses ──────────────────────────────────────────
 // Escalable: cualquier planta nueva del catálogo se filtra automáticamente en
-// cuanto tenga (o empareje con) una fila del `calendario`.
+// cuanto tenga (o empareje con) una o varias filas del `calendario`.
 
 export type Actividad = "S" | "T" | "C";
+/** 1 = primera quincena (inicios de mes), 2 = segunda quincena (finales). */
+export type Quincena = 1 | 2;
+export type Labor = { actividad: Actividad; quincena?: Quincena };
 
 export const actividadesLabel: Record<Actividad, string> = {
   S: "Siembra",
   T: "Trasplante",
   C: "Cosecha",
 };
+
+export const quincenaLabel: Record<Quincena, string> = {
+  1: "1ª quincena",
+  2: "2ª quincena",
+};
+
+export const leyendaCalendario: { codigo: Actividad; etiqueta: string }[] = [
+  { codigo: "S", etiqueta: "Siembra" },
+  { codigo: "T", etiqueta: "Trasplante" },
+  { codigo: "C", etiqueta: "Cosecha" },
+];
+
+/** Convierte una celda ("T1", "S1C2", "SC"…) en la lista de labores. */
+export function parseCelda(estado: MesEstado | undefined): Labor[] {
+  if (!estado) return [];
+  const out: Labor[] = [];
+  for (const m of estado.matchAll(/([STC])([12])?/g)) {
+    out.push({
+      actividad: m[1] as Actividad,
+      quincena: m[2] ? (Number(m[2]) as Quincena) : undefined,
+    });
+  }
+  return out;
+}
+
+/** Labores de una celda que caen en una quincena concreta (1 o 2). */
+export function laboresEnQuincena(estado: MesEstado | undefined, quincena: Quincena): Labor[] {
+  return parseCelda(estado).filter((l) => l.quincena === undefined || l.quincena === quincena);
+}
 
 /** Índices de meses (0-11) del rango, admitiendo rangos que cruzan el año. */
 export function mesesEnRango(desde: number, hasta: number): number[] {
@@ -914,19 +946,16 @@ export function mesesEnRango(desde: number, hasta: number): number[] {
   return out;
 }
 
-function expandir(estado: MesEstado): Actividad[] {
-  if (estado === "SC") return ["S", "C"];
-  if (estado === "S" || estado === "T" || estado === "C") return [estado];
-  return [];
-}
-
 /** Actividades de cultivo de una planta dentro de un rango de meses. */
 export function actividadesEnRango(planta: Plant, desde: number, hasta: number): Actividad[] {
-  const fila = getCalendarioPlanta(planta);
-  if (!fila) return [];
+  const filas = getCalendariosPlanta(planta);
+  if (!filas.length) return [];
   const set = new Set<Actividad>();
-  for (const i of mesesEnRango(desde, hasta)) {
-    for (const a of expandir(fila.meses[i] ?? "")) set.add(a);
+  for (const fila of filas) {
+    for (const i of mesesEnRango(desde, hasta)) {
+      for (const l of parseCelda(fila.meses[i])) set.add(l.actividad);
+    }
   }
   return (["S", "T", "C"] as Actividad[]).filter((a) => set.has(a));
 }
+
