@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
-import { calendario, meses, guias, type MesEstado } from "@/lib/mock-data";
+import { calendario, meses, guias, laboresEnQuincena, quincenaLabel } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/tu-huerto")({
   head: () => ({
