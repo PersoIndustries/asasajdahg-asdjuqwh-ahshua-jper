@@ -10,6 +10,7 @@ import {
   guias, plantasHortícolas, plantasOrnamentales, type Plant,
 } from "@/lib/mock-data";
 import sustratos from "@/assets/tierras/sustratos.jpg";
+import imgPlaceholder from "@/assets/placeholder/under-construction-square.jpg";
 
 export const Route = createFileRoute("/productos")({
   head: () => ({
@@ -46,9 +47,9 @@ const uimg = (id: string, w = 800) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
 
 const sustratosSuliflor = [
-  { nombre: "Sustrato Universal Premium", uso: "Huerto, macetas, jardín", peso: "70 L", detalle: "Turba rubia, coco y perlita.", imagen: uimg("1585513553738-84fa8ee3e114") },
+  { nombre: "Sustrato Universal Premium", uso: "Huerto, macetas, jardín", peso: "70 L", detalle: "Turba rubia, coco y perlita.", imagen: imgPlaceholder },
   { nombre: "Sustrato para Hortícolas", uso: "Semilleros y trasplantes", peso: "50 L", detalle: "pH ajustado, drenaje óptimo.", imagen: uimg("1416879595882-3373a0480b5b") },
-  { nombre: "Sustrato Ácido", uso: "Azaleas, camelias, hortensias", peso: "20 L", detalle: "Turba rubia + fibra.", imagen: uimg("1502331538081-041522531548") },
+  { nombre: "Sustrato Ácido", uso: "Azaleas, camelias, hortensias", peso: "20 L", detalle: "Turba rubia + fibra.", imagen: imgPlaceholder },
   { nombre: "Sustrato Cactus & Suculentas", uso: "Ornamental interior", peso: "10 L", detalle: "Alto drenaje, mineral.", imagen: uimg("1459411552884-841db9b3cc2a") },
   { nombre: "Mantillo de Corteza", uso: "Acolchado y decoración", peso: "50 L", detalle: "Pino seleccionado.", imagen: uimg("1508766206392-8bd5cf550d1c") },
   { nombre: "Turba Rubia", uso: "Base de mezclas profesionales", peso: "80 L", detalle: "Fibra larga, baja densidad.", imagen: uimg("1466692476868-aef1dfb1e735") },
@@ -59,8 +60,8 @@ const composts = [
 ];
 
 const piedras = [
-  { nombre: "Piedras Marmolinas", uso: "Jardines, senderos y macetas decorativas", formato: "Sacos y a granel", detalle: "Acabado natural en tonos claros, ideal para acentuar zonas de grava.", imagen: uimg("1518331647612-4a5e7e6f1a9c") },
-  { nombre: "Canto Rodado", uso: "Bordes de arriates, fuentes y paisajismo", formato: "Sacos y a granel", detalle: "Piedra redondeada de río en diferentes granulometrías.", imagen: uimg("1534177618311-8dce4c8f2d20") },
+  { nombre: "Piedras Marmolinas", uso: "Jardines, senderos y macetas decorativas", formato: "Sacos y a granel", detalle: "Acabado natural en tonos claros, ideal para acentuar zonas de grava.", imagen: imgPlaceholder },
+  { nombre: "Canto Rodado", uso: "Bordes de arriates, fuentes y paisajismo", formato: "Sacos y a granel", detalle: "Piedra redondeada de río en diferentes granulometrías.", imagen: imgPlaceholder },
   { nombre: "Piedra Volcánica", uso: "Drenaje, decoración y acolchado", formato: "Sacos y a granel", detalle: "Ligera, porosa y resistente a las heladas.", imagen: uimg("1504198458649-3128b932f49e") },
   { nombre: "Corteza de Pino", uso: "Acolchado de parterres y árboles", formato: "Sacos de 50 L", detalle: "Mantiene la humedad, frena malas hierbas y aporta orden visual.", imagen: uimg("1502082553048-f009c37129b9") },
 ];

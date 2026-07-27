@@ -52,7 +52,7 @@ export const plantasDestacadas: Plant[] = [
     nombre: "Boniato",
     nombreCientifico: "Ipomoea batatas",
     categoria: "hortícola",
-    imagen: img("1596097635121-14b38c5d7a55"),
+    imagen: imgPlaceholder,
     descripcion: "Tubérculo dulce y nutritivo, se adapta muy bien al clima del Bajo Cinca.",
     curiosidades: "Puede alcanzar hasta 3 kg por planta con riego adecuado.",
     enfermedades: [
@@ -66,7 +66,7 @@ export const plantasDestacadas: Plant[] = [
     nombre: "Melocotonero",
     nombreCientifico: "Prunus persica",
     categoria: "árbol",
-    imagen: img("1591209627517-d3f36a35c8d5"),
+    imagen: imgPlaceholder,
     descripcion: "Árbol frutal emblema del valle del Cinca, floración espectacular.",
     curiosidades: "Fraga celebra cada primavera la 'Floración del Bajo Cinca'.",
     enfermedades: [
@@ -176,6 +176,7 @@ import imgCalendarioPrimavera from "@/assets/guias/calendario-primavera.jpg";
 import imgSustratos from "@/assets/guias/sustratos.jpg";
 import imgCompostaje from "@/assets/guias/compostaje.jpg";
 import imgCalcots from "@/assets/guias/calcots.jpg";
+import imgPlaceholder from "@/assets/placeholder/under-construction-wide.jpg";
 
 
 
