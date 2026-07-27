@@ -420,9 +420,11 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
                 </button>
               </div>
             )}
+            <CalendarioCultivo planta={planta} />
             <div className="rounded-lg bg-secondary/60 px-4 py-3 text-sm">
               <span className="text-muted-foreground">Temporada:</span> <span className="font-medium">{planta.temporada}</span>
             </div>
+
           </div>
         </div>
       </div>
