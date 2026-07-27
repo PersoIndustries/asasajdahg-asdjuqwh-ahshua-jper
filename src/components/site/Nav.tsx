@@ -8,6 +8,7 @@ import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 const linkDefs = [
   { to: "/", key: "home" },
   { to: "/productos", key: "products" },
+  { to: "/guias", key: "guides" },
   { to: "/tu-huerto", key: "garden" },
   { to: "/historia", key: "history" },
   { to: "/contacto", key: "contact" },
