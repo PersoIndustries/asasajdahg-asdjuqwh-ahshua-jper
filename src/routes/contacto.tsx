@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { MapPin, Phone, Clock, Mail, Check } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
+import { localBusinessLd, businessInfo, openingHoursSpecification, postalAddressLd, geoCoordinatesLd } from "@/lib/business-info";
 
 export const Route = createFileRoute("/contacto")({
   head: () => ({
@@ -14,6 +15,51 @@ export const Route = createFileRoute("/contacto")({
       { property: "og:type", content: "website" },
     ],
     links: [{ rel: "canonical", href: "/contacto" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          ...localBusinessLd,
+          contactPoint: [
+            {
+              "@type": "ContactPoint",
+              telephone: businessInfo.telephone,
+              contactType: "customer service",
+              areaServed: "ES",
+              availableLanguage: ["Spanish", "Catalan"],
+              hoursAvailable: openingHoursSpecification,
+            },
+            {
+              "@type": "ContactPoint",
+              telephone: businessInfo.telephoneSecondary,
+              contactType: "sales",
+              areaServed: "ES",
+              availableLanguage: ["Spanish", "Catalan"],
+            },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ContactPage",
+          name: "Contacto · Jardiper",
+          url: "/contacto",
+          about: { "@id": "https://jardiper.es/#business" },
+          mainEntity: {
+            "@type": "LocalBusiness",
+            "@id": "https://jardiper.es/#business",
+            name: businessInfo.name,
+            telephone: businessInfo.telephone,
+            email: businessInfo.email,
+            address: postalAddressLd,
+            geo: geoCoordinatesLd,
+            openingHoursSpecification,
+          },
+        }),
+      },
+    ],
   }),
   component: ContactoPage,
 });
@@ -60,8 +106,9 @@ function ContactoPage() {
                   <div>
                     <p className="text-xs uppercase tracking-widest text-accent mb-1">Horario de verano</p>
                     <p>Lunes a viernes<br />8:00 – 13:00 · 16:00 – 19:00</p>
+                    <p className="mt-2">Sábados<br />9:00 – 13:00</p>
                   </div>
-                  <p className="text-xs">Sábados y domingos cerrado</p>
+                  <p className="text-xs">Domingos y festivos cerrado</p>
                 </div>
               </div>
             </div>

@@ -4,6 +4,7 @@ import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { temporadaActual } from "@/lib/mock-data";
 import heroAsset from "@/assets/home/hero.jpg.asset.json";
 import vivero from "@/assets/home/vivero.jpg";
+import { localBusinessLd } from "@/lib/business-info";
 
 const heroPlant = heroAsset.url;
 const heroAbsoluteUrl = `https://project--ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2.lovable.app${heroAsset.url}`;
@@ -24,6 +25,28 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: heroAbsoluteUrl },
     ],
     links: [{ rel: "canonical", href: "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          ...localBusinessLd,
+          image: heroAbsoluteUrl,
+          logo: heroAbsoluteUrl,
+          slogan: "Cultivamos plantas. Cultivamos historia.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "Jardiper",
+          url: "/",
+          inLanguage: "es-ES",
+          publisher: { "@id": "https://jardiper.es/#business" },
+        }),
+      },
+    ],
   }),
   component: Home,
 });
