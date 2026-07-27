@@ -522,3 +522,44 @@ export const leyendaCalendario: { codigo: Exclude<MesEstado, "">; etiqueta: stri
   { codigo: "C", etiqueta: "Cosecha" },
   { codigo: "SC", etiqueta: "Siembra y cosecha" },
 ];
+
+// ── Filtros por mes / rango de meses ──────────────────────────────────────────
+// Escalable: cualquier planta nueva del catálogo se filtra automáticamente en
+// cuanto tenga (o empareje con) una fila del `calendario`.
+
+export type Actividad = "S" | "T" | "C";
+
+export const actividadesLabel: Record<Actividad, string> = {
+  S: "Siembra",
+  T: "Trasplante",
+  C: "Cosecha",
+};
+
+/** Índices de meses (0-11) del rango, admitiendo rangos que cruzan el año. */
+export function mesesEnRango(desde: number, hasta: number): number[] {
+  const out: number[] = [];
+  let i = desde;
+  for (let n = 0; n < 12; n++) {
+    out.push(i);
+    if (i === hasta) break;
+    i = (i + 1) % 12;
+  }
+  return out;
+}
+
+function expandir(estado: MesEstado): Actividad[] {
+  if (estado === "SC") return ["S", "C"];
+  if (estado === "S" || estado === "T" || estado === "C") return [estado];
+  return [];
+}
+
+/** Actividades de cultivo de una planta dentro de un rango de meses. */
+export function actividadesEnRango(planta: Plant, desde: number, hasta: number): Actividad[] {
+  const fila = getCalendarioPlanta(planta);
+  if (!fila) return [];
+  const set = new Set<Actividad>();
+  for (const i of mesesEnRango(desde, hasta)) {
+    for (const a of expandir(fila.meses[i] ?? "")) set.add(a);
+  }
+  return (["S", "T", "C"] as Actividad[]).filter((a) => set.has(a));
+}

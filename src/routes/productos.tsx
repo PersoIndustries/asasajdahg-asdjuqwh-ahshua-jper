@@ -3,13 +3,15 @@ import { useMemo, useState } from "react";
 import {
   X, Search, ChevronRight, Clock, Download,
   Check, Package, Truck, Sprout, Leaf, Recycle, Mountain, TreePine, Gem,
-  FlowerIcon, Info,
+  FlowerIcon, Info, CalendarDays,
 } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   guias, plantasHortícolas, plantasOrnamentales, meses,
-  getCalendarioPlanta, leyendaCalendario, type Plant, type MesEstado,
+  getCalendarioPlanta, leyendaCalendario, actividadesEnRango, actividadesLabel,
+  type Plant, type MesEstado, type Actividad,
 } from "@/lib/mock-data";
+
 import sustratos from "@/assets/tierras/sustratos.jpg";
 import imgPlaceholder from "@/assets/placeholder/under-construction-square.jpg";
 
@@ -76,17 +78,26 @@ const macetas = [
   { nombre: "Macetero XXL / Corporativo", uso: "Grandes espacios y proyectos", formato: "Ø 60–120 cm", detalle: "Fibra de vidrio, hormigón ligero o rotomoldeado. Consúltanos.", imagen: uimg("1523712999610-f77fbcfc3843") },
 ];
 
+const MES_ACTUAL = new Date().getMonth();
+
 function ProductosPage() {
   const [tab, setTab] = useState<TabKey>("hortícolas");
   const [busqueda, setBusqueda] = useState("");
   const [catFiltro, setCatFiltro] = useState<string>("todas");
   const [ficha, setFicha] = useState<Plant | null>(null);
+  // Filtro por mes / rango de meses del calendario de cultivo
+  const [filtroMesActivo, setFiltroMesActivo] = useState(false);
+  const [mesDesde, setMesDesde] = useState(MES_ACTUAL);
+  const [mesHasta, setMesHasta] = useState(MES_ACTUAL);
+  const [actividades, setActividades] = useState<Actividad[]>([]);
 
   const listaBase = tab === "hortícolas" ? plantasHortícolas : tab === "ornamentales" ? plantasOrnamentales : [];
   const categoriasDisponibles = useMemo(
     () => Array.from(new Set(listaBase.map((p) => p.categoria))),
     [listaBase],
   );
+  const filtroCalendarioActivo = tab === "hortícolas" && filtroMesActivo;
+
   const listaFiltrada = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
     return listaBase.filter((p) => {
@@ -95,9 +106,24 @@ function ProductosPage() {
         !q ||
         p.nombre.toLowerCase().includes(q) ||
         (p.nombreCientifico ?? "").toLowerCase().includes(q);
-      return matchCat && matchQ;
+      if (!matchCat || !matchQ) return false;
+      if (!filtroCalendarioActivo) return true;
+      const acts = actividadesEnRango(p, mesDesde, mesHasta);
+      if (acts.length === 0) return false;
+      return actividades.length === 0 || acts.some((a) => actividades.includes(a));
     });
-  }, [listaBase, catFiltro, busqueda]);
+  }, [listaBase, catFiltro, busqueda, filtroCalendarioActivo, mesDesde, mesHasta, actividades]);
+
+  const toggleActividad = (a: Actividad) =>
+    setActividades((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
+
+  const resetCalendario = () => {
+    setFiltroMesActivo(false);
+    setMesDesde(MES_ACTUAL);
+    setMesHasta(MES_ACTUAL);
+    setActividades([]);
+  };
+
 
   return (
     <SiteLayout>
@@ -195,22 +221,121 @@ function ProductosPage() {
               ))}
             </div>
           </div>
+
+          {tab === "hortícolas" && (
+            <div className="mb-8 rounded-2xl border border-border bg-secondary/30 p-5">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center gap-2 text-sm font-medium">
+                  <CalendarDays className="h-4 w-4 text-primary" /> Filtrar por calendario de cultivo
+                </span>
+                <button
+                  onClick={() => { setFiltroMesActivo(true); setMesDesde(MES_ACTUAL); setMesHasta(MES_ACTUAL); }}
+                  className={`px-4 py-1.5 rounded-full text-xs transition-all ${
+                    filtroMesActivo && mesDesde === MES_ACTUAL && mesHasta === MES_ACTUAL
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background border border-border hover:bg-secondary/70"
+                  }`}
+                >
+                  Este mes ({meses[MES_ACTUAL]})
+                </button>
+                <button
+                  onClick={() => { setFiltroMesActivo(true); setMesDesde(MES_ACTUAL); setMesHasta((MES_ACTUAL + 2) % 12); }}
+                  className={`px-4 py-1.5 rounded-full text-xs transition-all ${
+                    filtroMesActivo && mesDesde === MES_ACTUAL && mesHasta === (MES_ACTUAL + 2) % 12
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-background border border-border hover:bg-secondary/70"
+                  }`}
+                >
+                  Próximos 3 meses
+                </button>
+                {filtroMesActivo && (
+                  <button onClick={resetCalendario} className="px-4 py-1.5 rounded-full text-xs bg-background border border-border hover:bg-secondary/70">
+                    Quitar filtro
+                  </button>
+                )}
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  Desde
+                  <select
+                    value={mesDesde}
+                    onChange={(e) => { setMesDesde(Number(e.target.value)); setFiltroMesActivo(true); }}
+                    className="rounded-full border border-input bg-background px-3 py-1.5 text-xs text-foreground"
+                  >
+                    {meses.map((m, i) => <option key={m} value={i}>{m}</option>)}
+                  </select>
+                </label>
+                <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                  Hasta
+                  <select
+                    value={mesHasta}
+                    onChange={(e) => { setMesHasta(Number(e.target.value)); setFiltroMesActivo(true); }}
+                    className="rounded-full border border-input bg-background px-3 py-1.5 text-xs text-foreground"
+                  >
+                    {meses.map((m, i) => <option key={m} value={i}>{m}</option>)}
+                  </select>
+                </label>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-xs text-muted-foreground">Labor:</span>
+                  {(["S", "T", "C"] as Actividad[]).map((a) => (
+                    <button
+                      key={a}
+                      onClick={() => { toggleActividad(a); setFiltroMesActivo(true); }}
+                      className={`px-3 py-1.5 rounded-full text-xs transition-all border ${
+                        actividades.includes(a)
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background border-border hover:bg-secondary/70"
+                      }`}
+                    >
+                      {actividadesLabel[a]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {filtroCalendarioActivo && (
+                <p className="mt-3 text-xs text-muted-foreground">
+                  Mostrando {listaFiltrada.length} variedad{listaFiltrada.length === 1 ? "" : "es"} con actividad
+                  {actividades.length > 0 ? ` de ${actividades.map((a) => actividadesLabel[a].toLowerCase()).join(" o ")}` : ""}{" "}
+                  entre <strong className="text-foreground">{meses[mesDesde]}</strong> y{" "}
+                  <strong className="text-foreground">{meses[mesHasta]}</strong>.
+                </p>
+              )}
+            </div>
+          )}
+
           {listaFiltrada.length === 0 && (
             <p className="text-sm text-muted-foreground py-12 text-center">
-              No hay variedades que coincidan con tu búsqueda.
+              {filtroCalendarioActivo
+                ? "Ninguna variedad tiene labores de cultivo en el periodo seleccionado."
+                : "No hay variedades que coincidan con tu búsqueda."}
             </p>
           )}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {listaFiltrada.map((p) => (
-              <button key={p.id} onClick={() => setFicha(p)} className="text-left group">
-                <div className="aspect-square overflow-hidden rounded-2xl bg-muted mb-3">
-                  <img src={p.imagen} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                </div>
-                <h3 className="font-serif text-lg group-hover:text-primary transition-colors">{p.nombre}</h3>
-                <p className="text-xs italic text-muted-foreground">{p.nombreCientifico}</p>
-              </button>
-            ))}
+            {listaFiltrada.map((p) => {
+              const acts = filtroCalendarioActivo ? actividadesEnRango(p, mesDesde, mesHasta) : [];
+              return (
+                <button key={p.id} onClick={() => setFicha(p)} className="text-left group">
+                  <div className="aspect-square overflow-hidden rounded-2xl bg-muted mb-3">
+                    <img src={p.imagen} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  </div>
+                  <h3 className="font-serif text-lg group-hover:text-primary transition-colors">{p.nombre}</h3>
+                  <p className="text-xs italic text-muted-foreground">{p.nombreCientifico}</p>
+                  {acts.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {acts.map((a) => (
+                        <span key={a} className={`text-[10px] px-2 py-0.5 rounded-full border ${estadoEstilos[a].clase}`}>
+                          {actividadesLabel[a]}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
+
         </Section>
       )}
 
