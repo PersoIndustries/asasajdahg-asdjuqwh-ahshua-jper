@@ -7,14 +7,28 @@ import { calendario, meses, guias, type MesEstado } from "@/lib/mock-data";
 export const Route = createFileRoute("/tu-huerto")({
   head: () => ({
     meta: [
-      { title: "Tu Huerto · Calendario, guías y libro de campo · Jardiper" },
-      { name: "description", content: "Calendario hortícola semanal del Bajo Cinca, guías de cultivo en PDF y el próximo libro de campo digital de Jardiper." },
+      { title: "Tu Huerto · Calendario hortícola y guías de cultivo · Jardiper" },
+      { name: "description", content: "Calendario hortícola semanal del Bajo Cinca (Fraga, Lleida), guías de cultivo en PDF descargables y libro de campo digital para planificar tu huerto todo el año." },
+      { name: "keywords", content: "calendario hortícola Bajo Cinca, guías cultivo PDF, libro de campo, huerto Fraga, siembra Lleida, cuándo plantar" },
       { property: "og:title", content: "Tu Huerto · Jardiper" },
       { property: "og:description", content: "Calendario, guías PDF y libro de campo digital para tu huerto." },
       { property: "og:url", content: "/tu-huerto" },
       { property: "og:type", content: "website" },
     ],
     links: [{ rel: "canonical", href: "/tu-huerto" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
+            { "@type": "ListItem", position: 2, name: "Tu Huerto", item: "/tu-huerto" },
+          ],
+        }),
+      },
+    ],
   }),
   component: TuHuertoPage,
 });

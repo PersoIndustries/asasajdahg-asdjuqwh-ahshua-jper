@@ -19,9 +19,12 @@ export const businessInfo = {
     postalCode: "22520",
     addressCountry: "ES",
   },
-  geo: { latitude: 41.5322, longitude: 0.3416 },
+  geo: { latitude: 41.5322062, longitude: 0.3163568 },
   areaServed: ["Fraga", "Bajo Cinca", "Lleida", "Huesca"],
-  sameAs: ["https://instagram.com/jardiper"],
+  sameAs: [
+    "https://instagram.com/jardiper",
+    "https://www.google.com/maps/place/JARDIPER/@41.5322062,0.3163568,17z",
+  ],
 } as const;
 
 // Horario actual (verano): L–V 8-13 / 16-19, sábados 9-13, domingos y festivos cerrado.

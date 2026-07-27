@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Sprout, Sparkles } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { temporadaActual } from "@/lib/mock-data";
 import heroAsset from "@/assets/home/hero.jpg.asset.json";
@@ -12,10 +13,10 @@ const heroAbsoluteUrl = `https://project--ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2.l
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Jardiper · Vivero familiar en Fraga, Bajo Cinca" },
-      { name: "description", content: "Plantas, huerto, sustratos y consejo experto. Más de 50 años cultivando en el Bajo Cinca (Fraga, Huesca)." },
-      { property: "og:title", content: "Jardiper · Vivero familiar en Fraga" },
-      { property: "og:description", content: "Plantas de temporada, guías de cultivo y sustratos Suliflor." },
+      { title: "Jardiper · Vivero y Garden Center en Fraga (Huesca) · Bajo Cinca" },
+      { name: "description", content: "Vivero familiar en Fraga con más de 50 años. Plantas hortícolas y ornamentales, sustratos Suliflor, compost ECO Liett Ibérica y macetas. Envíos y venta al por mayor en Bajo Cinca y Lleida." },
+      { property: "og:title", content: "Jardiper · Vivero familiar en Fraga (Huesca)" },
+      { property: "og:description", content: "Plantas, sustratos, compost y consejo experto desde 1974 en el Bajo Cinca." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: heroAbsoluteUrl },
@@ -44,6 +45,11 @@ export const Route = createFileRoute("/")({
           url: "/",
           inLanguage: "es-ES",
           publisher: { "@id": "https://jardiper.es/#business" },
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "/productos?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
         }),
       },
     ],
@@ -62,6 +68,7 @@ function Home() {
 }
 
 function Hero() {
+  const { t } = useTranslation();
   return (
     <section className="relative min-h-[92vh] flex items-center overflow-hidden">
       <div className="absolute inset-0 -z-10">
@@ -78,34 +85,33 @@ function Hero() {
       <div className="container-page relative pt-24 pb-16">
         <div className="max-w-2xl fade-up">
           <p className="text-xs uppercase tracking-[0.25em] text-accent font-medium mb-6">
-            Fraga · Bajo Cinca · desde 1974
+            {t("home.eyebrow")}
           </p>
           <h1 className="font-serif text-5xl md:text-7xl leading-[1.05] font-medium text-foreground">
-            Cultivamos plantas.<br />
-            <span className="italic text-primary">Cultivamos historia.</span>
+            {t("home.titleA")}<br />
+            <span className="italic text-primary">{t("home.titleB")}</span>
           </h1>
           <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed">
-            Vivero y garden center familiar con más de 50 años acompañando huertos,
-            jardines y balcones del Bajo Cinca.
+            {t("home.subtitle")}
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
             <Link
               to="/tu-huerto"
               className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-medium hover:bg-primary/90 transition-all hover:gap-3"
             >
-              Tu huerto <ArrowRight className="h-4 w-4" />
+              {t("home.ctaGarden")} <ArrowRight className="h-4 w-4" />
             </Link>
             <Link
               to="/contacto"
               className="inline-flex items-center gap-2 rounded-full border border-foreground/20 px-6 py-3 text-sm font-medium hover:bg-foreground hover:text-background transition-colors"
             >
-              Visita el vivero
+              {t("home.ctaVisit")}
             </Link>
           </div>
         </div>
       </div>
       <div className="absolute bottom-8 right-8 hidden md:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground animate-pulse">
-        <span className="h-px w-8 bg-muted-foreground/60" /> Descubre
+        <span className="h-px w-8 bg-muted-foreground/60" /> {t("home.discover")}
       </div>
     </section>
   );

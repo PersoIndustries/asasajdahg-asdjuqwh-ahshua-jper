@@ -14,14 +14,28 @@ import sustratos from "@/assets/tierras/sustratos.jpg";
 export const Route = createFileRoute("/productos")({
   head: () => ({
     meta: [
-      { title: "Productos · Vivero Jardiper (Fraga)" },
-      { name: "description", content: "Catálogo de plantas hortícolas y ornamentales, tierras y sustratos, compost y material de jardinería: piedras, macetas y complementos." },
+      { title: "Productos · Plantas, sustratos, compost y macetas · Jardiper Fraga" },
+      { name: "description", content: "Catálogo Jardiper: plantas hortícolas y ornamentales, sustratos Suliflor, compost ECO Liett Ibérica, piedras decorativas y macetas de todos los tamaños en Fraga, Huesca." },
+      { name: "keywords", content: "plantas hortícolas Fraga, plantas ornamentales, sustratos Suliflor, compost ECO, big bag compost, piedras decorativas, macetas, vivero al por mayor Bajo Cinca" },
       { property: "og:title", content: "Productos · Vivero Jardiper" },
       { property: "og:description", content: "Plantas, sustratos Suliflor, compost Liett Ibérica, piedras y macetas en Fraga, Huesca." },
       { property: "og:url", content: "/productos" },
       { property: "og:type", content: "website" },
     ],
     links: [{ rel: "canonical", href: "/productos" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
+            { "@type": "ListItem", position: 2, name: "Productos", item: "/productos" },
+          ],
+        }),
+      },
+    ],
   }),
   component: ProductosPage,
 });

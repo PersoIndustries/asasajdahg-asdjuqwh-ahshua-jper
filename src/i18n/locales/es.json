@@ -1,0 +1,85 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "products": "Productos",
+    "garden": "Tu Huerto",
+    "history": "Historia",
+    "contact": "Contacto",
+    "visitUs": "Visítanos",
+    "openMenu": "Abrir menú",
+    "language": "Idioma"
+  },
+  "footer": {
+    "tagline": "Vivero y garden center familiar en Fraga, Huesca. Más de 50 años cultivando plantas y consejo experto para el huerto y jardín del Bajo Cinca.",
+    "visitUs": "Visítanos",
+    "explore": "Explora",
+    "schedule": "L–V · 8:00–13:00 y 16:00–19:00",
+    "saturday": "Sábados · 9:00–13:00",
+    "closed": "Domingos y festivos cerrado",
+    "rights": "Todos los derechos reservados"
+  },
+  "cookies": {
+    "title": "Usamos cookies",
+    "text": "Utilizamos cookies para mejorar tu experiencia y analizar el tráfico. Puedes aceptarlas o rechazar las no esenciales.",
+    "accept": "Aceptar",
+    "reject": "Rechazar"
+  },
+  "home": {
+    "eyebrow": "Fraga · Bajo Cinca · desde 1974",
+    "titleA": "Cultivamos plantas.",
+    "titleB": "Cultivamos historia.",
+    "subtitle": "Vivero y garden center familiar con más de 50 años acompañando huertos, jardines y balcones del Bajo Cinca.",
+    "ctaGarden": "Tu huerto",
+    "ctaVisit": "Visita el vivero",
+    "discover": "Descubre"
+  },
+  "products": {
+    "eyebrow": "Nuestro catálogo",
+    "titleA": "Todo lo que tu",
+    "titleB": "huerto y jardín",
+    "titleC": "necesitan",
+    "subtitle": "Miles de referencias entre plantas hortícolas y ornamentales, sustratos profesionales, compost ecológico, piedras decorativas y macetas de todos los estilos y tamaños.",
+    "tabs": {
+      "horticolas": "Hortícolas",
+      "ornamentales": "Ornamentales",
+      "tierras": "Tierras y sustratos",
+      "material": "Material para jardinería"
+    }
+  },
+  "garden": {
+    "eyebrow": "Tu Huerto",
+    "title": "Calendario, guías y libro de campo"
+  },
+  "history": {
+    "eyebrow": "Nuestra historia",
+    "title": "Cinco décadas cultivando el Bajo Cinca"
+  },
+  "contact": {
+    "eyebrow": "Contacto",
+    "title": "Ven a vernos, o escríbenos.",
+    "nursery": "Vivero Jardiper",
+    "phones": "Teléfonos",
+    "schedule": "Horario",
+    "summer": "Horario de verano",
+    "weekdays": "Lunes a viernes",
+    "saturday": "Sábados",
+    "closed": "Domingos y festivos cerrado",
+    "email": "Email",
+    "writeUs": "Escríbenos",
+    "replyTime": "Te contestamos en 24-48h laborables.",
+    "sent": "¡Mensaje enviado!",
+    "sentDetail": "Te contactaremos pronto. (versión demo)",
+    "form": {
+      "name": "Nombre",
+      "surname": "Apellidos",
+      "email": "Email",
+      "phone": "Teléfono (opcional)",
+      "subjectGeneral": "Consulta general",
+      "subjectOrder": "Pedido de plantas",
+      "subjectWholesale": "Sustratos al por mayor",
+      "subjectAdvice": "Consejo técnico",
+      "message": "Cuéntanos…",
+      "submit": "Enviar mensaje"
+    }
+  }
+}
