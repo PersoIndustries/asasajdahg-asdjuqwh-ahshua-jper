@@ -2,7 +2,7 @@
   "nav": {
     "home": "Inicio",
     "products": "Productos",
-    "guides": "Guías",
+    "blog": "Blog",
     "garden": "Tu Huerto",
     "history": "Historia",
     "contact": "Contacto",
@@ -83,19 +83,19 @@
       "submit": "Enviar mensaje"
     }
   },
-  "guides": {
-    "eyebrow": "Blog de jardinería",
-    "title": "Guías de cultivo y consejos",
-    "subtitle": "Aprende con el equipo de Jardiper: calendarios del huerto, técnicas de cultivo, sustratos y compostaje para el Bajo Cinca.",
+  "blog": {
+    "eyebrow": "Blog",
+    "title": "Noticias y curiosidades",
+    "subtitle": "Actualidad del vivero, curiosidades del mundo vegetal y notas del equipo de Jardiper en el Bajo Cinca.",
     "all": "Todas",
-    "searchPlaceholder": "Buscar guía…",
-    "noResults": "No encontramos guías con esos criterios.",
-    "read": "Leer guía",
-    "back": "Volver a guías",
-    "downloadTitle": "Descarga la guía en PDF",
+    "searchPlaceholder": "Buscar artículo…",
+    "noResults": "No encontramos artículos con esos criterios.",
+    "read": "Leer artículo",
+    "back": "Volver al blog",
+    "downloadTitle": "Descarga el PDF",
     "downloadText": "Llévate una versión imprimible para consultarla en el huerto.",
     "download": "Descargar PDF",
     "relatedEyebrow": "También te puede interesar",
-    "relatedTitle": "Más guías de jardinería"
+    "relatedTitle": "Más noticias y curiosidades"
   }
 }

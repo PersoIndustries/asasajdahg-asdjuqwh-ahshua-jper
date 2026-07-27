@@ -5,18 +5,18 @@ import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { guias } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/guias/")({
+export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Guías y blog de jardinería · Jardiper" },
-      { name: "description", content: "Guías prácticas de cultivo, calendarios del huerto, consejos de sustratos y compostaje del equipo de Jardiper en Fraga (Huesca)." },
-      { name: "keywords", content: "guías jardinería, blog huerto, cultivo Bajo Cinca, sustratos, compostaje, poda frutales" },
-      { property: "og:title", content: "Guías y blog de jardinería · Jardiper" },
-      { property: "og:description", content: "Consejos prácticos de cultivo para el huerto y el jardín del Bajo Cinca." },
-      { property: "og:url", content: "/guias" },
+      { title: "Blog · Noticias y curiosidades del vivero · Jardiper" },
+      { name: "description", content: "Noticias del vivero, curiosidades del mundo vegetal y apuntes del equipo de Jardiper en Fraga (Huesca)." },
+      { name: "keywords", content: "blog jardinería, noticias vivero Fraga, curiosidades plantas, Bajo Cinca" },
+      { property: "og:title", content: "Blog · Noticias y curiosidades del vivero · Jardiper" },
+      { property: "og:description", content: "Noticias del vivero y curiosidades del mundo vegetal en el Bajo Cinca." },
+      { property: "og:url", content: "/blog" },
       { property: "og:type", content: "website" },
     ],
-    links: [{ rel: "canonical", href: "/guias" }],
+    links: [{ rel: "canonical", href: "/blog" }],
     scripts: [
       {
         type: "application/ld+json",
@@ -25,18 +25,18 @@ export const Route = createFileRoute("/guias/")({
           "@type": "BreadcrumbList",
           itemListElement: [
             { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
-            { "@type": "ListItem", position: 2, name: "Guías", item: "/guias" },
+            { "@type": "ListItem", position: 2, name: "Blog", item: "/blog" },
           ],
         }),
       },
     ],
   }),
-  component: GuiasPage,
+  component: BlogPage,
 });
 
 const categorias = ["Todas", "Huerto", "Jardín", "Frutales", "Sustratos", "Compost"] as const;
 
-function GuiasPage() {
+function BlogPage() {
   const { t } = useTranslation();
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState<(typeof categorias)[number]>("Todas");
@@ -54,9 +54,9 @@ function GuiasPage() {
     <SiteLayout>
       <section className="pt-28 md:pt-36 pb-12 border-b border-border/60">
         <div className="container-page">
-          <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">{t("guides.eyebrow")}</p>
-          <h1 className="font-serif text-5xl md:text-6xl max-w-3xl leading-tight">{t("guides.title")}</h1>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t("guides.subtitle")}</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">{t("blog.eyebrow")}</p>
+          <h1 className="font-serif text-5xl md:text-6xl max-w-3xl leading-tight">{t("blog.title")}</h1>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t("blog.subtitle")}</p>
         </div>
       </section>
 
@@ -73,7 +73,7 @@ function GuiasPage() {
                     : "bg-secondary text-foreground/70 hover:bg-secondary/70"
                 }`}
               >
-                {c === "Todas" ? t("guides.all") : c}
+                {c === "Todas" ? t("blog.all") : c}
               </button>
             ))}
           </div>
@@ -81,7 +81,7 @@ function GuiasPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
-              placeholder={t("guides.searchPlaceholder")}
+              placeholder={t("blog.searchPlaceholder")}
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               className="w-full md:w-72 rounded-full border border-input bg-background pl-10 pr-4 py-2.5 text-sm"
@@ -90,13 +90,13 @@ function GuiasPage() {
         </div>
 
         {guiasFiltradas.length === 0 && (
-          <p className="py-16 text-center text-muted-foreground">{t("guides.noResults")}</p>
+          <p className="py-16 text-center text-muted-foreground">{t("blog.noResults")}</p>
         )}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {guiasFiltradas.map((g) => (
             <article key={g.id} className="group flex flex-col">
-              <Link to="/guias/$slug" params={{ slug: g.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
+              <Link to="/blog/$slug" params={{ slug: g.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
                 <img
                   src={g.imagen}
                   alt={g.titulo}
@@ -110,7 +110,7 @@ function GuiasPage() {
                   <Clock className="h-3 w-3" /> {g.minutos} min
                 </span>
               </p>
-              <Link to="/guias/$slug" params={{ slug: g.slug }}>
+              <Link to="/blog/$slug" params={{ slug: g.slug }}>
                 <h3 className="font-serif text-2xl mt-2 group-hover:text-primary transition-colors">{g.titulo}</h3>
               </Link>
               <p className="text-muted-foreground mt-2 flex-1">{g.resumen}</p>
@@ -122,11 +122,11 @@ function GuiasPage() {
                 ))}
               </div>
               <Link
-                to="/guias/$slug"
+                to="/blog/$slug"
                 params={{ slug: g.slug }}
                 className="mt-4 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
               >
-                {t("guides.read")} <ArrowRight className="h-4 w-4" />
+                {t("blog.read")} <ArrowRight className="h-4 w-4" />
               </Link>
             </article>
           ))}

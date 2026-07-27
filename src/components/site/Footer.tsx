@@ -56,7 +56,7 @@ export function Footer() {
           <ul className="space-y-2">
             <li><Link to="/" className="text-muted-foreground hover:text-primary">{t("nav.home")}</Link></li>
             <li><Link to="/productos" className="text-muted-foreground hover:text-primary">{t("nav.products")}</Link></li>
-            <li><Link to="/guias" className="text-muted-foreground hover:text-primary">{t("nav.guides")}</Link></li>
+            <li><Link to="/blog" className="text-muted-foreground hover:text-primary">{t("nav.blog")}</Link></li>
             <li><Link to="/tu-huerto" className="text-muted-foreground hover:text-primary">{t("nav.garden")}</Link></li>
             <li><Link to="/historia" className="text-muted-foreground hover:text-primary">{t("nav.history")}</Link></li>
             <li><Link to="/contacto" className="text-muted-foreground hover:text-primary">{t("nav.contact")}</Link></li>
