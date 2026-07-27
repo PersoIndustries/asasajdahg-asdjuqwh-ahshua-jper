@@ -8,8 +8,10 @@ import {
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   guias, plantasHortícolas, plantasOrnamentales, meses,
-  getCalendarioPlanta, leyendaCalendario, type Plant, type MesEstado,
+  getCalendarioPlanta, leyendaCalendario, actividadesEnRango, actividadesLabel,
+  type Plant, type MesEstado, type Actividad,
 } from "@/lib/mock-data";
+
 import sustratos from "@/assets/tierras/sustratos.jpg";
 import imgPlaceholder from "@/assets/placeholder/under-construction-square.jpg";
 
