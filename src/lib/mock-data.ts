@@ -22,6 +22,8 @@ export type Plant = {
   imagen: string;
   descripcion: string;
   curiosidades: string;
+  /** Uso culinario: cómo se come / cómo se prepara. */
+  comoSeCome?: string;
   enfermedades: { nombre: string; combate: string; imagen?: string }[];
   temporada: string;
   guiaId?: string;
@@ -43,6 +45,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: img("1592841200221-a6898f307baa"),
     descripcion: "Variedad autóctona aragonesa, carnoso, dulce y de gran calibre.",
     curiosidades: "Denominación de Origen protegida en el Somontano; se conserva desde principios del siglo XX.",
+    comoSeCome:
+      "En crudo, en ensalada con un buen aceite y sal en escamas; también asado o en salsa lenta. Su carne poco ácida es ideal para tostadas y gazpachos suaves.",
     enfermedades: [
       { nombre: "Mildiu", combate: "Tratamientos preventivos con caldo bordelés y buena ventilación.", imagen: img("1591857177580-dc82b9ac4e1e", 400) },
       { nombre: "Araña roja", combate: "Aumentar humedad ambiental y aplicar jabón potásico." },
@@ -57,6 +61,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgCalcots,
     descripcion: "Cebolla tierna típica del noreste peninsular, ideal para brasa.",
     curiosidades: "Se planta en verano y se cosecha en invierno tras varias 'calzadas' de tierra.",
+    comoSeCome:
+      "Asado a la brasa hasta que la capa exterior se quema, envuelto en papel de periódico y comido con salsa romesco, mojando el tallo blanco.",
     enfermedades: [
       { nombre: "Roya", combate: "Rotación de cultivos y azufre en polvo." },
     ],
@@ -71,6 +77,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgPlaceholder,
     descripcion: "Tubérculo dulce y nutritivo, se adapta muy bien al clima del Bajo Cinca.",
     curiosidades: "Puede alcanzar hasta 3 kg por planta con riego adecuado.",
+    comoSeCome:
+      "Asado al horno con piel, en puré, frito en bastones o cocido en cremas. También en dulces y en el clásico relleno de panellets.",
     enfermedades: [
       { nombre: "Gusano del boniato", combate: "Trampas de feromonas y suelo bien drenado." },
     ],
@@ -85,6 +93,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgPlaceholder,
     descripcion: "Árbol frutal emblema del valle del Cinca, floración espectacular.",
     curiosidades: "Fraga celebra cada primavera la 'Floración del Bajo Cinca'.",
+    comoSeCome:
+      "El melocotón se come fresco, en almíbar, en mermelada o asado con vino tinto y canela.",
     enfermedades: [
       { nombre: "Abolladura", combate: "Tratamiento cuprico en otoño y al inicio de la primavera." },
     ],
@@ -99,6 +109,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: img("1595351298020-038700609878"),
     descripcion: "Aromática mediterránea, resistente a la sequía y muy melífera.",
     curiosidades: "Sus flores atraen abejas y ahuyentan mosquitos de manera natural.",
+    comoSeCome:
+      "Uso culinario limitado: unas flores secas aromatizan bizcochos, miel, infusiones o mezclas tipo hierbas provenzales.",
     enfermedades: [{ nombre: "Hongos por exceso de riego", combate: "Suelo bien drenado y riego escaso." }],
     temporada: "Floración Mayo – Julio",
   },
@@ -110,6 +122,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: img("1445264718234-a623be589d37"),
     descripcion: "Variedad autóctona del Bajo Aragón, produce aceite virgen extra afrutado.",
     curiosidades: "Puede vivir más de 500 años en las condiciones adecuadas.",
+    comoSeCome:
+      "La aceituna necesita endulzado en salmuera antes de comerse; del fruto se obtiene el aceite de oliva virgen extra.",
     enfermedades: [{ nombre: "Mosca del olivo", combate: "Trampas cromáticas y tratamientos ecológicos." }],
     temporada: "Todo el año",
   },
@@ -121,6 +135,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: img("1533616688419-b7a585564566"),
     descripcion: "Ornamental clásico, ideal para pérgolas y muros soleados.",
     curiosidades: "Con buena poda puede florecer dos veces al año.",
+    comoSeCome:
+      "Los pétalos (sin tratar) se usan en mermeladas, siropes e infusiones; los escaramujos, en confitura rica en vitamina C.",
     enfermedades: [{ nombre: "Oidio", combate: "Azufre mojable y aireación entre plantas." }],
     temporada: "Abril – Octubre",
   },
@@ -132,6 +148,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: img("1533050487297-09b450131914"),
     descripcion: "Arbusto muy resistente, florece todo el verano incluso en suelos pobres.",
     curiosidades: "Es tóxica al consumo pero muy segura como planta ornamental.",
+    comoSeCome:
+      "No comestible: todas sus partes son tóxicas. Es una planta exclusivamente ornamental.",
     enfermedades: [{ nombre: "Cochinilla", combate: "Aceite de neem o jabón potásico." }],
     temporada: "Junio – Septiembre",
   },
@@ -146,6 +164,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgLechuga,
     descripcion: "Cogollo alargado y crujiente, la lechuga más cultivada del Bajo Cinca.",
     curiosidades: "Aguanta bien el calor si se riega por la mañana temprano.",
+    comoSeCome:
+      "En crudo: es la base de la ensalada César y de los cogollos a la plancha con anchoas y vinagreta.",
     enfermedades: [
       { nombre: "Mildiu de la lechuga", combate: "Evitar mojar la hoja y airear el marco de plantación." },
       { nombre: "Pulgón", combate: "Jabón potásico y fomento de mariquitas." },
@@ -161,6 +181,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgLechuga,
     descripcion: "Hoja rizada y tierna, en tonos verdes y rojizos. Ideal para corte continuo.",
     curiosidades: "Se puede recolectar hoja a hoja durante varias semanas.",
+    comoSeCome:
+      "En crudo, en ensaladas de hoja tierna; combina con frutos secos, queso fresco y vinagretas suaves.",
     enfermedades: [{ nombre: "Botritis", combate: "Riego moderado y buena ventilación." }],
     temporada: "Marzo – Noviembre",
     calendarioKey: "Lechuga",
@@ -173,6 +195,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgLechuga,
     descripcion: "Cogollo mantecoso de hoja suave, muy apreciada en ensalada.",
     curiosidades: "Es la lechuga tradicional de primavera en los huertos de la zona.",
+    comoSeCome:
+      "En crudo, en ensalada clásica; sus hojas mantecosas sirven también como envoltorio para rellenos ligeros.",
     enfermedades: [{ nombre: "Caracoles y babosas", combate: "Trampas de cerveza y acolchado seco." }],
     temporada: "Marzo – Octubre",
     calendarioKey: "Lechuga",
@@ -185,6 +209,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgLechuga,
     descripcion: "Hoja rizada y amarga, muy resistente al frío del invierno.",
     curiosidades: "Se blanquea atando las hojas unos días antes de cosechar.",
+    comoSeCome:
+      "En crudo con ajo, anchoas y granada (ensalada de Navidad) o ligeramente salteada para suavizar su amargor.",
     enfermedades: [{ nombre: "Podredumbre del cuello", combate: "No enterrar el cuello y regar por surco." }],
     temporada: "Septiembre – Febrero",
   },
@@ -196,6 +222,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgColiflor,
     descripcion: "Pella blanca y compacta, cultivo estrella de otoño e invierno.",
     curiosidades: "Doblar sus propias hojas sobre la pella la mantiene bien blanca.",
+    comoSeCome:
+      "Cocida al vapor, asada al horno con especias, rebozada, en puré o cruda rallada como «cuscús» de coliflor.",
     enfermedades: [
       { nombre: "Oruga de la col", combate: "Bacillus thuringiensis y revisión de envés de hoja." },
       { nombre: "Hernia de la col", combate: "Rotación larga y encalado del suelo." },
@@ -210,6 +238,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgColiflor,
     descripcion: "Pella verde con rebrotes laterales que alargan la cosecha semanas.",
     curiosidades: "Tras cortar la pella central sigue produciendo brotes pequeños.",
+    comoSeCome:
+      "Al vapor o salteado breve para conservar el color; también asado, en cremas o en pasta con ajo y guindilla.",
     enfermedades: [{ nombre: "Pulgón ceniciento", combate: "Jabón potásico y eliminación de brotes afectados." }],
     temporada: "Octubre – Marzo",
   },
@@ -221,6 +251,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgColesHoja,
     descripcion: "Col de hoja rizada, muy rústica: mejora de sabor tras las primeras heladas.",
     curiosidades: "El frío convierte parte de su almidón en azúcar y la vuelve más dulce.",
+    comoSeCome:
+      "Salteada con ajo, en cremas, en batidos verdes o al horno en chips crujientes con aceite y sal.",
     enfermedades: [{ nombre: "Mosca blanca", combate: "Trampas cromáticas amarillas y neem." }],
     temporada: "Octubre – Abril",
   },
@@ -232,6 +264,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgColesHoja,
     descripcion: "Col de hoja lisa y abierta, cosecha escalonada durante todo el invierno.",
     curiosidades: "Se recolecta hoja a hoja sin arrancar la planta.",
+    comoSeCome:
+      "Cocida en potajes y guisos de legumbre; también salteada con ajo y pimentón.",
     enfermedades: [{ nombre: "Oruga de la col", combate: "Bacillus thuringiensis en tratamientos semanales." }],
     temporada: "Octubre – Abril",
     calendarioKey: "Col rizada",
@@ -244,6 +278,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgColesHoja,
     descripcion: "Cogollo apretado de hoja lisa o rizada, conserva muy bien tras la cosecha.",
     curiosidades: "Un repollo bien formado puede pesar más de 3 kg.",
+    comoSeCome:
+      "Crudo en ensalada tipo coleslaw, salteado, cocido en guisos o fermentado en chucrut.",
     enfermedades: [{ nombre: "Hernia de la col", combate: "Rotación de cultivos de al menos 4 años." }],
     temporada: "Octubre – Marzo",
   },
@@ -255,6 +291,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgPimiento,
     descripcion: "Pimiento verde alargado y fino, dulce, perfecto para freír.",
     curiosidades: "Si se deja madurar en planta pasa a rojo y gana dulzor.",
+    comoSeCome:
+      "Frito en aceite con sal, asado en escalivada, o en fritada y sofritos.",
     enfermedades: [
       { nombre: "Oidiopsis", combate: "Azufre mojable y evitar exceso de humedad." },
       { nombre: "Trips", combate: "Trampas azules y control biológico." },
@@ -270,6 +308,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgPimiento,
     descripcion: "Pimiento carnoso de tres o cuatro cascos, ideal para asar.",
     curiosidades: "Necesita bastante potasio para cuajar frutos grandes y de pared gruesa.",
+    comoSeCome:
+      "Asado y pelado en ensaladas y conservas, relleno al horno, o crudo en tiras para crudités.",
     enfermedades: [{ nombre: "Podredumbre apical", combate: "Riego regular y aporte de calcio." }],
     temporada: "Julio – Octubre",
     calendarioKey: "Pimiento",
@@ -282,6 +322,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgPimiento,
     descripcion: "Pimiento pequeño para freír, de recolección continua en verano.",
     curiosidades: "Unos pican y otros no: depende del calor y del riego recibido.",
+    comoSeCome:
+      "Fritos enteros a fuego fuerte con abundante sal gruesa; se comen con la mano por el rabito.",
     enfermedades: [{ nombre: "Araña roja", combate: "Humedad ambiental y jabón potásico." }],
     temporada: "Junio – Septiembre",
     calendarioKey: "Pimiento",
@@ -294,6 +336,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgBerenjena,
     descripcion: "Fruto morado y brillante, muy productiva con calor y riego constante.",
     curiosidades: "Es pariente directa del tomate y del pimiento: no conviene plantarlas seguidas.",
+    comoSeCome:
+      "Asada al horno, a la plancha, frita en rodajas con miel, en escalivada, moussaka o babaganoush.",
     enfermedades: [
       { nombre: "Araña roja", combate: "Aumentar humedad y aplicar azufre o neem." },
       { nombre: "Verticilosis", combate: "Rotación de cultivos y suelo bien drenado." },
@@ -308,6 +352,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgCalabacin,
     descripcion: "Planta muy productiva: en plena temporada se recolecta cada dos días.",
     curiosidades: "Necesita polinizadores; sin abejas muchos frutos se quedan sin cuajar.",
+    comoSeCome:
+      "A la plancha, salteado, en crema, relleno al horno, en tortilla o crudo en tiras finas marinadas.",
     enfermedades: [{ nombre: "Oidio", combate: "Azufre mojable y retirar hojas muy afectadas." }],
     temporada: "Junio – Septiembre",
     guiaId: "polinizacion-calabacines",
@@ -320,6 +366,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgPepino,
     descripcion: "Cultivo trepador de crecimiento rápido, agradece emparrado y sombreo suave.",
     curiosidades: "Entutorado en vertical da frutos más rectos y sanos.",
+    comoSeCome:
+      "Crudo en ensalada, gazpachos y salmorejos frescos, en tzatziki o encurtido en vinagre.",
     enfermedades: [{ nombre: "Mildiu", combate: "Riego por goteo y buena ventilación." }],
     temporada: "Junio – Septiembre",
   },
@@ -331,6 +379,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgAcelga,
     descripcion: "Hortaliza rústica de corte continuo, produce casi todo el año.",
     curiosidades: "De una misma planta se pueden cortar hojas durante varios meses.",
+    comoSeCome:
+      "Hoja y penca por separado: la hoja rehogada con ajo o en pastel, la penca cocida, rebozada o gratinada.",
     enfermedades: [{ nombre: "Minador de la hoja", combate: "Retirar hojas afectadas y usar malla antiinsectos." }],
     temporada: "Todo el año",
   },
@@ -342,6 +392,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgAcelga,
     descripcion: "Cultivo de hoja rápido y de clima fresco, perfecto para otoño e invierno.",
     curiosidades: "Con calor se sube a flor enseguida: mejor sembrarla fuera del verano.",
+    comoSeCome:
+      "Cruda en ensalada cuando es tierna; salteada con pasas y piñones, en crema, en tortilla o en lasaña.",
     enfermedades: [{ nombre: "Mildiu", combate: "Variedades resistentes y marcos amplios." }],
     temporada: "Octubre – Marzo",
   },
@@ -353,6 +405,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgCebollaPuerro,
     descripcion: "Cebolla de bulbo para conservación, en variedades dulces y de guarda.",
     curiosidades: "Se cura al sol unos días tras arrancarla para que aguante meses.",
+    comoSeCome:
+      "Base de todo sofrito; cruda en ensalada, caramelizada, asada al horno o en sopa de cebolla.",
     enfermedades: [{ nombre: "Mildiu de la cebolla", combate: "Rotación y tratamientos cúpricos preventivos." }],
     temporada: "Junio – Septiembre",
   },
@@ -364,6 +418,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgCebollaPuerro,
     descripcion: "Se aporca con tierra para conseguir un tallo blanco largo y tierno.",
     curiosidades: "Resiste heladas fuertes y puede quedarse en tierra hasta su uso.",
+    comoSeCome:
+      "En cremas (vichyssoise), en caldos, asado a la brasa con romesco o salteado como base de guisos.",
     enfermedades: [{ nombre: "Roya del puerro", combate: "Marcos amplios y evitar exceso de nitrógeno." }],
     temporada: "Octubre – Marzo",
   },
@@ -375,6 +431,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgCebollaPuerro,
     descripcion: "Se planta en otoño diente a diente y se cosecha a principios de verano.",
     curiosidades: "El dicho local: por San Antón, el ajo en el terrón.",
+    comoSeCome:
+      "Crudo picado en aliños y alioli, dorado en sofritos, asado entero en cabeza o en sopa castellana.",
     enfermedades: [{ nombre: "Roya", combate: "Rotación de cultivos y azufre en polvo." }],
     temporada: "Junio – Julio",
   },
@@ -386,6 +444,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgRaices,
     descripcion: "Raíz dulce y crujiente; pide suelo suelto, mullido y sin piedras.",
     curiosidades: "Sembrada junto a la cebolla se ahuyentan mutuamente sus moscas.",
+    comoSeCome:
+      "Cruda en bastones y rallada, cocida en guisos y caldos, asada al horno, en crema o en bizcocho.",
     enfermedades: [{ nombre: "Mosca de la zanahoria", combate: "Malla antiinsectos y siembras escalonadas." }],
     temporada: "Todo el año (según siembra)",
   },
@@ -397,6 +457,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgRaices,
     descripcion: "El cultivo más rápido del huerto: listo en apenas un mes.",
     curiosidades: "Perfecto para intercalar entre cultivos lentos y aprovechar espacio.",
+    comoSeCome:
+      "Crudo en rodajas finas con sal y aceite, en ensaladas por su punto picante, o encurtido.",
     enfermedades: [{ nombre: "Pulguilla", combate: "Riego frecuente y malla fina." }],
     temporada: "Marzo – Noviembre",
   },
@@ -408,6 +470,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgLegumbres,
     descripcion: "En mata baja o de enrame; fija nitrógeno y mejora el suelo.",
     curiosidades: "Recolectada joven y a menudo, la planta produce mucho más tiempo.",
+    comoSeCome:
+      "Cocida al vapor y salteada con ajo y jamón, en ensalada templada con patata, o en menestra.",
     enfermedades: [{ nombre: "Roya de la judía", combate: "Airear el emparrado y evitar mojar la hoja." }],
     temporada: "Junio – Septiembre",
   },
@@ -419,6 +483,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgLegumbres,
     descripcion: "Leguminosa de invierno y primavera, agradece un pequeño entutorado.",
     curiosidades: "Como todas las leguminosas, deja el suelo enriquecido para el cultivo siguiente.",
+    comoSeCome:
+      "Salteado con jamón, en menestras y guisos; los más tiernos se pueden comer casi crudos.",
     enfermedades: [{ nombre: "Oidio", combate: "Siembras tempranas y azufre mojable." }],
     temporada: "Abril – Junio",
     calendarioKey: "Habas",
@@ -431,6 +497,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgLegumbres,
     descripcion: "Siembra otoñal, cosecha de primavera. Muy rústica y agradecida.",
     curiosidades: "Despuntar la planta en floración reduce mucho el ataque de pulgón negro.",
+    comoSeCome:
+      "Tiernas salteadas con jamón o «a la catalana»; secas, en potajes. Las muy pequeñas, crudas con queso.",
     enfermedades: [{ nombre: "Pulgón negro", combate: "Despunte de brotes tiernos y jabón potásico." }],
     temporada: "Abril – Mayo",
     calendarioKey: "Habas",
@@ -443,6 +511,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgAcelga,
     descripcion: "Pencas aromáticas y crujientes; exige riego constante y suelo rico.",
     curiosidades: "Su aroma ayuda a despistar plagas de las coles vecinas.",
+    comoSeCome:
+      "Crudo en bastones y ensaladas, como base aromática de caldos y sofritos, o en crema con manzana.",
     enfermedades: [{ nombre: "Septoriosis", combate: "Rotación y eliminación de hojas manchadas." }],
     temporada: "Septiembre – Enero",
   },
@@ -454,6 +524,8 @@ export const plantasDestacadas: Plant[] = [
     imagen: imgFresa,
     descripcion: "Planta perenne de fruto rojo; ideal en mesa de cultivo, maceta o bancal.",
     curiosidades: "Sus estolones dan plantas nuevas gratis cada temporada.",
+    comoSeCome:
+      "Fresca al natural, con zumo de naranja o nata, en mermelada, batidos y postres.",
     enfermedades: [{ nombre: "Botritis", combate: "Acolchado de paja para que el fruto no toque el suelo." }],
     temporada: "Abril – Junio",
   },
