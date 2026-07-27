@@ -49,10 +49,9 @@ export function Footer() {
         <div className="space-y-3 text-sm">
           <h4 className="font-serif text-lg text-foreground">Explora</h4>
           <ul className="space-y-2">
-            <li><Link to="/informacion-campo" className="text-muted-foreground hover:text-primary">Información de Campo</Link></li>
-            <li><Link to="/tierras-sustratos" className="text-muted-foreground hover:text-primary">Tierras y Sustratos</Link></li>
+            <li><Link to="/productos" className="text-muted-foreground hover:text-primary">Productos</Link></li>
+            <li><Link to="/tu-huerto" className="text-muted-foreground hover:text-primary">Tu Huerto</Link></li>
             <li><Link to="/historia" className="text-muted-foreground hover:text-primary">Historia</Link></li>
-            <li><Link to="/libro-campo" className="text-muted-foreground hover:text-primary">Libro de Campo</Link></li>
             <li><Link to="/contacto" className="text-muted-foreground hover:text-primary">Contacto</Link></li>
           </ul>
         </div>

@@ -5,10 +5,9 @@ import logoAsset from "@/assets/brand/logo.png.asset.json";
 
 const links = [
   { to: "/", label: "Inicio" },
-  { to: "/informacion-campo", label: "Información de Campo" },
-  { to: "/tierras-sustratos", label: "Tierras y Sustratos" },
+  { to: "/productos", label: "Productos" },
+  { to: "/tu-huerto", label: "Tu Huerto" },
   { to: "/historia", label: "Historia" },
-  { to: "/libro-campo", label: "Libro de Campo" },
   { to: "/contacto", label: "Contacto" },
 ] as const;
 
