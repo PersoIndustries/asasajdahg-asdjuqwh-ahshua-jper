@@ -2,7 +2,7 @@
   "nav": {
     "home": "Start",
     "products": "Produkte",
-    "guides": "Anleitungen",
+    "blog": "Blog",
     "garden": "Dein Garten",
     "history": "Geschichte",
     "contact": "Kontakt",
@@ -83,19 +83,19 @@
       "submit": "Nachricht senden"
     }
   },
-  "guides": {
-    "eyebrow": "Gartenblog",
-    "title": "Anleitungen und Tipps",
-    "subtitle": "Lernen Sie mit dem Jardiper-Team: Gemüsekalender, Anbautechniken, Substrate und Kompostierung für den Bajo Cinca.",
+  "blog": {
+    "eyebrow": "Blog",
+    "title": "Neuigkeiten und Kurioses",
+    "subtitle": "Neuigkeiten aus der Gärtnerei, Kurioses aus der Pflanzenwelt und Notizen des Jardiper-Teams im Bajo Cinca.",
     "all": "Alle",
-    "searchPlaceholder": "Anleitung suchen…",
-    "noResults": "Keine Anleitungen entsprechen diesen Kriterien.",
-    "read": "Anleitung lesen",
-    "back": "Zurück zu den Anleitungen",
-    "downloadTitle": "PDF-Anleitung herunterladen",
-    "downloadText": "Nehmen Sie eine druckbare Version mit in den Garten.",
+    "searchPlaceholder": "Artikel suchen…",
+    "noResults": "Keine Artikel entsprechen diesen Kriterien.",
+    "read": "Artikel lesen",
+    "back": "Zurück zum Blog",
+    "downloadTitle": "PDF herunterladen",
+    "downloadText": "Nimm eine druckbare Version mit in den Garten.",
     "download": "PDF herunterladen",
-    "relatedEyebrow": "Das könnte Sie auch interessieren",
-    "relatedTitle": "Weitere Gartenanleitungen"
+    "relatedEyebrow": "Das könnte dich auch interessieren",
+    "relatedTitle": "Mehr Neuigkeiten und Kurioses"
   }
 }

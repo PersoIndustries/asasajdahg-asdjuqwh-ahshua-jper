@@ -54,9 +54,9 @@ function BlogPage() {
     <SiteLayout>
       <section className="pt-28 md:pt-36 pb-12 border-b border-border/60">
         <div className="container-page">
-          <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">{t("guides.eyebrow")}</p>
-          <h1 className="font-serif text-5xl md:text-6xl max-w-3xl leading-tight">{t("guides.title")}</h1>
-          <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t("guides.subtitle")}</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">{t("blog.eyebrow")}</p>
+          <h1 className="font-serif text-5xl md:text-6xl max-w-3xl leading-tight">{t("blog.title")}</h1>
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl">{t("blog.subtitle")}</p>
         </div>
       </section>
 
@@ -73,7 +73,7 @@ function BlogPage() {
                     : "bg-secondary text-foreground/70 hover:bg-secondary/70"
                 }`}
               >
-                {c === "Todas" ? t("guides.all") : c}
+                {c === "Todas" ? t("blog.all") : c}
               </button>
             ))}
           </div>
@@ -81,7 +81,7 @@ function BlogPage() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               type="search"
-              placeholder={t("guides.searchPlaceholder")}
+              placeholder={t("blog.searchPlaceholder")}
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
               className="w-full md:w-72 rounded-full border border-input bg-background pl-10 pr-4 py-2.5 text-sm"
@@ -90,7 +90,7 @@ function BlogPage() {
         </div>
 
         {guiasFiltradas.length === 0 && (
-          <p className="py-16 text-center text-muted-foreground">{t("guides.noResults")}</p>
+          <p className="py-16 text-center text-muted-foreground">{t("blog.noResults")}</p>
         )}
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -126,7 +126,7 @@ function BlogPage() {
                 params={{ slug: g.slug }}
                 className="mt-4 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
               >
-                {t("guides.read")} <ArrowRight className="h-4 w-4" />
+                {t("blog.read")} <ArrowRight className="h-4 w-4" />
               </Link>
             </article>
           ))}

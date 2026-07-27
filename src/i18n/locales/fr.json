@@ -2,7 +2,7 @@
   "nav": {
     "home": "Accueil",
     "products": "Produits",
-    "guides": "Guides",
+    "blog": "Blog",
     "garden": "Votre Jardin",
     "history": "Histoire",
     "contact": "Contact",
@@ -83,19 +83,19 @@
       "submit": "Envoyer le message"
     }
   },
-  "guides": {
-    "eyebrow": "Blog de jardinage",
-    "title": "Guides de culture et conseils",
-    "subtitle": "Apprenez avec l'équipe Jardiper : calendriers potagers, techniques de culture, substrats et compostage pour le Bajo Cinca.",
+  "blog": {
+    "eyebrow": "Blog",
+    "title": "Actualités et curiosités",
+    "subtitle": "Actualités de la pépinière, curiosités du monde végétal et notes de l'équipe Jardiper dans le Bajo Cinca.",
     "all": "Toutes",
-    "searchPlaceholder": "Rechercher un guide…",
-    "noResults": "Aucun guide ne correspond à ces critères.",
-    "read": "Lire le guide",
-    "back": "Retour aux guides",
-    "downloadTitle": "Télécharger le guide PDF",
-    "downloadText": "Emportez une version imprimable à consulter au jardin.",
+    "searchPlaceholder": "Rechercher un article…",
+    "noResults": "Aucun article ne correspond à ces critères.",
+    "read": "Lire l'article",
+    "back": "Retour au blog",
+    "downloadTitle": "Télécharger le PDF",
+    "downloadText": "Emportez une version imprimable à consulter au potager.",
     "download": "Télécharger le PDF",
-    "relatedEyebrow": "Cela pourrait aussi vous intéresser",
-    "relatedTitle": "Plus de guides de jardinage"
+    "relatedEyebrow": "Cela peut aussi vous intéresser",
+    "relatedTitle": "Plus d'actualités et curiosités"
   }
 }

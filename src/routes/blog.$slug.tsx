@@ -89,7 +89,7 @@ function PostDetailPage() {
             to="/blog"
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-6"
           >
-            <ArrowLeft className="h-4 w-4" /> {t("guides.back")}
+            <ArrowLeft className="h-4 w-4" /> {t("blog.back")}
           </Link>
           <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">{guia.categoria}</p>
           <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight">{guia.titulo}</h1>
@@ -129,14 +129,14 @@ function PostDetailPage() {
 
         {guia.pdfUrl && (
           <div className="mt-12 p-6 rounded-2xl bg-secondary/50 border border-border">
-            <h3 className="font-serif text-xl mb-2">{t("guides.downloadTitle")}</h3>
-            <p className="text-sm text-muted-foreground mb-4">{t("guides.downloadText")}</p>
+            <h3 className="font-serif text-xl mb-2">{t("blog.downloadTitle")}</h3>
+            <p className="text-sm text-muted-foreground mb-4">{t("blog.downloadText")}</p>
             <a
               href={guia.pdfUrl}
               download
               className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
             >
-              <Download className="h-4 w-4" /> {t("guides.download")}
+              <Download className="h-4 w-4" /> {t("blog.download")}
             </a>
           </div>
         )}
@@ -154,7 +154,7 @@ function PostDetailPage() {
       </div>
 
       {relacionadas.length > 0 && (
-        <Section eyebrow={t("guides.relatedEyebrow")} title={t("guides.relatedTitle")}>
+        <Section eyebrow={t("blog.relatedEyebrow")} title={t("blog.relatedTitle")}>
           <div className="grid md:grid-cols-3 gap-8">
             {relacionadas.map((g: Guia) => (
               <article key={g.id} className="group">
@@ -175,7 +175,7 @@ function PostDetailPage() {
                   params={{ slug: g.slug }}
                   className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
                 >
-                  {t("guides.read")} <ArrowRight className="h-4 w-4" />
+                  {t("blog.read")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </article>
             ))}
