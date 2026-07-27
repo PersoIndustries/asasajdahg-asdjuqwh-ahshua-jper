@@ -8,11 +8,11 @@ import { guias } from "@/lib/mock-data";
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
-      { title: "Guías y blog de jardinería · Jardiper" },
-      { name: "description", content: "Guías prácticas de cultivo, calendarios del huerto, consejos de sustratos y compostaje del equipo de Jardiper en Fraga (Huesca)." },
-      { name: "keywords", content: "guías jardinería, blog huerto, cultivo Bajo Cinca, sustratos, compostaje, poda frutales" },
-      { property: "og:title", content: "Guías y blog de jardinería · Jardiper" },
-      { property: "og:description", content: "Consejos prácticos de cultivo para el huerto y el jardín del Bajo Cinca." },
+      { title: "Blog · Noticias y curiosidades del vivero · Jardiper" },
+      { name: "description", content: "Noticias del vivero, curiosidades del mundo vegetal y apuntes del equipo de Jardiper en Fraga (Huesca)." },
+      { name: "keywords", content: "blog jardinería, noticias vivero Fraga, curiosidades plantas, Bajo Cinca" },
+      { property: "og:title", content: "Blog · Noticias y curiosidades del vivero · Jardiper" },
+      { property: "og:description", content: "Noticias del vivero y curiosidades del mundo vegetal en el Bajo Cinca." },
       { property: "og:url", content: "/blog" },
       { property: "og:type", content: "website" },
     ],
