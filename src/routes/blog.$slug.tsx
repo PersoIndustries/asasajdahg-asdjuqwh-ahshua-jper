@@ -1,17 +1,22 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, Clock, Calendar, Download, ArrowRight } from "lucide-react";
+import { ArrowLeft, Clock, Calendar, ArrowRight, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
-import { guias, type Guia, type GuiaSection } from "@/lib/mock-data";
+import {
+  getNoticia,
+  noticiasRelacionadas,
+  formatearFecha,
+  type Noticia,
+} from "@/lib/noticias";
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }): Guia => {
-    const guia = guias.find((g) => g.slug === params.slug);
-    if (!guia) throw notFound();
-    return guia;
+  loader: ({ params }): Noticia => {
+    const noticia = getNoticia(params.slug);
+    if (!noticia) throw notFound();
+    return noticia;
   },
-  head: ({ params, loaderData: guia }) => {
-    if (!guia) {
+  head: ({ params, loaderData: noticia }) => {
+    if (!noticia) {
       return {
         meta: [
           { title: "Artículo no encontrado · Jardiper" },
@@ -21,17 +26,17 @@ export const Route = createFileRoute("/blog/$slug")({
     }
     return {
       meta: [
-        { title: `${guia.titulo} · Blog · Jardiper` },
-        { name: "description", content: guia.resumen },
-        { property: "og:title", content: guia.titulo },
-        { property: "og:description", content: guia.resumen },
+        { title: `${noticia.titulo} · Blog · Jardiper` },
+        { name: "description", content: noticia.resumen },
+        { property: "og:title", content: noticia.titulo },
+        { property: "og:description", content: noticia.resumen },
         { property: "og:url", content: `/blog/${params.slug}` },
         { property: "og:type", content: "article" },
-        { property: "article:published_time", content: guia.fechaPublicacion },
-        { property: "article:section", content: guia.categoria },
+        { property: "article:published_time", content: noticia.fecha },
+        { property: "article:section", content: noticia.categoria },
         { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: guia.titulo },
-        { name: "twitter:description", content: guia.resumen },
+        { name: "twitter:title", content: noticia.titulo },
+        { name: "twitter:description", content: noticia.resumen },
       ],
       links: [{ rel: "canonical", href: `/blog/${params.slug}` }],
       scripts: [
@@ -39,12 +44,12 @@ export const Route = createFileRoute("/blog/$slug")({
           type: "application/ld+json",
           children: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "Article",
-            headline: guia.titulo,
-            description: guia.resumen,
-            datePublished: guia.fechaPublicacion,
-            articleSection: guia.categoria,
-            author: { "@type": "Organization", name: "Jardiper" },
+            "@type": "NewsArticle",
+            headline: noticia.titulo,
+            description: noticia.resumen,
+            datePublished: noticia.fecha,
+            articleSection: noticia.categoria,
+            author: { "@type": "Organization", name: noticia.autor },
             publisher: { "@type": "Organization", name: "Jardiper", url: "/" },
             mainEntityOfPage: { "@type": "WebPage", "@id": `/blog/${params.slug}` },
           }),
@@ -57,29 +62,22 @@ export const Route = createFileRoute("/blog/$slug")({
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
               { "@type": "ListItem", position: 2, name: "Blog", item: "/blog" },
-              { "@type": "ListItem", position: 3, name: guia.titulo, item: `/blog/${params.slug}` },
+              { "@type": "ListItem", position: 3, name: noticia.titulo, item: `/blog/${params.slug}` },
             ],
           }),
         },
       ],
     };
   },
-  component: PostDetailPage,
+  component: NoticiaDetailPage,
+  errorComponent: NoticiaError,
+  notFoundComponent: NoticiaNotFound,
 });
 
-function PostDetailPage() {
+function NoticiaDetailPage() {
   const { t } = useTranslation();
-  const guia = Route.useLoaderData();
-
-  const relacionadas: Guia[] = guia.relacionados
-    ? (guias.filter((g) => guia.relacionados!.includes(g.slug)) as Guia[])
-    : (guias.filter((g) => g.categoria === guia.categoria && g.slug !== guia.slug).slice(0, 3) as Guia[]);
-
-  const fechaFormateada = new Date(guia.fechaPublicacion).toLocaleDateString("es-ES", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const noticia = Route.useLoaderData();
+  const relacionadas = noticiasRelacionadas(noticia);
 
   return (
     <SiteLayout>
@@ -91,15 +89,18 @@ function PostDetailPage() {
           >
             <ArrowLeft className="h-4 w-4" /> {t("blog.back")}
           </Link>
-          <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">{guia.categoria}</p>
-          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight">{guia.titulo}</h1>
-          <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-relaxed">{guia.resumen}</p>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">{noticia.categoria}</p>
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-tight">{noticia.titulo}</h1>
+          <p className="mt-4 text-lg md:text-xl text-muted-foreground leading-relaxed">{noticia.resumen}</p>
           <div className="mt-6 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <Calendar className="h-4 w-4" /> {fechaFormateada}
+              <Calendar className="h-4 w-4" /> {formatearFecha(noticia.fecha)}
             </span>
             <span className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4" /> {guia.minutos} min
+              <Clock className="h-4 w-4" /> {noticia.minutos} min
+            </span>
+            <span className="flex items-center gap-1.5">
+              <User className="h-4 w-4" /> {noticia.autor}
             </span>
           </div>
         </div>
@@ -107,18 +108,24 @@ function PostDetailPage() {
 
       <div className="container-page max-w-4xl py-12">
         <div className="relative aspect-[21/9] overflow-hidden rounded-2xl mb-12">
-          <img src={guia.imagen} alt={guia.titulo} className="h-full w-full object-cover" />
+          <img
+            src={noticia.imagen}
+            alt={noticia.titulo}
+            width={1600}
+            height={1000}
+            className="h-full w-full object-cover"
+          />
         </div>
 
         <div className="prose prose-lg max-w-none">
-          <p className="text-xl leading-relaxed text-foreground/90">{guia.contenido}</p>
+          <p className="text-xl leading-relaxed text-foreground/90">{noticia.entradilla}</p>
 
-          {guia.secciones.map((seccion: GuiaSection, i: number) => (
+          {noticia.secciones.map((seccion, i) => (
             <div key={i} className="mt-10">
               {seccion.titulo && (
                 <h2 className="font-serif text-2xl md:text-3xl text-foreground mb-4">{seccion.titulo}</h2>
               )}
-              {seccion.parrafos.map((parrafo: string, j: number) => (
+              {seccion.parrafos.map((parrafo, j) => (
                 <p key={j} className="text-muted-foreground leading-relaxed mb-4 last:mb-0">
                   {parrafo}
                 </p>
@@ -127,22 +134,8 @@ function PostDetailPage() {
           ))}
         </div>
 
-        {guia.pdfUrl && (
-          <div className="mt-12 p-6 rounded-2xl bg-secondary/50 border border-border">
-            <h3 className="font-serif text-xl mb-2">{t("blog.downloadTitle")}</h3>
-            <p className="text-sm text-muted-foreground mb-4">{t("blog.downloadText")}</p>
-            <a
-              href={guia.pdfUrl}
-              download
-              className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
-            >
-              <Download className="h-4 w-4" /> {t("blog.download")}
-            </a>
-          </div>
-        )}
-
         <div className="mt-12 flex flex-wrap gap-2">
-          {guia.tags.map((tag: string) => (
+          {noticia.tags.map((tag) => (
             <span
               key={tag}
               className="text-xs uppercase tracking-widest px-3 py-1.5 rounded-full bg-secondary text-foreground/70"
@@ -156,24 +149,31 @@ function PostDetailPage() {
       {relacionadas.length > 0 && (
         <Section eyebrow={t("blog.relatedEyebrow")} title={t("blog.relatedTitle")}>
           <div className="grid md:grid-cols-3 gap-8">
-            {relacionadas.map((g: Guia) => (
-              <article key={g.id} className="group">
-                <Link to="/blog/$slug" params={{ slug: g.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
+            {relacionadas.map((r) => (
+              <article key={r.id} className="group flex flex-col">
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: r.slug }}
+                  className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4"
+                >
                   <img
-                    src={g.imagen}
-                    alt={g.titulo}
+                    src={r.imagen}
+                    alt={r.titulo}
                     loading="lazy"
+                    width={1600}
+                    height={1000}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </Link>
-                <p className="text-xs uppercase tracking-widest text-accent">{g.categoria}</p>
-                <Link to="/blog/$slug" params={{ slug: g.slug }}>
-                  <h3 className="font-serif text-xl mt-2 group-hover:text-primary transition-colors">{g.titulo}</h3>
+                <p className="text-xs uppercase tracking-widest text-accent">{r.categoria}</p>
+                <Link to="/blog/$slug" params={{ slug: r.slug }}>
+                  <h3 className="font-serif text-xl mt-2 group-hover:text-primary transition-colors">{r.titulo}</h3>
                 </Link>
+                <p className="text-sm text-muted-foreground mt-2 flex-1">{r.resumen}</p>
                 <Link
                   to="/blog/$slug"
-                  params={{ slug: g.slug }}
-                  className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
+                  params={{ slug: r.slug }}
+                  className="mt-3 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
                 >
                   {t("blog.read")} <ArrowRight className="h-4 w-4" />
                 </Link>
@@ -182,6 +182,45 @@ function PostDetailPage() {
           </div>
         </Section>
       )}
+    </SiteLayout>
+  );
+}
+
+function NoticiaNotFound() {
+  return (
+    <SiteLayout>
+      <div className="container-page max-w-2xl py-40 text-center">
+        <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">Blog</p>
+        <h1 className="font-serif text-4xl md:text-5xl">Este artículo ya no está disponible</h1>
+        <p className="mt-4 text-muted-foreground">
+          Puede que lo hayamos movido o que el enlace esté mal escrito. Echa un vistazo al resto de noticias.
+        </p>
+        <Link
+          to="/blog"
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-medium"
+        >
+          <ArrowLeft className="h-4 w-4" /> Volver al blog
+        </Link>
+      </div>
+    </SiteLayout>
+  );
+}
+
+function NoticiaError() {
+  return (
+    <SiteLayout>
+      <div className="container-page max-w-2xl py-40 text-center">
+        <h1 className="font-serif text-4xl md:text-5xl">No hemos podido cargar el artículo</h1>
+        <p className="mt-4 text-muted-foreground">
+          Ha ocurrido un problema al mostrar esta noticia. Prueba a recargar la página.
+        </p>
+        <Link
+          to="/blog"
+          className="mt-8 inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-6 py-3 text-sm font-medium"
+        >
+          <ArrowLeft className="h-4 w-4" /> Volver al blog
+        </Link>
+      </div>
     </SiteLayout>
   );
 }
