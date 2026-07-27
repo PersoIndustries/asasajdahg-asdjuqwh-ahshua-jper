@@ -9,32 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TierrasSustratosRouteImport } from './routes/tierras-sustratos'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as LibroCampoRouteImport } from './routes/libro-campo'
-import { Route as InformacionCampoRouteImport } from './routes/informacion-campo'
 import { Route as HistoriaRouteImport } from './routes/historia'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as IndexRouteImport } from './routes/index'
 
-const TierrasSustratosRoute = TierrasSustratosRouteImport.update({
-  id: '/tierras-sustratos',
-  path: '/tierras-sustratos',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LibroCampoRoute = LibroCampoRouteImport.update({
-  id: '/libro-campo',
-  path: '/libro-campo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const InformacionCampoRoute = InformacionCampoRouteImport.update({
-  id: '/informacion-campo',
-  path: '/informacion-campo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HistoriaRoute = HistoriaRouteImport.update({
@@ -57,98 +39,43 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/historia': typeof HistoriaRoute
-  '/informacion-campo': typeof InformacionCampoRoute
-  '/libro-campo': typeof LibroCampoRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/historia': typeof HistoriaRoute
-  '/informacion-campo': typeof InformacionCampoRoute
-  '/libro-campo': typeof LibroCampoRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
   '/historia': typeof HistoriaRoute
-  '/informacion-campo': typeof InformacionCampoRoute
-  '/libro-campo': typeof LibroCampoRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/tierras-sustratos': typeof TierrasSustratosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/contacto'
-    | '/historia'
-    | '/informacion-campo'
-    | '/libro-campo'
-    | '/sitemap.xml'
-    | '/tierras-sustratos'
+  fullPaths: '/' | '/contacto' | '/historia' | '/sitemap.xml'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/contacto'
-    | '/historia'
-    | '/informacion-campo'
-    | '/libro-campo'
-    | '/sitemap.xml'
-    | '/tierras-sustratos'
-  id:
-    | '__root__'
-    | '/'
-    | '/contacto'
-    | '/historia'
-    | '/informacion-campo'
-    | '/libro-campo'
-    | '/sitemap.xml'
-    | '/tierras-sustratos'
+  to: '/' | '/contacto' | '/historia' | '/sitemap.xml'
+  id: '__root__' | '/' | '/contacto' | '/historia' | '/sitemap.xml'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContactoRoute: typeof ContactoRoute
   HistoriaRoute: typeof HistoriaRoute
-  InformacionCampoRoute: typeof InformacionCampoRoute
-  LibroCampoRoute: typeof LibroCampoRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  TierrasSustratosRoute: typeof TierrasSustratosRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/tierras-sustratos': {
-      id: '/tierras-sustratos'
-      path: '/tierras-sustratos'
-      fullPath: '/tierras-sustratos'
-      preLoaderRoute: typeof TierrasSustratosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/libro-campo': {
-      id: '/libro-campo'
-      path: '/libro-campo'
-      fullPath: '/libro-campo'
-      preLoaderRoute: typeof LibroCampoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/informacion-campo': {
-      id: '/informacion-campo'
-      path: '/informacion-campo'
-      fullPath: '/informacion-campo'
-      preLoaderRoute: typeof InformacionCampoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/historia': {
@@ -179,10 +106,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContactoRoute: ContactoRoute,
   HistoriaRoute: HistoriaRoute,
-  InformacionCampoRoute: InformacionCampoRoute,
-  LibroCampoRoute: LibroCampoRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  TierrasSustratosRoute: TierrasSustratosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
