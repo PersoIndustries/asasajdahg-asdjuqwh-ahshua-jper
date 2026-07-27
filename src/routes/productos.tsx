@@ -78,17 +78,26 @@ const macetas = [
   { nombre: "Macetero XXL / Corporativo", uso: "Grandes espacios y proyectos", formato: "Ø 60–120 cm", detalle: "Fibra de vidrio, hormigón ligero o rotomoldeado. Consúltanos.", imagen: uimg("1523712999610-f77fbcfc3843") },
 ];
 
+const MES_ACTUAL = new Date().getMonth();
+
 function ProductosPage() {
   const [tab, setTab] = useState<TabKey>("hortícolas");
   const [busqueda, setBusqueda] = useState("");
   const [catFiltro, setCatFiltro] = useState<string>("todas");
   const [ficha, setFicha] = useState<Plant | null>(null);
+  // Filtro por mes / rango de meses del calendario de cultivo
+  const [filtroMesActivo, setFiltroMesActivo] = useState(false);
+  const [mesDesde, setMesDesde] = useState(MES_ACTUAL);
+  const [mesHasta, setMesHasta] = useState(MES_ACTUAL);
+  const [actividades, setActividades] = useState<Actividad[]>([]);
 
   const listaBase = tab === "hortícolas" ? plantasHortícolas : tab === "ornamentales" ? plantasOrnamentales : [];
   const categoriasDisponibles = useMemo(
     () => Array.from(new Set(listaBase.map((p) => p.categoria))),
     [listaBase],
   );
+  const filtroCalendarioActivo = tab === "hortícolas" && filtroMesActivo;
+
   const listaFiltrada = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
     return listaBase.filter((p) => {
@@ -97,9 +106,24 @@ function ProductosPage() {
         !q ||
         p.nombre.toLowerCase().includes(q) ||
         (p.nombreCientifico ?? "").toLowerCase().includes(q);
-      return matchCat && matchQ;
+      if (!matchCat || !matchQ) return false;
+      if (!filtroCalendarioActivo) return true;
+      const acts = actividadesEnRango(p, mesDesde, mesHasta);
+      if (acts.length === 0) return false;
+      return actividades.length === 0 || acts.some((a) => actividades.includes(a));
     });
-  }, [listaBase, catFiltro, busqueda]);
+  }, [listaBase, catFiltro, busqueda, filtroCalendarioActivo, mesDesde, mesHasta, actividades]);
+
+  const toggleActividad = (a: Actividad) =>
+    setActividades((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
+
+  const resetCalendario = () => {
+    setFiltroMesActivo(false);
+    setMesDesde(MES_ACTUAL);
+    setMesHasta(MES_ACTUAL);
+    setActividades([]);
+  };
+
 
   return (
     <SiteLayout>
