@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
+import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
 import { calendario, meses, guias, type MesEstado } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/tu-huerto")({
@@ -148,7 +149,7 @@ function TuHuertoPage() {
           </div>
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
             <a
-              href="/descargas/fechas-aconsejables-trasplante.pdf"
+              href={pdfFechas.url}
               download
               className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors self-start"
             >
