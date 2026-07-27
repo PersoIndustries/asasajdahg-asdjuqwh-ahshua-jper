@@ -172,6 +172,10 @@ import pdfBoniatos from "@/assets/guias/plantar-boniatos.pdf.asset.json";
 import pdfCalcots from "@/assets/guias/cultivar-calcots.pdf.asset.json";
 import pdfCalabacines from "@/assets/guias/polinizacion-calabacines.pdf.asset.json";
 import pdfPoda from "@/assets/guias/poda-frutales.pdf.asset.json";
+import imgCalendarioPrimavera from "@/assets/guias/calendario-primavera.jpg";
+import imgSustratos from "@/assets/guias/sustratos.jpg";
+import imgCompostaje from "@/assets/guias/compostaje.jpg";
+
 
 export const guias: Guia[] = [
   {
