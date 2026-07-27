@@ -1,6 +1,19 @@
 // Mock data for Jardiper — reemplazar con datos de la base de datos futura.
 // TODO: conectar a Lovable Cloud (Supabase) cuando la BD esté lista.
 
+import imgLechuga from "@/assets/horticolas/lechuga.jpg";
+import imgColiflor from "@/assets/horticolas/coliflor.jpg";
+import imgColesHoja from "@/assets/horticolas/coles-hoja.jpg";
+import imgPimiento from "@/assets/horticolas/pimiento.jpg";
+import imgBerenjena from "@/assets/horticolas/berenjena.jpg";
+import imgCalabacin from "@/assets/horticolas/calabacin.jpg";
+import imgPepino from "@/assets/horticolas/pepino.jpg";
+import imgAcelga from "@/assets/horticolas/acelga-espinaca.jpg";
+import imgCebollaPuerro from "@/assets/horticolas/cebolla-puerro.jpg";
+import imgRaices from "@/assets/horticolas/raices.jpg";
+import imgLegumbres from "@/assets/horticolas/legumbres.jpg";
+import imgFresa from "@/assets/horticolas/fresa.jpg";
+
 export type Plant = {
   id: string;
   nombre: string;
