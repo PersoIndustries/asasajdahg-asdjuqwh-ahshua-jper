@@ -16,6 +16,7 @@ import { Route as HistoriaRouteImport } from './routes/historia'
 import { Route as GuiasRouteImport } from './routes/guias'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuiasIndexRouteImport } from './routes/guias.index'
 import { Route as GuiasSlugRouteImport } from './routes/guias.$slug'
 
 const TuHuertoRoute = TuHuertoRouteImport.update({
@@ -53,6 +54,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuiasIndexRoute = GuiasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GuiasRoute,
+} as any)
 const GuiasSlugRoute = GuiasSlugRouteImport.update({
   id: '/$slug',
   path: '/$slug',
@@ -68,16 +74,17 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
   '/guias/$slug': typeof GuiasSlugRoute
+  '/guias/': typeof GuiasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
-  '/guias': typeof GuiasRouteWithChildren
   '/historia': typeof HistoriaRoute
   '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
   '/guias/$slug': typeof GuiasSlugRoute
+  '/guias': typeof GuiasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +96,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
   '/guias/$slug': typeof GuiasSlugRoute
+  '/guias/': typeof GuiasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,16 +109,17 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tu-huerto'
     | '/guias/$slug'
+    | '/guias/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/contacto'
-    | '/guias'
     | '/historia'
     | '/productos'
     | '/sitemap.xml'
     | '/tu-huerto'
     | '/guias/$slug'
+    | '/guias'
   id:
     | '__root__'
     | '/'
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/tu-huerto'
     | '/guias/$slug'
+    | '/guias/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guias/': {
+      id: '/guias/'
+      path: '/'
+      fullPath: '/guias/'
+      preLoaderRoute: typeof GuiasIndexRouteImport
+      parentRoute: typeof GuiasRoute
+    }
     '/guias/$slug': {
       id: '/guias/$slug'
       path: '/$slug'
@@ -196,10 +213,12 @@ declare module '@tanstack/react-router' {
 
 interface GuiasRouteChildren {
   GuiasSlugRoute: typeof GuiasSlugRoute
+  GuiasIndexRoute: typeof GuiasIndexRoute
 }
 
 const GuiasRouteChildren: GuiasRouteChildren = {
   GuiasSlugRoute: GuiasSlugRoute,
+  GuiasIndexRoute: GuiasIndexRoute,
 }
 
 const GuiasRouteWithChildren = GuiasRoute._addFileChildren(GuiasRouteChildren)
@@ -216,3 +235,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
