@@ -185,125 +185,149 @@ function ProductosPage() {
           title={tab === "hortícolas" ? "Variedades Hortícolas" : "Ornamentales"}
           intro="Haz click en cualquier variedad para ver su ficha completa."
         >
-          <div className="mb-8 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
-            <div className="relative w-full md:max-w-sm">
-              <Search className="h-4 w-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-              <input
-                placeholder="Buscar por nombre o nombre científico…"
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-                className="w-full rounded-full border border-input bg-background pl-11 pr-5 py-2.5 text-sm"
-              />
+          <div className="mb-10 rounded-3xl border border-border bg-card overflow-hidden">
+            {/* Buscador + recuento */}
+            <div className="p-5 md:p-6 border-b border-border/70 flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="relative flex-1 min-w-0">
+                <Search className="h-4 w-4 absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
+                <input
+                  placeholder="Buscar por nombre o nombre científico…"
+                  value={busqueda}
+                  onChange={(e) => setBusqueda(e.target.value)}
+                  className="w-full h-11 rounded-full border border-input bg-background pl-11 pr-10 text-sm outline-none focus:border-primary transition-colors"
+                />
+                {busqueda && (
+                  <button
+                    onClick={() => setBusqueda("")}
+                    aria-label="Borrar búsqueda"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:bg-secondary"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground sm:text-right shrink-0">
+                <span className="text-foreground font-medium">{listaFiltrada.length}</span> de {listaBase.length} variedades
+              </p>
             </div>
-            <div className="flex flex-wrap gap-2">
-              <button
-                onClick={() => setCatFiltro("todas")}
-                className={`px-4 py-1.5 rounded-full text-xs transition-all capitalize ${
-                  catFiltro === "todas"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-secondary text-foreground/70 hover:bg-secondary/70"
-                }`}
-              >
-                Todas
-              </button>
-              {categoriasDisponibles.map((c) => (
+
+            {/* Filtros */}
+            <div className="p-5 md:p-6 grid gap-x-5 gap-y-4 md:grid-cols-[8rem_1fr] md:items-start">
+              <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground md:pt-2">Categoría</span>
+              <div className="flex flex-wrap gap-2">
                 <button
-                  key={c}
-                  onClick={() => setCatFiltro(c)}
-                  className={`px-4 py-1.5 rounded-full text-xs transition-all capitalize ${
-                    catFiltro === c
+                  onClick={() => setCatFiltro("todas")}
+                  className={`h-8 px-4 rounded-full text-xs transition-all capitalize ${
+                    catFiltro === "todas"
                       ? "bg-primary text-primary-foreground"
                       : "bg-secondary text-foreground/70 hover:bg-secondary/70"
                   }`}
                 >
-                  {c}
+                  Todas
                 </button>
-              ))}
-            </div>
-          </div>
-
-          {tab === "hortícolas" && (
-            <div className="mb-8 rounded-2xl border border-border bg-secondary/30 p-5">
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 text-sm font-medium">
-                  <CalendarDays className="h-4 w-4 text-primary" /> Filtrar por calendario de cultivo
-                </span>
-                <button
-                  onClick={() => { setFiltroMesActivo(true); setMesDesde(MES_ACTUAL); setMesHasta(MES_ACTUAL); }}
-                  className={`px-4 py-1.5 rounded-full text-xs transition-all ${
-                    filtroMesActivo && mesDesde === MES_ACTUAL && mesHasta === MES_ACTUAL
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-background border border-border hover:bg-secondary/70"
-                  }`}
-                >
-                  Este mes ({meses[MES_ACTUAL]})
-                </button>
-                <button
-                  onClick={() => { setFiltroMesActivo(true); setMesDesde(MES_ACTUAL); setMesHasta((MES_ACTUAL + 2) % 12); }}
-                  className={`px-4 py-1.5 rounded-full text-xs transition-all ${
-                    filtroMesActivo && mesDesde === MES_ACTUAL && mesHasta === (MES_ACTUAL + 2) % 12
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-background border border-border hover:bg-secondary/70"
-                  }`}
-                >
-                  Próximos 3 meses
-                </button>
-                {filtroMesActivo && (
-                  <button onClick={resetCalendario} className="px-4 py-1.5 rounded-full text-xs bg-background border border-border hover:bg-secondary/70">
-                    Quitar filtro
+                {categoriasDisponibles.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCatFiltro(c)}
+                    className={`h-8 px-4 rounded-full text-xs transition-all capitalize ${
+                      catFiltro === c
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-secondary text-foreground/70 hover:bg-secondary/70"
+                    }`}
+                  >
+                    {c}
                   </button>
-                )}
+                ))}
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
-                <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                  Desde
-                  <select
-                    value={mesDesde}
-                    onChange={(e) => { setMesDesde(Number(e.target.value)); setFiltroMesActivo(true); }}
-                    className="rounded-full border border-input bg-background px-3 py-1.5 text-xs text-foreground"
-                  >
-                    {meses.map((m, i) => <option key={m} value={i}>{m}</option>)}
-                  </select>
-                </label>
-                <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                  Hasta
-                  <select
-                    value={mesHasta}
-                    onChange={(e) => { setMesHasta(Number(e.target.value)); setFiltroMesActivo(true); }}
-                    className="rounded-full border border-input bg-background px-3 py-1.5 text-xs text-foreground"
-                  >
-                    {meses.map((m, i) => <option key={m} value={i}>{m}</option>)}
-                  </select>
-                </label>
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Labor:</span>
-                  {(["S", "T", "C"] as Actividad[]).map((a) => (
-                    <button
-                      key={a}
-                      onClick={() => { toggleActividad(a); setFiltroMesActivo(true); }}
-                      className={`px-3 py-1.5 rounded-full text-xs transition-all border ${
-                        actividades.includes(a)
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-background border-border hover:bg-secondary/70"
-                      }`}
-                    >
-                      {actividadesLabel[a]}
-                    </button>
-                  ))}
-                </div>
-              </div>
+              {tab === "hortícolas" && (
+                <>
+                  <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground md:pt-2 flex items-center gap-2">
+                    <CalendarDays className="h-3.5 w-3.5 text-primary" /> Calendario
+                  </span>
+                  <div className="flex flex-col gap-3">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        onClick={() => { setFiltroMesActivo(true); setMesDesde(MES_ACTUAL); setMesHasta(MES_ACTUAL); }}
+                        className={`h-8 px-4 rounded-full text-xs transition-all border ${
+                          filtroMesActivo && mesDesde === MES_ACTUAL && mesHasta === MES_ACTUAL
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-background border-border hover:bg-secondary/70"
+                        }`}
+                      >
+                        Este mes · {meses[MES_ACTUAL]}
+                      </button>
+                      <button
+                        onClick={() => { setFiltroMesActivo(true); setMesDesde(MES_ACTUAL); setMesHasta((MES_ACTUAL + 2) % 12); }}
+                        className={`h-8 px-4 rounded-full text-xs transition-all border ${
+                          filtroMesActivo && mesDesde === MES_ACTUAL && mesHasta === (MES_ACTUAL + 2) % 12
+                            ? "bg-primary text-primary-foreground border-primary"
+                            : "bg-background border-border hover:bg-secondary/70"
+                        }`}
+                      >
+                        Próximos 3 meses
+                      </button>
+                      <span className="hidden sm:block h-5 w-px bg-border mx-1" />
+                      <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                        Desde
+                        <select
+                          value={mesDesde}
+                          onChange={(e) => { setMesDesde(Number(e.target.value)); setFiltroMesActivo(true); }}
+                          className="h-8 rounded-full border border-input bg-background px-3 text-xs text-foreground"
+                        >
+                          {meses.map((m, i) => <option key={m} value={i}>{m}</option>)}
+                        </select>
+                      </label>
+                      <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                        Hasta
+                        <select
+                          value={mesHasta}
+                          onChange={(e) => { setMesHasta(Number(e.target.value)); setFiltroMesActivo(true); }}
+                          className="h-8 rounded-full border border-input bg-background px-3 text-xs text-foreground"
+                        >
+                          {meses.map((m, i) => <option key={m} value={i}>{m}</option>)}
+                        </select>
+                      </label>
+                    </div>
 
-              {filtroCalendarioActivo && (
-                <p className="mt-3 text-xs text-muted-foreground">
-                  Mostrando {listaFiltrada.length} variedad{listaFiltrada.length === 1 ? "" : "es"} con actividad
-                  {actividades.length > 0 ? ` de ${actividades.map((a) => actividadesLabel[a].toLowerCase()).join(" o ")}` : ""}{" "}
-                  entre <strong className="text-foreground">{meses[mesDesde]}</strong> y{" "}
-                  <strong className="text-foreground">{meses[mesHasta]}</strong>.
-                </p>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xs text-muted-foreground mr-1">Labor</span>
+                      {(["S", "T", "C"] as Actividad[]).map((a) => (
+                        <button
+                          key={a}
+                          onClick={() => { toggleActividad(a); setFiltroMesActivo(true); }}
+                          className={`h-8 px-4 rounded-full text-xs transition-all border ${
+                            actividades.includes(a)
+                              ? "bg-primary text-primary-foreground border-primary"
+                              : "bg-background border-border hover:bg-secondary/70"
+                          }`}
+                        >
+                          {actividadesLabel[a]}
+                        </button>
+                      ))}
+                      {filtroMesActivo && (
+                        <button
+                          onClick={resetCalendario}
+                          className="h-8 px-4 rounded-full text-xs text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors inline-flex items-center gap-1.5"
+                        >
+                          <X className="h-3 w-3" /> Quitar filtro
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </>
               )}
             </div>
-          )}
+
+            {filtroCalendarioActivo && (
+              <p className="px-5 md:px-6 py-3 bg-secondary/40 border-t border-border/70 text-xs text-muted-foreground">
+                Mostrando variedades con actividad
+                {actividades.length > 0 ? ` de ${actividades.map((a) => actividadesLabel[a].toLowerCase()).join(" o ")}` : ""}{" "}
+                entre <strong className="text-foreground font-medium">{meses[mesDesde]}</strong> y{" "}
+                <strong className="text-foreground font-medium">{meses[mesHasta]}</strong>.
+              </p>
+            )}
+          </div>
 
           {listaFiltrada.length === 0 && (
             <p className="text-sm text-muted-foreground py-12 text-center">
@@ -312,6 +336,7 @@ function ProductosPage() {
                 : "No hay variedades que coincidan con tu búsqueda."}
             </p>
           )}
+
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {listaFiltrada.map((p) => {
               const acts = filtroCalendarioActivo ? actividadesEnRango(p, mesDesde, mesHasta) : [];
