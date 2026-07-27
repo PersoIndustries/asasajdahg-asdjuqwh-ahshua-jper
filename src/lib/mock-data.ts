@@ -185,7 +185,7 @@ export const guias: Guia[] = [
     resumen: "Qué sembrar y trasplantar en marzo, abril y mayo en el Bajo Cinca.",
     minutos: 5,
     categoria: "Huerto",
-    imagen: img("1464226182882-8de1a7131070"),
+    imagen: imgCalendarioPrimavera,
     contenido:
       "La primavera es la temporada de mayor actividad en el huerto. Aprovecha las subidas de temperatura para sembrar de forma escalonada y asegurar cosechas continuas.",
     secciones: [
@@ -406,7 +406,7 @@ export const guias: Guia[] = [
     resumen: "Cuándo vale la pena una mezcla general y cuándo necesitas una formulación especializada.",
     minutos: 5,
     categoria: "Sustratos",
-    imagen: img("1615816760367-3c1b8b3e0a2b"),
+    imagen: imgSustratos,
     contenido:
       "La tierra universal es versátil, pero cada cultivo tiene necesidades diferentes. Conocer cuándo usar un sustrato específico marca la diferencia entre una planta que sobrevive y otra que prospera.",
     secciones: [
@@ -444,7 +444,7 @@ export const guias: Guia[] = [
     resumen: "Convierte los restos de cocina y jardín en compost rico para tus plantas.",
     minutos: 6,
     categoria: "Compost",
-    imagen: img("1466694457118-15e921e5b6e0"),
+    imagen: imgCompostaje,
     contenido:
       "El compostaje es una de las prácticas más sencillas y efectivas para cerrar el ciclo de materia orgánica en casa. Con un poco de equilibrio obtendrás un abono excelente.",
     secciones: [
