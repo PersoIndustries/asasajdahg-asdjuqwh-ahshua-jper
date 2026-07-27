@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { X, Cookie } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 type Consent = "accepted" | "rejected" | null;
 
@@ -8,6 +9,7 @@ const STORAGE_KEY = "jardiper-cookie-consent";
 export function CookieConsent() {
   const [consent, setConsent] = useState<Consent>(null);
   const [mounted, setMounted] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     setMounted(true);
@@ -36,7 +38,7 @@ export function CookieConsent() {
     <div
       role="dialog"
       aria-live="polite"
-      aria-label="Preferencias de cookies"
+      aria-label={t("cookies.title")}
       className="fixed bottom-0 inset-x-0 z-50 p-4 md:p-6"
     >
       <div className="container-page">
@@ -46,11 +48,7 @@ export function CookieConsent() {
           </div>
           <div className="flex-1">
             <p className="text-sm md:text-base text-foreground leading-relaxed">
-              Utilizamos cookies propias para mejorar tu experiencia de navegación.
-              Puedes aceptarlas o rechazarlas. Más información en nuestra{" "}
-              <a href="/contacto" className="underline hover:text-primary transition-colors">
-                política de privacidad
-              </a>.
+              {t("cookies.text")}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
@@ -58,17 +56,17 @@ export function CookieConsent() {
               onClick={() => save("rejected")}
               className="rounded-full px-4 py-2 text-sm font-medium border border-border bg-background hover:bg-accent transition-colors"
             >
-              Rechazar
+              {t("cookies.reject")}
             </button>
             <button
               onClick={() => save("accepted")}
               className="rounded-full px-4 py-2 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
             >
-              Aceptar
+              {t("cookies.accept")}
             </button>
             <button
               onClick={() => save("rejected")}
-              aria-label="Cerrar aviso de cookies"
+              aria-label={t("cookies.reject")}
               className="p-2 text-muted-foreground hover:text-foreground transition-colors"
             >
               <X className="h-4 w-4" />

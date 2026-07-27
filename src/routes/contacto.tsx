@@ -7,8 +7,9 @@ import { localBusinessLd, businessInfo, openingHoursSpecification, postalAddress
 export const Route = createFileRoute("/contacto")({
   head: () => ({
     meta: [
-      { title: "Contacto · Jardiper Fraga" },
-      { name: "description", content: "Visita Jardiper en Carretera A-131 km 1,800, Fraga. Horarios, teléfonos y formulario de contacto." },
+      { title: "Contacto · Vivero Jardiper Fraga · Teléfono, mapa y horario" },
+      { name: "description", content: "Visita Jardiper en Carretera A-131 km 1,800, Fraga (Huesca). Teléfonos 974 47 21 58 y 611 32 16 20, horario L–V 8-13/16-19 y sábados 9-13, email y formulario de contacto." },
+      { name: "keywords", content: "contacto vivero Fraga, teléfono Jardiper, cómo llegar, horario garden center Fraga" },
       { property: "og:title", content: "Contacto · Jardiper" },
       { property: "og:description", content: "Cómo llegar, horarios y contacto directo." },
       { property: "og:url", content: "/contacto" },
@@ -19,6 +20,17 @@ export const Route = createFileRoute("/contacto")({
       {
         type: "application/ld+json",
         children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
+            { "@type": "ListItem", position: 2, name: "Contacto", item: "/contacto" },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
           ...localBusinessLd,
           contactPoint: [
             {
@@ -26,7 +38,7 @@ export const Route = createFileRoute("/contacto")({
               telephone: businessInfo.telephone,
               contactType: "customer service",
               areaServed: "ES",
-              availableLanguage: ["Spanish", "Catalan"],
+              availableLanguage: ["Spanish", "Catalan", "English", "French", "German"],
               hoursAvailable: openingHoursSpecification,
             },
             {
@@ -34,7 +46,7 @@ export const Route = createFileRoute("/contacto")({
               telephone: businessInfo.telephoneSecondary,
               contactType: "sales",
               areaServed: "ES",
-              availableLanguage: ["Spanish", "Catalan"],
+              availableLanguage: ["Spanish", "Catalan", "English", "French", "German"],
             },
           ],
         }),
@@ -125,10 +137,18 @@ function ContactoPage() {
             <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-border">
               <iframe
                 title="Mapa Jardiper"
-                src="https://www.openstreetmap.org/export/embed.html?bbox=0.325,41.520,0.360,41.545&layer=mapnik&marker=41.5322,0.3416"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=0.3063,41.5272,0.3263,41.5372&layer=mapnik&marker=41.5322062,0.3163568"
                 className="w-full h-full"
                 loading="lazy"
               />
+              <a
+                href="https://www.google.com/maps/place/JARDIPER/@41.5322062,0.3163568,17z"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="sr-only"
+              >
+                Ver Jardiper en Google Maps
+              </a>
             </div>
           </div>
 

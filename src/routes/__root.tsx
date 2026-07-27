@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { localBusinessLd } from "../lib/business-info";
+import "../i18n";
 
 function NotFoundComponent() {
   return (
@@ -78,13 +79,22 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Jardiper · Vivero y Garden Center en Fraga (Huesca)" },
-      { name: "description", content: "Vivero familiar en Fraga (Huesca) desde 1974. Plantas de huerto y jardín, sustratos Suliflor, compost ECO y consejo experto en el Bajo Cinca." },
+      { title: "Jardiper · Vivero y Garden Center en Fraga (Huesca) desde 1974" },
+      { name: "description", content: "Vivero familiar en Fraga (Huesca) desde 1974. Plantas de huerto y jardín, sustratos Suliflor, compost ECO, macetas y consejo experto en el Bajo Cinca y Lleida." },
+      { name: "keywords", content: "vivero Fraga, garden center Huesca, plantas Bajo Cinca, sustratos Suliflor, compost ECO, jardinería Lleida, macetas, huerto Fraga, Jardiper" },
       { name: "author", content: "Jardiper" },
       { name: "robots", content: "index, follow, max-image-preview:large" },
       { name: "theme-color", content: "#3d5a3d" },
+      { name: "format-detection", content: "telephone=yes" },
+      { name: "geo.region", content: "ES-HU" },
+      { name: "geo.placename", content: "Fraga, Huesca" },
+      { name: "geo.position", content: "41.5322062;0.3163568" },
+      { name: "ICBM", content: "41.5322062, 0.3163568" },
       { property: "og:site_name", content: "Jardiper" },
       { property: "og:locale", content: "es_ES" },
+      { property: "og:locale:alternate", content: "en_US" },
+      { property: "og:locale:alternate", content: "fr_FR" },
+      { property: "og:locale:alternate", content: "de_DE" },
       { property: "og:title", content: "Jardiper · Vivero y Garden Center en Fraga" },
       { property: "og:description", content: "Plantas, huerto y jardinería con más de 50 años de historia familiar en el Bajo Cinca." },
       { property: "og:type", content: "website" },

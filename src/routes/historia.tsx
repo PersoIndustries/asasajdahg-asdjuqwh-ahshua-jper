@@ -11,14 +11,38 @@ import img2024 from "@/assets/historia/2024.jpg";
 export const Route = createFileRoute("/historia")({
   head: () => ({
     meta: [
-      { title: "Historia · Jardiper" },
-      { name: "description", content: "De Horticultura Peralta a Jardiper. Más de 50 años de historia familiar en Fraga." },
+      { title: "Historia · 50 años del vivero Jardiper en Fraga · Bajo Cinca" },
+      { name: "description", content: "De Horticultura Peralta a Jardiper: más de 50 años de historia familiar cultivando plantas y comunidad en Fraga, el corazón del Bajo Cinca." },
+      { name: "keywords", content: "historia Jardiper, Horticultura Peralta, vivero familiar Fraga, garden center Huesca desde 1974" },
       { property: "og:title", content: "Historia · Jardiper" },
       { property: "og:description", content: "50 años cultivando plantas y comunidad en el Bajo Cinca." },
       { property: "og:url", content: "/historia" },
       { property: "og:type", content: "article" },
     ],
     links: [{ rel: "canonical", href: "/historia" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
+            { "@type": "ListItem", position: 2, name: "Historia", item: "/historia" },
+          ],
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          name: "Historia de Jardiper",
+          url: "/historia",
+          about: { "@id": "https://jardiper.es/#business" },
+        }),
+      },
+    ],
   }),
   component: HistoriaPage,
 });
