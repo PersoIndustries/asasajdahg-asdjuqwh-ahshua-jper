@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, Clock, Calendar, ArrowRight, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
+import type { NoticiaSection } from "@/lib/noticias";
 import {
   getNoticia,
   noticiasRelacionadas,
@@ -76,7 +77,7 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function NoticiaDetailPage() {
   const { t } = useTranslation();
-  const noticia = Route.useLoaderData();
+  const noticia: Noticia = Route.useLoaderData();
   const relacionadas = noticiasRelacionadas(noticia);
 
   return (
@@ -120,12 +121,12 @@ function NoticiaDetailPage() {
         <div className="prose prose-lg max-w-none">
           <p className="text-xl leading-relaxed text-foreground/90">{noticia.entradilla}</p>
 
-          {noticia.secciones.map((seccion, i) => (
+          {noticia.secciones.map((seccion: NoticiaSection, i: number) => (
             <div key={i} className="mt-10">
               {seccion.titulo && (
                 <h2 className="font-serif text-2xl md:text-3xl text-foreground mb-4">{seccion.titulo}</h2>
               )}
-              {seccion.parrafos.map((parrafo, j) => (
+              {seccion.parrafos.map((parrafo: string, j: number) => (
                 <p key={j} className="text-muted-foreground leading-relaxed mb-4 last:mb-0">
                   {parrafo}
                 </p>
@@ -135,7 +136,7 @@ function NoticiaDetailPage() {
         </div>
 
         <div className="mt-12 flex flex-wrap gap-2">
-          {noticia.tags.map((tag) => (
+          {noticia.tags.map((tag: string) => (
             <span
               key={tag}
               className="text-xs uppercase tracking-widest px-3 py-1.5 rounded-full bg-secondary text-foreground/70"
