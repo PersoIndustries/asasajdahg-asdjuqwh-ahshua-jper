@@ -484,6 +484,20 @@ export const calendario: { planta: string; meses: MesEstado[] }[] = [
   { planta: "Habas",        meses: ["", "", "", "C", "C", "", "", "", "", "S", "S", "S"] },
   { planta: "Judía verde",  meses: ["", "", "", "S", "S", "C", "C", "C", "C", "", "", ""] },
   { planta: "Espinaca",     meses: ["C", "C", "S", "", "", "", "", "", "S", "S", "C", "C"] },
+  { planta: "Coliflor",     meses: ["C", "C", "", "", "", "S", "S", "T", "T", "C", "C", "C"] },
+  { planta: "Brócoli",      meses: ["C", "C", "", "", "", "S", "S", "T", "T", "C", "C", "C"] },
+  { planta: "Repollo",      meses: ["C", "C", "", "", "", "S", "S", "T", "T", "C", "C", "C"] },
+  { planta: "Col rizada",   meses: ["C", "C", "C", "C", "", "", "S", "S", "T", "T", "C", "C"] },
+  { planta: "Escarola",     meses: ["C", "C", "", "", "", "", "S", "S", "T", "C", "C", "C"] },
+  { planta: "Berenjena",    meses: ["", "S", "S", "T", "T", "", "C", "C", "C", "C", "", ""] },
+  { planta: "Pepino",       meses: ["", "", "S", "S", "T", "C", "C", "C", "C", "", "", ""] },
+  { planta: "Acelga",       meses: ["C", "C", "S", "T", "C", "C", "C", "S", "T", "C", "C", "C"] },
+  { planta: "Apio",         meses: ["C", "", "", "S", "S", "T", "T", "", "C", "C", "C", "C"] },
+  { planta: "Puerro",       meses: ["C", "C", "S", "S", "", "T", "T", "", "", "C", "C", "C"] },
+  { planta: "Rábano",       meses: ["", "", "S", "SC", "SC", "C", "", "", "S", "SC", "C", ""] },
+  { planta: "Guisante",     meses: ["", "", "", "C", "C", "", "", "", "", "S", "S", "S"] },
+  { planta: "Fresa",        meses: ["", "", "T", "C", "C", "C", "", "", "T", "T", "", ""] },
+
 ];
 
 export type GuiaSection = {
