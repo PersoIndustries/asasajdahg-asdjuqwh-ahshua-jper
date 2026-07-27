@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { localBusinessLd } from "../lib/business-info";
 
 function NotFoundComponent() {
   return (
@@ -104,39 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     scripts: [
       {
         type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "GardenStore",
-          name: "Jardiper",
-          description: "Vivero y garden center familiar en Fraga (Huesca) desde 1974. Plantas, sustratos, compost y consejo experto.",
-          telephone: "+34974472158",
-          email: "correo@jardiper.es",
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "Carretera A-131 km 1,800",
-            addressLocality: "Fraga",
-            addressRegion: "Huesca",
-            postalCode: "22520",
-            addressCountry: "ES",
-          },
-          geo: { "@type": "GeoCoordinates", latitude: 41.5322, longitude: 0.3416 },
-          areaServed: ["Fraga", "Bajo Cinca", "Lleida", "Huesca"],
-          openingHoursSpecification: [
-            {
-              "@type": "OpeningHoursSpecification",
-              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-              opens: "08:00",
-              closes: "13:00",
-            },
-            {
-              "@type": "OpeningHoursSpecification",
-              dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-              opens: "16:00",
-              closes: "19:00",
-            },
-          ],
-          foundingDate: "1974",
-        }),
+        children: JSON.stringify(localBusinessLd),
       },
     ],
   }),
