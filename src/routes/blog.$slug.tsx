@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { guias, type Guia, type GuiaSection } from "@/lib/mock-data";
 
-export const Route = createFileRoute("/guias/$slug")({
+export const Route = createFileRoute("/blog/$slug")({
   loader: ({ params }): Guia => {
     const guia = guias.find((g) => g.slug === params.slug);
     if (!guia) throw notFound();
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/guias/$slug")({
         { name: "description", content: guia.resumen },
         { property: "og:title", content: guia.titulo },
         { property: "og:description", content: guia.resumen },
-        { property: "og:url", content: `/guias/${params.slug}` },
+        { property: "og:url", content: `/blog/${params.slug}` },
         { property: "og:type", content: "article" },
         { property: "article:published_time", content: guia.fechaPublicacion },
         { property: "article:section", content: guia.categoria },
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/guias/$slug")({
         { name: "twitter:title", content: guia.titulo },
         { name: "twitter:description", content: guia.resumen },
       ],
-      links: [{ rel: "canonical", href: `/guias/${params.slug}` }],
+      links: [{ rel: "canonical", href: `/blog/${params.slug}` }],
       scripts: [
         {
           type: "application/ld+json",
@@ -46,7 +46,7 @@ export const Route = createFileRoute("/guias/$slug")({
             articleSection: guia.categoria,
             author: { "@type": "Organization", name: "Jardiper" },
             publisher: { "@type": "Organization", name: "Jardiper", url: "/" },
-            mainEntityOfPage: { "@type": "WebPage", "@id": `/guias/${params.slug}` },
+            mainEntityOfPage: { "@type": "WebPage", "@id": `/blog/${params.slug}` },
           }),
         },
         {
@@ -56,18 +56,18 @@ export const Route = createFileRoute("/guias/$slug")({
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
-              { "@type": "ListItem", position: 2, name: "Guías", item: "/guias" },
-              { "@type": "ListItem", position: 3, name: guia.titulo, item: `/guias/${params.slug}` },
+              { "@type": "ListItem", position: 2, name: "Guías", item: "/blog" },
+              { "@type": "ListItem", position: 3, name: guia.titulo, item: `/blog/${params.slug}` },
             ],
           }),
         },
       ],
     };
   },
-  component: GuiaDetailPage,
+  component: PostDetailPage,
 });
 
-function GuiaDetailPage() {
+function PostDetailPage() {
   const { t } = useTranslation();
   const guia = Route.useLoaderData();
 
@@ -86,7 +86,7 @@ function GuiaDetailPage() {
       <section className="pt-28 md:pt-36 pb-12 border-b border-border/60">
         <div className="container-page max-w-4xl">
           <Link
-            to="/guias"
+            to="/blog"
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors mb-6"
           >
             <ArrowLeft className="h-4 w-4" /> {t("guides.back")}
@@ -158,7 +158,7 @@ function GuiaDetailPage() {
           <div className="grid md:grid-cols-3 gap-8">
             {relacionadas.map((g: Guia) => (
               <article key={g.id} className="group">
-                <Link to="/guias/$slug" params={{ slug: g.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
+                <Link to="/blog/$slug" params={{ slug: g.slug }} className="block relative aspect-[16/10] overflow-hidden rounded-2xl bg-muted mb-4">
                   <img
                     src={g.imagen}
                     alt={g.titulo}
@@ -167,11 +167,11 @@ function GuiaDetailPage() {
                   />
                 </Link>
                 <p className="text-xs uppercase tracking-widest text-accent">{g.categoria}</p>
-                <Link to="/guias/$slug" params={{ slug: g.slug }}>
+                <Link to="/blog/$slug" params={{ slug: g.slug }}>
                   <h3 className="font-serif text-xl mt-2 group-hover:text-primary transition-colors">{g.titulo}</h3>
                 </Link>
                 <Link
-                  to="/guias/$slug"
+                  to="/blog/$slug"
                   params={{ slug: g.slug }}
                   className="mt-2 inline-flex items-center gap-1 text-sm text-primary hover:gap-2 transition-all"
                 >
