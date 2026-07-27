@@ -2,6 +2,7 @@
   "nav": {
     "home": "Start",
     "products": "Produkte",
+    "guides": "Anleitungen",
     "garden": "Dein Garten",
     "history": "Geschichte",
     "contact": "Kontakt",
@@ -81,5 +82,20 @@
       "message": "Erzähl uns…",
       "submit": "Nachricht senden"
     }
+  },
+  "guides": {
+    "eyebrow": "Gartenblog",
+    "title": "Anleitungen und Tipps",
+    "subtitle": "Lernen Sie mit dem Jardiper-Team: Gemüsekalender, Anbautechniken, Substrate und Kompostierung für den Bajo Cinca.",
+    "all": "Alle",
+    "searchPlaceholder": "Anleitung suchen…",
+    "noResults": "Keine Anleitungen entsprechen diesen Kriterien.",
+    "read": "Anleitung lesen",
+    "back": "Zurück zu den Anleitungen",
+    "downloadTitle": "PDF-Anleitung herunterladen",
+    "downloadText": "Nehmen Sie eine druckbare Version mit in den Garten.",
+    "download": "PDF herunterladen",
+    "relatedEyebrow": "Das könnte Sie auch interessieren",
+    "relatedTitle": "Weitere Gartenanleitungen"
   }
 }

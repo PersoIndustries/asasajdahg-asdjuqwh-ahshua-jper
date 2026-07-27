@@ -13,8 +13,11 @@ import { Route as TuHuertoRouteImport } from './routes/tu-huerto'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProductosRouteImport } from './routes/productos'
 import { Route as HistoriaRouteImport } from './routes/historia'
+import { Route as GuiasRouteImport } from './routes/guias'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GuiasIndexRouteImport } from './routes/guias.index'
+import { Route as GuiasSlugRouteImport } from './routes/guias.$slug'
 
 const TuHuertoRoute = TuHuertoRouteImport.update({
   id: '/tu-huerto',
@@ -36,6 +39,11 @@ const HistoriaRoute = HistoriaRouteImport.update({
   path: '/historia',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuiasRoute = GuiasRouteImport.update({
+  id: '/guias',
+  path: '/guias',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContactoRoute = ContactoRouteImport.update({
   id: '/contacto',
   path: '/contacto',
@@ -46,14 +54,27 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuiasIndexRoute = GuiasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => GuiasRoute,
+} as any)
+const GuiasSlugRoute = GuiasSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => GuiasRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
+  '/guias': typeof GuiasRouteWithChildren
   '/historia': typeof HistoriaRoute
   '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
+  '/guias/$slug': typeof GuiasSlugRoute
+  '/guias/': typeof GuiasIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -62,25 +83,33 @@ export interface FileRoutesByTo {
   '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
+  '/guias/$slug': typeof GuiasSlugRoute
+  '/guias': typeof GuiasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contacto': typeof ContactoRoute
+  '/guias': typeof GuiasRouteWithChildren
   '/historia': typeof HistoriaRoute
   '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
+  '/guias/$slug': typeof GuiasSlugRoute
+  '/guias/': typeof GuiasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/contacto'
+    | '/guias'
     | '/historia'
     | '/productos'
     | '/sitemap.xml'
     | '/tu-huerto'
+    | '/guias/$slug'
+    | '/guias/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -89,19 +118,25 @@ export interface FileRouteTypes {
     | '/productos'
     | '/sitemap.xml'
     | '/tu-huerto'
+    | '/guias/$slug'
+    | '/guias'
   id:
     | '__root__'
     | '/'
     | '/contacto'
+    | '/guias'
     | '/historia'
     | '/productos'
     | '/sitemap.xml'
     | '/tu-huerto'
+    | '/guias/$slug'
+    | '/guias/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContactoRoute: typeof ContactoRoute
+  GuiasRoute: typeof GuiasRouteWithChildren
   HistoriaRoute: typeof HistoriaRoute
   ProductosRoute: typeof ProductosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -138,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HistoriaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guias': {
+      id: '/guias'
+      path: '/guias'
+      fullPath: '/guias'
+      preLoaderRoute: typeof GuiasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contacto': {
       id: '/contacto'
       path: '/contacto'
@@ -152,12 +194,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/guias/': {
+      id: '/guias/'
+      path: '/'
+      fullPath: '/guias/'
+      preLoaderRoute: typeof GuiasIndexRouteImport
+      parentRoute: typeof GuiasRoute
+    }
+    '/guias/$slug': {
+      id: '/guias/$slug'
+      path: '/$slug'
+      fullPath: '/guias/$slug'
+      preLoaderRoute: typeof GuiasSlugRouteImport
+      parentRoute: typeof GuiasRoute
+    }
   }
 }
+
+interface GuiasRouteChildren {
+  GuiasSlugRoute: typeof GuiasSlugRoute
+  GuiasIndexRoute: typeof GuiasIndexRoute
+}
+
+const GuiasRouteChildren: GuiasRouteChildren = {
+  GuiasSlugRoute: GuiasSlugRoute,
+  GuiasIndexRoute: GuiasIndexRoute,
+}
+
+const GuiasRouteWithChildren = GuiasRoute._addFileChildren(GuiasRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContactoRoute: ContactoRoute,
+  GuiasRoute: GuiasRouteWithChildren,
   HistoriaRoute: HistoriaRoute,
   ProductosRoute: ProductosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
@@ -166,13 +235,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

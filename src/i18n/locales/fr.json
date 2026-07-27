@@ -2,6 +2,7 @@
   "nav": {
     "home": "Accueil",
     "products": "Produits",
+    "guides": "Guides",
     "garden": "Votre Jardin",
     "history": "Histoire",
     "contact": "Contact",
@@ -81,5 +82,20 @@
       "message": "Racontez-nous…",
       "submit": "Envoyer le message"
     }
+  },
+  "guides": {
+    "eyebrow": "Blog de jardinage",
+    "title": "Guides de culture et conseils",
+    "subtitle": "Apprenez avec l'équipe Jardiper : calendriers potagers, techniques de culture, substrats et compostage pour le Bajo Cinca.",
+    "all": "Toutes",
+    "searchPlaceholder": "Rechercher un guide…",
+    "noResults": "Aucun guide ne correspond à ces critères.",
+    "read": "Lire le guide",
+    "back": "Retour aux guides",
+    "downloadTitle": "Télécharger le guide PDF",
+    "downloadText": "Emportez une version imprimable à consulter au jardin.",
+    "download": "Télécharger le PDF",
+    "relatedEyebrow": "Cela pourrait aussi vous intéresser",
+    "relatedTitle": "Plus de guides de jardinage"
   }
 }
