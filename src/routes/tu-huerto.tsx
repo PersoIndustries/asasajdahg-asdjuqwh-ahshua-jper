@@ -34,7 +34,7 @@ export const Route = createFileRoute("/tu-huerto")({
   component: TuHuertoPage,
 });
 
-const colorByEstado: Record<MesEstado, string> = {
+const colorByActividad: Record<string, string> = {
   S: "bg-sage/60 text-primary",
   T: "bg-accent/70 text-white",
   C: "bg-primary text-primary-foreground",
@@ -44,6 +44,7 @@ const colorByEstado: Record<MesEstado, string> = {
 
 const zonas = [{ id: "bajo-cinca", nombre: "Bajo Cinca, Lleida y alrededores" }];
 const SEMANAS_POR_MES = 4;
+
 
 type Tab = "calendario" | "guias" | "libro";
 
