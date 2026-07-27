@@ -14,14 +14,14 @@ export const Route = createFileRoute("/blog/$slug")({
     if (!guia) {
       return {
         meta: [
-          { title: "Guía no encontrada · Jardiper" },
+          { title: "Artículo no encontrado · Jardiper" },
           { name: "robots", content: "noindex" },
         ],
       };
     }
     return {
       meta: [
-        { title: `${guia.titulo} · Guías · Jardiper` },
+        { title: `${guia.titulo} · Blog · Jardiper` },
         { name: "description", content: guia.resumen },
         { property: "og:title", content: guia.titulo },
         { property: "og:description", content: guia.resumen },
@@ -56,7 +56,7 @@ export const Route = createFileRoute("/blog/$slug")({
             "@type": "BreadcrumbList",
             itemListElement: [
               { "@type": "ListItem", position: 1, name: "Inicio", item: "/" },
-              { "@type": "ListItem", position: 2, name: "Guías", item: "/blog" },
+              { "@type": "ListItem", position: 2, name: "Blog", item: "/blog" },
               { "@type": "ListItem", position: 3, name: guia.titulo, item: `/blog/${params.slug}` },
             ],
           }),
