@@ -13,12 +13,15 @@ import imgCebollaPuerro from "@/assets/horticolas/cebolla-puerro.jpg";
 import imgRaices from "@/assets/horticolas/raices.jpg";
 import imgLegumbres from "@/assets/horticolas/legumbres.jpg";
 import imgFresa from "@/assets/horticolas/fresa.jpg";
+import imgRomero from "@/assets/aromaticas/romero.jpg";
+import imgAlbahaca from "@/assets/aromaticas/albahaca.jpg";
+import imgTomilloMenta from "@/assets/aromaticas/tomillo-menta.jpg";
 
 export type Plant = {
   id: string;
   nombre: string;
   nombreCientifico?: string;
-  categoria: "hortícola" | "ornamental" | "árbol" | "arbusto" | "flor";
+  categoria: "hortícola" | "ornamental" | "árbol" | "arbusto" | "flor" | "aromática";
   imagen: string;
   descripcion: string;
   curiosidades: string;
@@ -105,7 +108,7 @@ export const plantasDestacadas: Plant[] = [
     id: "lavanda",
     nombre: "Lavanda",
     nombreCientifico: "Lavandula angustifolia",
-    categoria: "flor",
+    categoria: "aromática",
     imagen: img("1595351298020-038700609878"),
     descripcion: "Aromática mediterránea, resistente a la sequía y muy melífera.",
     curiosidades: "Sus flores atraen abejas y ahuyentan mosquitos de manera natural.",
@@ -529,12 +532,64 @@ export const plantasDestacadas: Plant[] = [
     enfermedades: [{ nombre: "Botritis", combate: "Acolchado de paja para que el fruto no toque el suelo." }],
     temporada: "Abril – Junio",
   },
+  {
+    id: "romero",
+    nombre: "Romero",
+    nombreCientifico: "Rosmarinus officinalis",
+    categoria: "aromática",
+    imagen: imgRomero,
+    descripcion: "Arbusto mediterráneo perenne, muy rústico y resistente a la sequía; en maceta o seto bajo.",
+    curiosidades: "Florece incluso en invierno y es una de las primeras fuentes de néctar para las abejas.",
+    comoSeCome:
+      "Ramitas frescas o secas para asados, patatas al horno, escabeches y aceites aromatizados.",
+    enfermedades: [{ nombre: "Pudrición de raíz", combate: "Sustrato muy drenante y riegos espaciados." }],
+    temporada: "Todo el año",
+  },
+  {
+    id: "tomillo",
+    nombre: "Tomillo",
+    nombreCientifico: "Thymus vulgaris",
+    categoria: "aromática",
+    imagen: imgTomilloMenta,
+    descripcion: "Mata baja y compacta, ideal para rocallas, bordes y macetas a pleno sol.",
+    curiosidades: "Su aceite esencial (timol) tiene propiedades antisépticas conocidas desde la antigüedad.",
+    comoSeCome:
+      "En guisos, adobos de carne, verduras al horno e infusiones para la garganta.",
+    enfermedades: [{ nombre: "Exceso de humedad", combate: "Evitar encharcamiento y podar tras la floración." }],
+    temporada: "Todo el año",
+  },
+  {
+    id: "albahaca",
+    nombre: "Albahaca",
+    nombreCientifico: "Ocimum basilicum",
+    categoria: "aromática",
+    imagen: imgAlbahaca,
+    descripcion: "Anual de hoja tierna y aroma intenso; muy agradecida en maceta junto a la cocina.",
+    curiosidades: "Plantada junto al tomate ayuda a ahuyentar la mosca blanca.",
+    comoSeCome:
+      "Hoja fresca en ensalada de tomate, pesto, pizzas y pasta; se añade siempre al final.",
+    enfermedades: [{ nombre: "Mildiu de la albahaca", combate: "Riego a pie de planta y buena ventilación." }],
+    temporada: "Mayo – Septiembre",
+  },
+  {
+    id: "menta-hierbabuena",
+    nombre: "Menta y Hierbabuena",
+    nombreCientifico: "Mentha spp.",
+    categoria: "aromática",
+    imagen: imgTomilloMenta,
+    descripcion: "Vivaces muy vigorosas; conviene cultivarlas en maceta para controlar su expansión.",
+    curiosidades: "Sus rizomas pueden colonizar un bancal entero en una sola temporada.",
+    comoSeCome:
+      "En infusión, mojitos y limonadas, con guisantes o habas y en salsas frescas de yogur.",
+    enfermedades: [{ nombre: "Roya de la menta", combate: "Cortar a ras en otoño y renovar la mata cada 2–3 años." }],
+    temporada: "Marzo – Octubre",
+  },
 ];
 
 
 export const plantasHortícolas = plantasDestacadas.filter((p) => p.categoria === "hortícola");
 export const plantasOrnamentales = plantasDestacadas.filter((p) =>
-  ["árbol", "arbusto", "flor", "ornamental"].includes(p.categoria),
+  ["árbol", "arbusto", "flor", "ornamental", "aromática"].includes(p.categoria),
 );
 
 export const temporadaActual: Plant[] = plantasDestacadas.slice(0, 6);
