@@ -1,9 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   X, Search, ChevronRight, Clock, Download,
   Check, Package, Truck, Sprout, Leaf, Recycle, Mountain, TreePine, Gem,
-  FlowerIcon, Info, CalendarDays,
+  FlowerIcon, Info, CalendarDays, Boxes,
 } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
@@ -16,6 +16,7 @@ import {
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
 import imgPlaceholder from "@/assets/placeholder/under-construction-square.jpg";
+import macetas3d from "@/assets/material/macetas-3d.jpg";
 
 export const Route = createFileRoute("/productos")({
   head: () => ({
@@ -488,6 +489,63 @@ function ProductosPage() {
                   </div>
                 </article>
               ))}
+            </div>
+          </Section>
+
+          <Section
+            eyebrow="Novedad · Fabricación propia"
+            title="Impresión 3D de macetas a medida"
+            intro="Diseñamos e imprimimos macetas, jardineras y accesorios personalizados en nuestro taller de Fraga: tu medida, tu color y hasta tu logotipo."
+          >
+            <div className="grid lg:grid-cols-2 gap-8 items-center">
+              <div className="rounded-3xl overflow-hidden border border-border bg-secondary">
+                <img
+                  src={macetas3d}
+                  alt="Macetas impresas en 3D con acabado texturizado en el taller de Jardiper"
+                  loading="lazy"
+                  width={1200}
+                  height={800}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <ul className="space-y-4">
+                  {[
+                    { t: "Medidas exactas", d: "Macetas y jardineras adaptadas a tu balcón, alféizar, repisa o mesa de cultivo, al milímetro." },
+                    { t: "Diseño personalizado", d: "Formas geométricas, texturas, colores a elegir y grabado de nombre o logotipo para empresas y regalos." },
+                    { t: "Materiales resistentes", d: "Filamentos aptos para exterior, con drenaje y plato integrados si lo necesitas." },
+                    { t: "Piezas de repuesto", d: "Soportes, autorriegos, tutores, etiquetas de huerto y accesorios descatalogados." },
+                  ].map((f) => (
+                    <li key={f.t} className="flex items-start gap-3">
+                      <Boxes className="h-5 w-5 text-primary mt-0.5 shrink-0" />
+                      <div>
+                        <h3 className="font-serif text-lg leading-snug">{f.t}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">{f.d}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+                <div className="mt-8 rounded-2xl border border-border bg-secondary/50 p-5">
+                  <p className="text-sm text-foreground/80">
+                    Cuéntanos la medida y el uso y te preparamos un presupuesto sin compromiso.
+                    Los plazos dependen del tamaño de la pieza (normalmente 3–7 días).
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-3">
+                    <Link
+                      to="/contacto"
+                      className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
+                    >
+                      Pedir presupuesto <ChevronRight className="h-4 w-4" />
+                    </Link>
+                    <a
+                      href="tel:974472158"
+                      className="inline-flex items-center rounded-full border border-border px-5 py-2.5 text-sm font-medium hover:bg-secondary transition-colors"
+                    >
+                      974 47 21 58
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </Section>
         </>

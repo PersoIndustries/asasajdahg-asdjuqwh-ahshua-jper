@@ -108,7 +108,7 @@ export const plantasDestacadas: Plant[] = [
     id: "lavanda",
     nombre: "Lavanda",
     nombreCientifico: "Lavandula angustifolia",
-    categoria: "flor",
+    categoria: "aromática",
     imagen: img("1595351298020-038700609878"),
     descripcion: "Aromática mediterránea, resistente a la sequía y muy melífera.",
     curiosidades: "Sus flores atraen abejas y ahuyentan mosquitos de manera natural.",
