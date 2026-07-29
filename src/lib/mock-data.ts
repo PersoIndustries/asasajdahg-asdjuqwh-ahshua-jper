@@ -13,12 +13,15 @@ import imgCebollaPuerro from "@/assets/horticolas/cebolla-puerro.jpg";
 import imgRaices from "@/assets/horticolas/raices.jpg";
 import imgLegumbres from "@/assets/horticolas/legumbres.jpg";
 import imgFresa from "@/assets/horticolas/fresa.jpg";
+import imgRomero from "@/assets/aromaticas/romero.jpg";
+import imgAlbahaca from "@/assets/aromaticas/albahaca.jpg";
+import imgTomilloMenta from "@/assets/aromaticas/tomillo-menta.jpg";
 
 export type Plant = {
   id: string;
   nombre: string;
   nombreCientifico?: string;
-  categoria: "hortícola" | "ornamental" | "árbol" | "arbusto" | "flor";
+  categoria: "hortícola" | "ornamental" | "árbol" | "arbusto" | "flor" | "aromática";
   imagen: string;
   descripcion: string;
   curiosidades: string;
