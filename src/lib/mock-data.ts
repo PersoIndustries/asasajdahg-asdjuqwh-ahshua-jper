@@ -589,7 +589,7 @@ export const plantasDestacadas: Plant[] = [
 
 export const plantasHortícolas = plantasDestacadas.filter((p) => p.categoria === "hortícola");
 export const plantasOrnamentales = plantasDestacadas.filter((p) =>
-  ["árbol", "arbusto", "flor", "ornamental"].includes(p.categoria),
+  ["árbol", "arbusto", "flor", "ornamental", "aromática"].includes(p.categoria),
 );
 
 export const temporadaActual: Plant[] = plantasDestacadas.slice(0, 6);
