@@ -28,6 +28,7 @@ export type PlagaRow = {
   descripcion: string;
   prevencion: string;
   combate: string;
+  otros_datos?: string | null;
   imagen_url: string | null;
   plaga_imagenes?: PlagaImagenRow[];
 };
@@ -89,6 +90,7 @@ export function rowToPlant(row: PlantaRow): Plant {
         descripcion: p.descripcion?.trim() || undefined,
         prevencion: p.prevencion?.trim() || undefined,
         combate: p.combate?.trim() || undefined,
+        otrosDatos: p.otros_datos?.trim() || undefined,
         imagen: imagenDePlaga(p, claves),
       };
     });
@@ -145,7 +147,7 @@ async function fetchPlantas(): Promise<Plant[]> {
   const { data, error } = await supabase
     .from("plantas")
     .select(
-      "*, planta_enfermedades(nombre, combate, imagen_url, orden), planta_plagas(orden, plagas(id, slug, nombre, descripcion, prevencion, combate, imagen_url, plaga_imagenes(imagen_url, tag, orden)))",
+      "*, planta_enfermedades(nombre, combate, imagen_url, orden), planta_plagas(orden, plagas(id, slug, nombre, descripcion, prevencion, combate, otros_datos, imagen_url, plaga_imagenes(imagen_url, tag, orden)))",
     )
     .eq("publicado", true)
     .order("orden", { ascending: true });

@@ -188,7 +188,7 @@ function PreviaPlagas({
       if (plagaIds.length === 0) return [] as PlagaRow[];
       const { data, error } = await supabase
         .from("plagas")
-        .select("id, slug, nombre, descripcion, prevencion, combate, imagen_url, plaga_imagenes(imagen_url, tag, orden)")
+        .select("id, slug, nombre, descripcion, prevencion, combate, otros_datos, imagen_url, plaga_imagenes(imagen_url, tag, orden)")
         .in("id", plagaIds);
       if (error) throw error;
       return data as unknown as PlagaRow[];
@@ -206,6 +206,7 @@ function PreviaPlagas({
       descripcion: p.descripcion?.trim() || undefined,
       prevencion: p.prevencion?.trim() || undefined,
       combate: p.combate?.trim() || undefined,
+      otrosDatos: p.otros_datos?.trim() || undefined,
       imagen: imagenDePlaga(p, claves),
     }));
 
@@ -863,10 +864,11 @@ type PlagaForm = {
   descripcion: string;
   prevencion: string;
   combate: string;
+  otros_datos: string;
   imagen_url: string;
 };
 
-const plagaVacia: PlagaForm = { slug: "", nombre: "", descripcion: "", prevencion: "", combate: "", imagen_url: "" };
+const plagaVacia: PlagaForm = { slug: "", nombre: "", descripcion: "", prevencion: "", combate: "", otros_datos: "", imagen_url: "" };
 
 const aSlug = (t: string) =>
   t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -917,6 +919,7 @@ function PanelPlagas() {
         descripcion: f.descripcion,
         prevencion: f.prevencion,
         combate: f.combate,
+        otros_datos: f.otros_datos,
         imagen_url: f.imagen_url || null,
       };
       const { error } = f.id
@@ -995,7 +998,7 @@ function PanelPlagas() {
       <Ayuda titulo="Cómo funcionan las plagas">
         <li><b>Catálogo global</b>: creas la plaga una vez (por ejemplo «Pulgón») y la reutilizas en todas las plantas que la sufran.</li>
         <li><b>Asociar a una planta</b>: en «Catálogo y temporada», edita la planta y marca las plagas que le afectan.</li>
-        <li><b>Descripción, Prevención y Cómo combatirla</b>: si dejas un campo vacío, no se muestra en la ficha del producto.</li>
+        <li><b>Descripción, Prevención, Cómo combatirla y Otros datos</b>: si dejas un campo vacío, no se muestra en la ficha del producto. En la web, prevención, combate y otros datos aparecen dentro de un desplegable.</li>
         <li><b>Imágenes con etiqueta</b>: puedes subir varias fotos por plaga y ponerles una etiqueta (ej. «tomate», «berenjena»). En la ficha de esa planta se muestra la foto cuya etiqueta coincide.</li>
         <li><b>Imagen por defecto</b>: si la plaga no tiene foto para esa planta se usa su imagen principal y, si tampoco existe, el placeholder «web en construcción».</li>
         <li>Si una planta no tiene ninguna plaga asociada, la sección de enfermedades no aparece en su ficha.</li>
@@ -1009,6 +1012,7 @@ function PanelPlagas() {
           <Campo label="Descripción (opcional)" ancho><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
           <Campo label="Prevención (opcional)" ancho><textarea className={input} rows={2} value={edit.prevencion} onChange={(e) => setEdit({ ...edit, prevencion: e.target.value })} /></Campo>
           <Campo label="Cómo combatirla (opcional)" ancho><textarea className={input} rows={2} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
+          <Campo label="Otros datos (opcional)" ancho><textarea className={input} rows={2} value={edit.otros_datos} onChange={(e) => setEdit({ ...edit, otros_datos: e.target.value })} /></Campo>
           <Campo label="URL de imagen principal (opcional)" ancho><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
@@ -1087,7 +1091,7 @@ function PanelPlagas() {
                   <button type="button" className="p-2 hover:text-primary" onClick={() => setEdit({
                     id: e.id, slug: e.slug, nombre: e.nombre,
                     descripcion: e.descripcion ?? "", prevencion: e.prevencion ?? "",
-                    combate: e.combate ?? "", imagen_url: e.imagen_url ?? "",
+                    combate: e.combate ?? "", otros_datos: e.otros_datos ?? "", imagen_url: e.imagen_url ?? "",
                   })}>Editar</button>
                   <button type="button" className="p-2 text-muted-foreground hover:text-destructive" aria-label={`Borrar ${e.nombre}`}
                     onClick={() => { if (confirm(`¿Borrar "${e.nombre}"? Se quitará de todas las plantas.`)) borrar.mutate(e.id); }}>
