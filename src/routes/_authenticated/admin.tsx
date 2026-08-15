@@ -368,7 +368,7 @@ function PanelPlantas() {
             contenido: (
               <>
                 <Miniatura src={p.imagen_url} slug={p.slug} alt={p.nombre} />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{p.nombre}</p>
                   <p className="text-xs text-muted-foreground">
                     {p.slug} · {p.categoria} · {(vinculos ?? []).filter((v) => v.planta_id === p.id).length} plagas
@@ -874,7 +874,7 @@ function PanelPlagas() {
             contenido: (
               <>
                 <Miniatura src={e.imagen_url || e.plaga_imagenes?.[0]?.imagen_url} alt={e.nombre} />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{e.nombre}</p>
                   <p className="text-xs text-muted-foreground truncate">
                     {e.plaga_imagenes?.length ?? 0} imágenes · {(e.combate || e.descripcion || "Sin texto").slice(0, 80)}
@@ -1071,7 +1071,7 @@ function PanelBlog() {
             contenido: (
               <>
                 <Miniatura src={n.imagen_url} alt={n.titulo} />
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{n.titulo}</p>
                   <p className="text-xs text-muted-foreground">{n.fecha} · {n.categoria}</p>
                 </div>
@@ -1152,7 +1152,7 @@ function Tabla({ filas, vacio }: { filas: { key: string; contenido: React.ReactN
   return (
     <ul className="rounded-2xl border border-border bg-card divide-y divide-border">
       {filas.map((f) => (
-        <li key={f.key} className="flex items-center justify-between gap-4 p-4 text-sm">{f.contenido}</li>
+        <li key={f.key} className="flex items-center gap-3 p-4 text-sm">{f.contenido}</li>
       ))}
     </ul>
   );
