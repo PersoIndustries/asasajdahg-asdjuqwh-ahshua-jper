@@ -14,6 +14,7 @@ import {
 import { usePlantas, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
+import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
