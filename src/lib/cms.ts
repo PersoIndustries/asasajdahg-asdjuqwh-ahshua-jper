@@ -152,7 +152,9 @@ function fusionar<T extends { id: string }>(estaticos: T[], deBd: T[]): T[] {
 async function fetchPlantas(): Promise<Plant[]> {
   const { data, error } = await supabase
     .from("plantas")
-    .select("*, planta_enfermedades(nombre, combate, imagen_url, orden)")
+    .select(
+      "*, planta_enfermedades(nombre, combate, imagen_url, orden), planta_plagas(orden, plagas(id, slug, nombre, descripcion, prevencion, combate, imagen_url, plaga_imagenes(imagen_url, tag, orden)))",
+    )
     .eq("publicado", true)
     .order("orden", { ascending: true });
   if (error) throw error;
