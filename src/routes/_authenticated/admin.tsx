@@ -690,11 +690,18 @@ function PanelCalendario() {
         aviso={aviso}
         acciones={
           <>
-            <button type="button" onClick={() => importar.mutate()} disabled={importar.isPending}
+            <button
+              type="button"
+              title="Vuelve a añadir las filas del calendario base que no estén en la base de datos. Las que hayas borrado a propósito volverán a aparecer."
+              onClick={() => {
+                if (window.confirm("Se añadirán las filas del calendario base que falten (incluidas las que borraste antes). Las filas existentes no se modifican. ¿Continuar?")) importar.mutate();
+              }}
+              disabled={importar.isPending}
               className={`${btn} border border-border hover:text-primary`}>
               {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Importar calendario actual
+              Restaurar calendario base
             </button>
+
             <button type="button" onClick={() => setNuevo({ planta: "", ciclo: "" })}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva fila
