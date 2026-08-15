@@ -11,7 +11,7 @@ import {
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad,
 } from "@/lib/mock-data";
-import { CalendarioCultivo } from "@/components/site/CalendarioCultivo";
+import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
 
 
 import sustratos from "@/assets/tierras/sustratos.jpg";

@@ -8,10 +8,10 @@ import {
 export type FilaCal = { planta: string; ciclo?: string; meses: (string | undefined)[] };
 
 /** Estilos únicos de actividad, compartidos por todas las secciones. */
-export const estadoEstilos: Record<Actividad, { fondo: string; borde: string; hex: string }> = {
-  S: { fondo: "bg-sage/45", borde: "border-sage/60", hex: "#cfe3cb" },
-  T: { fondo: "bg-primary/25", borde: "border-primary/40", hex: "#a9c1a4" },
-  C: { fondo: "bg-tierra/35", borde: "border-tierra/50", hex: "#e2c8a6" },
+export const estadoEstilos: Record<Actividad, { fondo: string; borde: string; clase: string; hex: string }> = {
+  S: { fondo: "bg-sage/45", borde: "border-sage/60", clase: "bg-sage/30 text-primary border-sage/50", hex: "#cfe3cb" },
+  T: { fondo: "bg-primary/25", borde: "border-primary/40", clase: "bg-primary/15 text-primary border-primary/40", hex: "#a9c1a4" },
+  C: { fondo: "bg-tierra/35", borde: "border-tierra/50", clase: "bg-tierra/20 text-foreground border-tierra/40", hex: "#e2c8a6" },
 };
 
 /** Media casilla de mes (1ª o 2ª quincena). */
