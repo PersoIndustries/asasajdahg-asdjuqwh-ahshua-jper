@@ -402,7 +402,7 @@ function PanelPlantas() {
           <label className="block text-xs text-muted-foreground mb-1" htmlFor="filtro-categoria">Categoría</label>
           <select id="filtro-categoria" className={input} value={categoriaF} onChange={(e) => setCategoriaF(e.target.value)}>
             <option value="todas">Todas</option>
-            {["hortícola", "ornamental", "árbol", "arbusto", "flor", "aromática"].map((c) => <option key={c} value={c}>{c}</option>)}
+            {["hortícola", "ornamental", "árbol", "arbusto", "flor", "aromática", "frutal"].map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
         </div>
         <div className="w-full lg:w-44">
@@ -440,7 +440,7 @@ function PanelPlantas() {
           <Campo label="Nombre científico"><input className={input} value={edit.nombre_cientifico} onChange={(e) => setEdit({ ...edit, nombre_cientifico: e.target.value })} /></Campo>
           <Campo label="Categoría">
             <select className={input} value={edit.categoria} onChange={(e) => setEdit({ ...edit, categoria: e.target.value })}>
-              {["hortícola", "ornamental", "árbol", "arbusto", "flor", "aromática"].map((c) => <option key={c} value={c}>{c}</option>)}
+              {["hortícola", "ornamental", "árbol", "arbusto", "flor", "aromática", "frutal"].map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </Campo>
           <Campo label="URL de imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
