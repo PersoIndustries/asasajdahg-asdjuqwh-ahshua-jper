@@ -694,6 +694,23 @@ export const plantasDestacadas: Plant[] = [
     temporada: "Todo el año (plantación otoño-invierno)",
   },
   {
+    id: "litonero",
+    nombre: "Litonero",
+    nombreCientifico: "Celtis australis",
+    categoria: "árbol",
+    imagen: imgPlaceholder,
+    descripcion: "Árbol de sombra muy resistente y longevo, clásico en plazas y paseos del Bajo Cinca.",
+    curiosidades:
+      "Con su madera flexible se hacían horcas y bastones; sus frutos, los litones, son pequeños y comestibles.",
+    comoSeCome: "Los litones maduros se comen crudos: son dulces, con un hueso grande y poca pulpa.",
+    enfermedades: [
+      { nombre: "Pulgón", combate: "Jabón potásico y fauna auxiliar." },
+      { nombre: "Cochinilla", combate: "Aceite de parafina en invierno." },
+    ],
+    temporada: "Todo el año (plantación otoño-invierno)",
+  },
+
+  {
     id: "sauce-lloron",
     nombre: "Sauce Llorón",
     nombreCientifico: "Salix babylonica",
