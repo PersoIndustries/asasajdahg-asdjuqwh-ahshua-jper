@@ -367,9 +367,12 @@ function PanelPlantas() {
             key: p.id,
             contenido: (
               <>
+                <Miniatura src={p.imagen_url} slug={p.slug} alt={p.nombre} />
                 <div className="min-w-0">
                   <p className="font-medium truncate">{p.nombre}</p>
-                  <p className="text-xs text-muted-foreground">{p.slug} · {p.categoria}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {p.slug} · {p.categoria} · {(vinculos ?? []).filter((v) => v.planta_id === p.id).length} plagas
+                  </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <IconoEstado activo={p.es_temporada} on={Star} off={StarOff} titulo="Producto de temporada" />
