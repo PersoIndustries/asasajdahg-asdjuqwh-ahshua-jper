@@ -4,6 +4,8 @@ import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import logoAsset from "@/assets/brand/logo.png.asset.json";
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
+import { AuthButton } from "@/components/site/AuthButton";
+
 
 const linkDefs = [
   { to: "/", key: "home" },
@@ -58,6 +60,7 @@ export function Nav() {
 
         <div className="hidden lg:flex items-center gap-3">
           <LanguageSwitcher />
+          <AuthButton />
           <Link
             to="/contacto"
             className="inline-flex items-center rounded-full bg-primary text-primary-foreground px-5 py-2 text-sm font-medium hover:bg-primary/90 transition-colors"
@@ -65,6 +68,7 @@ export function Nav() {
             {t("nav.visitUs")}
           </Link>
         </div>
+
 
         <div className="lg:hidden flex items-center gap-2">
           <LanguageSwitcher />
@@ -92,7 +96,11 @@ export function Nav() {
                 {t(`nav.${l.key}`)}
               </Link>
             ))}
+            <div className="pt-4">
+              <AuthButton onNavigate={() => setOpen(false)} />
+            </div>
           </nav>
+
         </div>
       )}
     </header>

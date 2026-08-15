@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock } from "lucide-react";
+import { useCalendario } from "@/lib/cms";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
-import { calendario, meses, guias, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
+import { meses, guias, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
 import { estadoEstilos, LeyendaCalendario, BotonImprimirCalendario } from "@/components/site/CalendarioCultivo";
 
 export const Route = createFileRoute("/tu-huerto")({
@@ -47,9 +48,10 @@ function TuHuertoPage() {
   const [tagGuia, setTagGuia] = useState<string>("todas");
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
 
+  const calendario = useCalendario();
   const filas = useMemo(
     () => calendario.filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase())),
-    [filtro],
+    [filtro, calendario],
   );
 
   const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);

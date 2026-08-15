@@ -9,6 +9,7 @@ import {
   formatearFecha,
   type CategoriaNoticia,
 } from "@/lib/noticias";
+import { useNoticias } from "@/lib/cms";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -63,7 +64,7 @@ function BlogPage() {
   const [busqueda, setBusqueda] = useState("");
   const [categoria, setCategoria] = useState<CategoriaNoticia | "Todas">("Todas");
 
-  const todas = useMemo(() => noticiasOrdenadas(), []);
+  const todas = useNoticias();
   const filtradas = useMemo(() => {
     const q = busqueda.toLowerCase().trim();
     return todas.filter((n) => {

@@ -1,21 +1,21 @@
-import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Clock, Calendar, ArrowRight, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import type { NoticiaSection } from "@/lib/noticias";
 import {
   getNoticia,
-  noticiasRelacionadas,
   formatearFecha,
   type Noticia,
 } from "@/lib/noticias";
+import { useNoticias } from "@/lib/cms";
+
 
 export const Route = createFileRoute("/blog/$slug")({
-  loader: ({ params }): Noticia => {
-    const noticia = getNoticia(params.slug);
-    if (!noticia) throw notFound();
-    return noticia;
-  },
+  // El artículo puede venir del contenido estático o de la base de datos
+  // (publicado desde el gestor); en ese segundo caso lo resuelve el componente.
+  loader: ({ params }): Noticia | null => getNoticia(params.slug) ?? null,
+
   head: ({ params, loaderData: noticia }) => {
     if (!noticia) {
       return {
@@ -77,8 +77,17 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function NoticiaDetailPage() {
   const { t } = useTranslation();
-  const noticia: Noticia = Route.useLoaderData();
-  const relacionadas = noticiasRelacionadas(noticia);
+  const { slug } = Route.useParams();
+  const estatica = Route.useLoaderData();
+  const todas = useNoticias();
+  const noticia: Noticia | null = todas.find((n) => n.slug === slug) ?? estatica;
+
+  if (!noticia) return <NoticiaNotFound />;
+
+  const relacionadas = todas
+    .filter((n) => n.slug !== noticia.slug && n.categoria === noticia.categoria)
+    .slice(0, 3);
+
 
   return (
     <SiteLayout>
