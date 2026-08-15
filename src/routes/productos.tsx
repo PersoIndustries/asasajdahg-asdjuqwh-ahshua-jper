@@ -700,9 +700,10 @@ function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: (
   );
 }
 const estadoEstilos: Record<Actividad, { clase: string; fondo: string; etiqueta: string }> = {
-  S: { clase: "bg-accent/20 text-accent-foreground border-accent/40", fondo: "bg-accent/25", etiqueta: "Siembra" },
-  T: { clase: "bg-primary/20 text-primary border-primary/40", fondo: "bg-primary/25", etiqueta: "Trasplante" },
-  C: { clase: "bg-secondary text-foreground border-border", fondo: "bg-tierra/25", etiqueta: "Cosecha" },
+  S: { clase: "bg-sage/30 text-primary border-sage/50", fondo: "bg-sage/45", etiqueta: "Siembra" },
+  T: { clase: "bg-primary/15 text-primary border-primary/40", fondo: "bg-primary/25", etiqueta: "Trasplante" },
+  C: { clase: "bg-tierra/20 text-foreground border-tierra/40", fondo: "bg-tierra/35", etiqueta: "Cosecha" },
+
 };
 
 /** Media casilla de mes (1ª o 2ª quincena). */
