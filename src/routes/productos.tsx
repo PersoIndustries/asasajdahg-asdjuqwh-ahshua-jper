@@ -577,7 +577,7 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <button onClick={onClose} className="absolute top-4 right-4 p-2 rounded-full bg-background/80 hover:bg-muted z-10"><X className="h-4 w-4" /></button>
+        <button onClick={onClose} aria-label="Cerrar ficha" className="absolute top-4 right-4 p-2 rounded-full bg-background/80 hover:bg-muted z-10"><X className="h-4 w-4" /></button>
         <img src={planta.imagen} alt={planta.nombre} className="w-full h-64 object-cover" />
         <div className="p-8">
           <p className="text-xs uppercase tracking-widest text-accent capitalize">{planta.categoria}</p>
@@ -687,7 +687,7 @@ function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: (
             <a href={guia.pdfUrl} download className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors">
               <Download className="h-4 w-4" /> Descargar PDF
             </a>
-            <button onClick={onClose} className="p-2 rounded-full bg-secondary hover:bg-muted">
+            <button onClick={onClose} aria-label="Cerrar" className="p-2 rounded-full bg-secondary hover:bg-muted">
               <X className="h-4 w-4" />
             </button>
           </div>

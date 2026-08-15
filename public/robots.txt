@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://asasajdahg-asdjuqwh-ahshua-jper.lovable.app/sitemap.xml

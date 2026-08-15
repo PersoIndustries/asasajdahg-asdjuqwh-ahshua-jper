@@ -96,14 +96,14 @@ function ContactoPage() {
             <div className="flex gap-4">
               <MapPin className="h-6 w-6 text-primary shrink-0 mt-1" />
               <div>
-                <h3 className="font-serif text-xl">Vivero Jardiper</h3>
+                <h2 className="font-serif text-xl">Vivero Jardiper</h2>
                 <p className="text-muted-foreground mt-1">Carretera A-131 km 1,800<br />22520 Fraga, Huesca</p>
               </div>
             </div>
             <div className="flex gap-4">
               <Phone className="h-6 w-6 text-primary shrink-0 mt-1" />
               <div>
-                <h3 className="font-serif text-xl">Teléfonos</h3>
+                <h2 className="font-serif text-xl">Teléfonos</h2>
                 <p className="text-muted-foreground mt-1">
                   <a href="tel:974472158" className="hover:text-primary">974 47 21 58</a><br />
                   <a href="tel:611321620" className="hover:text-primary">611 32 16 20</a>
@@ -113,7 +113,7 @@ function ContactoPage() {
             <div className="flex gap-4">
               <Clock className="h-6 w-6 text-primary shrink-0 mt-1" />
               <div>
-                <h3 className="font-serif text-xl">Horario</h3>
+                <h2 className="font-serif text-xl">Horario</h2>
                 <div className="text-muted-foreground mt-1 space-y-3 text-sm">
                   <div>
                     <p className="text-xs uppercase tracking-widest text-accent mb-1">Horario de verano</p>
@@ -127,7 +127,7 @@ function ContactoPage() {
             <div className="flex gap-4">
               <Mail className="h-6 w-6 text-primary shrink-0 mt-1" />
               <div>
-                <h3 className="font-serif text-xl">Email</h3>
+                <h2 className="font-serif text-xl">Email</h2>
                 <p className="text-muted-foreground mt-1">
                   <a href="mailto:correo@jardiper.es" className="hover:text-primary">correo@jardiper.es</a>
                 </p>

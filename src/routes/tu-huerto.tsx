@@ -267,7 +267,7 @@ function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: (
             <a href={guia.pdfUrl} download className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors">
               <Download className="h-4 w-4" /> Descargar PDF
             </a>
-            <button onClick={onClose} className="p-2 rounded-full bg-secondary hover:bg-muted"><X className="h-4 w-4" /></button>
+            <button onClick={onClose} aria-label="Cerrar guía" className="p-2 rounded-full bg-secondary hover:bg-muted"><X className="h-4 w-4" /></button>
           </div>
         </div>
         <div className="flex-1 bg-muted min-h-[60vh]">
