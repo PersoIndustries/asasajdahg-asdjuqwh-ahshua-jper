@@ -650,18 +650,37 @@ function PanelCalendario() {
 
   const importar = useMutation({
     mutationFn: async () => {
-      const filas = calendarioEstatico.map((f, i) => ({
-        planta_nombre: f.planta,
-        ciclo: f.ciclo ?? null,
-        meses: f.meses.map((m) => m ?? ""),
-        orden: i,
-      }));
+      // Solo añade las filas base que NO existan ya (misma planta + mismo ciclo),
+      // para no recrear las que el gestor haya borrado o duplicar las editadas.
+      const { data: existentes, error: errLeer } = await supabase
+        .from("planta_calendario")
+        .select("planta_nombre, ciclo");
+      if (errLeer) throw errLeer;
+      const clave = (n: string, c?: string | null) => `${n.trim().toLowerCase()}|${(c ?? "").trim().toLowerCase()}`;
+      const yaHay = new Set((existentes ?? []).map((f) => clave(f.planta_nombre, f.ciclo)));
+      const filas = calendarioEstatico
+        .map((f, i) => ({
+          planta_nombre: f.planta,
+          ciclo: f.ciclo ?? null,
+          meses: f.meses.map((m) => m ?? ""),
+          orden: i,
+        }))
+        .filter((f) => !yaHay.has(clave(f.planta_nombre, f.ciclo)));
+      if (filas.length === 0) return 0;
       const { error } = await supabase.from("planta_calendario").insert(filas);
       if (error) throw error;
+      return filas.length;
     },
-    onSuccess: () => { setAviso("Calendario actual importado."); refrescar(); },
+    onSuccess: (n) =>
+      setAviso(
+        n === 0
+          ? "No se ha añadido nada: todas las filas base ya existen en la base de datos."
+          : `Importadas ${n} filas nuevas del calendario base (las existentes no se han tocado).`,
+      ),
     onError: (e: Error) => setAviso(e.message),
+    onSettled: () => refrescar(),
   });
+
 
   return (
     <div className="space-y-6">
@@ -671,11 +690,18 @@ function PanelCalendario() {
         aviso={aviso}
         acciones={
           <>
-            <button type="button" onClick={() => importar.mutate()} disabled={importar.isPending}
+            <button
+              type="button"
+              title="Vuelve a añadir las filas del calendario base que no estén en la base de datos. Las que hayas borrado a propósito volverán a aparecer."
+              onClick={() => {
+                if (window.confirm("Se añadirán las filas del calendario base que falten (incluidas las que borraste antes). Las filas existentes no se modifican. ¿Continuar?")) importar.mutate();
+              }}
+              disabled={importar.isPending}
               className={`${btn} border border-border hover:text-primary`}>
               {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Importar calendario actual
+              Restaurar calendario base
             </button>
+
             <button type="button" onClick={() => setNuevo({ planta: "", ciclo: "" })}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva fila
@@ -703,7 +729,7 @@ function PanelCalendario() {
       )}
 
       {isLoading ? <Cargando /> : (data ?? []).length === 0 ? (
-        <Vacio texto="Todavía no hay filas de calendario. Importa el calendario actual para poder editarlo." />
+        <Vacio texto="Todavía no hay filas de calendario. Usa «Restaurar calendario base» o crea filas nuevas." />
       ) : (
         <>
           <div className="rounded-2xl border border-border bg-card p-4 flex flex-wrap items-end gap-3">
