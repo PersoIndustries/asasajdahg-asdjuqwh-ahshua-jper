@@ -1070,6 +1070,7 @@ function PanelBlog() {
             key: n.id,
             contenido: (
               <>
+                <Miniatura src={n.imagen_url} alt={n.titulo} />
                 <div className="min-w-0">
                   <p className="font-medium truncate">{n.titulo}</p>
                   <p className="text-xs text-muted-foreground">{n.fecha} · {n.categoria}</p>
