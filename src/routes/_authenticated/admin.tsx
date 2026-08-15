@@ -332,9 +332,12 @@ function PanelCalendario() {
     void queryClient.invalidateQueries({ queryKey: ["cms"] });
   };
 
-  const guardarCelda = useMutation({
-    mutationFn: async ({ id, meses: m }: { id: string; meses: string[] }) => {
-      const { error } = await supabase.from("planta_calendario").update({ meses: m }).eq("id", id);
+  const guardarFila = useMutation({
+    mutationFn: async (f: { id: string; planta_nombre: string; ciclo: string | null; orden: number; meses: string[] }) => {
+      const { error } = await supabase
+        .from("planta_calendario")
+        .update({ planta_nombre: f.planta_nombre, ciclo: f.ciclo, orden: f.orden, meses: f.meses })
+        .eq("id", f.id);
       if (error) throw error;
     },
     onSuccess: refrescar,
