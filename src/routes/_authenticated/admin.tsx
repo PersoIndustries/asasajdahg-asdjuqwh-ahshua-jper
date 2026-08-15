@@ -777,11 +777,13 @@ function PanelCalendario() {
 type FilaCalEdit = { planta_nombre: string; ciclo: string | null; orden: number; meses: string[] };
 
 function FilaCalendarioEditable({
-  fila, onGuardar, onBorrar,
+  fila, onGuardar, onBorrar, onDuplicar,
 }: {
   fila: { id: string; planta_nombre: string; ciclo: string | null; orden: number; meses: string[] };
   onGuardar: (valores: FilaCalEdit) => void;
   onBorrar: () => void;
+  onDuplicar: () => void;
+
 }) {
   const inicial = useMemo<FilaCalEdit>(
     () => ({
