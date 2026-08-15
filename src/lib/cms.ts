@@ -134,20 +134,13 @@ export function plantToRow(p: Plant, extra?: { orden?: number; esTemporada?: boo
   };
 }
 
-function fusionar<T extends { id: string }>(estaticos: T[], deBd: T[]): T[] {
-  const mapa = new Map(estaticos.map((x) => [x.id, x]));
-  for (const item of deBd) mapa.set(item.id, item);
-  const orden = [...estaticos.map((x) => x.id), ...deBd.map((x) => x.id)];
-  const vistos = new Set<string>();
-  const out: T[] = [];
-  for (const id of orden) {
-    if (vistos.has(id)) continue;
-    vistos.add(id);
-    const item = mapa.get(id);
-    if (item) out.push(item);
-  }
-  return out;
+/** La base de datos manda. El contenido estático solo se usa como semilla
+ *  mientras la tabla esté vacía; en cuanto hay filas, lo que se ve en la web es
+ *  exactamente lo que hay en la base de datos (si borras algo, desaparece). */
+function contenido<T extends { id: string }>(estaticos: T[], deBd: T[] | undefined): T[] {
+  return deBd && deBd.length > 0 ? deBd : estaticos;
 }
+
 
 async function fetchPlantas(): Promise<Plant[]> {
   const { data, error } = await supabase
@@ -169,7 +162,7 @@ export function usePlantas(): Plant[] {
     staleTime: 60_000,
     retry: false,
   });
-  return fusionar(plantasDestacadas, data ?? []);
+  return contenido(plantasDestacadas, data);
 }
 
 export function useTemporada(): Plant[] {
@@ -282,6 +275,7 @@ export function useNoticias(): Noticia[] {
     staleTime: 60_000,
     retry: false,
   });
-  const todas = fusionar(noticiasEstaticas, data ?? []);
-  return todas.slice().sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const todas = contenido(noticiasEstaticas, data);
+  return todas.slice().sort((a: Noticia, b: Noticia) => b.fecha.localeCompare(a.fecha));
+
 }
