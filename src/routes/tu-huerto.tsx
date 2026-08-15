@@ -3,7 +3,8 @@ import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
-import { calendario, meses, guias, laboresEnQuincena, quincenaLabel } from "@/lib/mock-data";
+import { calendario, meses, guias, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
+import { estadoEstilos, LeyendaCalendario, BotonImprimirCalendario } from "@/components/site/CalendarioCultivo";
 
 export const Route = createFileRoute("/tu-huerto")({
   head: () => ({
@@ -34,16 +35,7 @@ export const Route = createFileRoute("/tu-huerto")({
   component: TuHuertoPage,
 });
 
-const colorByActividad: Record<string, string> = {
-  S: "bg-sage/60 text-primary",
-  T: "bg-accent/70 text-white",
-  C: "bg-primary text-primary-foreground",
-  SC: "bg-tierra text-white",
-  "": "bg-muted/40",
-};
-
 const zonas = [{ id: "bajo-cinca", nombre: "Bajo Cinca, Lleida y alrededores" }];
-const SEMANAS_POR_MES = 4;
 
 
 type Tab = "calendario" | "guias" | "libro";
@@ -54,6 +46,11 @@ function TuHuertoPage() {
   const [zona, setZona] = useState(zonas[0].id);
   const [tagGuia, setTagGuia] = useState<string>("todas");
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
+
+  const filas = useMemo(
+    () => calendario.filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase())),
+    [filtro],
+  );
 
   const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);
   const guiasFiltradas = useMemo(
@@ -106,59 +103,54 @@ function TuHuertoPage() {
             </div>
             <input placeholder="Filtrar planta…" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-full md:w-64 rounded-full border border-input bg-background px-5 py-2.5 text-sm" />
           </div>
-          <div className="flex flex-wrap gap-4 mb-6 text-xs">
-            {[["S", "Siembra"], ["T", "Trasplante"], ["C", "Cosecha"]].map(([k, l]) => (
-              <span key={k} className="flex items-center gap-2">
-                <span className={`inline-block h-4 w-4 rounded ${colorByActividad[k]}`} /> {l}
-              </span>
-            ))}
+          <div className="mb-4">
+            <LeyendaCalendario />
           </div>
           <div className="overflow-x-auto rounded-2xl border border-border">
-            <table className="min-w-[1100px] text-sm">
+            <table className="min-w-[1100px] text-sm border-collapse">
               <thead>
                 <tr className="bg-secondary/60">
                   <th rowSpan={2} className="text-left py-3 px-4 font-medium sticky left-0 bg-secondary/60 z-10">Planta</th>
                   {meses.map((m) => (
-                    <th key={m} colSpan={SEMANAS_POR_MES} className="py-2 px-2 font-medium text-xs border-l border-border/40">{m}</th>
+                    <th key={m} colSpan={2} className="py-2 px-2 font-medium text-xs border-l border-border/60">{m}</th>
                   ))}
                 </tr>
                 <tr className="bg-secondary/40">
                   {meses.flatMap((m) =>
-                    Array.from({ length: SEMANAS_POR_MES }, (_, i) => (
-                      <th key={`${m}-${i}`} className={`py-1.5 px-1 font-normal text-[10px] text-muted-foreground ${i === 0 ? "border-l border-border/40" : ""}`}>S{i + 1}</th>
+                    ([1, 2] as const).map((q) => (
+                      <th key={`${m}-${q}`} className={`py-1.5 px-1 font-normal text-[10px] text-muted-foreground border-b border-border ${q === 1 ? "border-l border-border/60" : ""}`}>
+                        {q === 1 ? "1ª" : "2ª"}
+                      </th>
                     )),
                   )}
                 </tr>
               </thead>
               <tbody>
-                {calendario
-                  .filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase()))
-                  .map((row, ri) => (
-                    <tr key={`${row.planta}-${row.ciclo ?? ri}`} className="border-t border-border hover:bg-secondary/30 transition-colors">
-                      <td className="py-3 px-4 font-medium sticky left-0 bg-background z-10 whitespace-nowrap">
-                        {row.planta}
-                        {row.ciclo && <span className="block text-[10px] font-normal text-muted-foreground">{row.ciclo}</span>}
-                      </td>
-                      {row.meses.flatMap((estado, mi) =>
-                        Array.from({ length: SEMANAS_POR_MES }, (_, wi) => {
-                          // semanas 1-2 → 1ª quincena, semanas 3-4 → 2ª quincena
-                          const labores = laboresEnQuincena(estado, wi < 2 ? 1 : 2);
-                          const codigo = labores.map((l) => l.actividad).join("");
-                          return (
-                            <td key={`${mi}-${wi}`} className={`p-0.5 ${wi === 0 ? "border-l border-border/40" : ""}`}>
-                              <div
-                                title={labores.length ? `${meses[mi]} · ${quincenaLabel[wi < 2 ? 1 : 2]}` : undefined}
-                                className={`h-7 rounded-sm flex items-center justify-center text-[9px] font-semibold ${colorByActividad[codigo] ?? colorByActividad[labores[0]?.actividad ?? ""]}`}
-                              >
-                                {codigo}
-                              </div>
-                            </td>
-                          );
-                        }),
-                      )}
-                    </tr>
-                  ))}
-
+                {filas.map((row, ri) => (
+                  <tr key={`${row.planta}-${row.ciclo ?? ri}`} className="border-t border-border hover:bg-secondary/30 transition-colors">
+                    <td className="py-3 px-4 font-medium sticky left-0 bg-background z-10 whitespace-nowrap">
+                      {row.planta}
+                      {row.ciclo && <span className="block text-[10px] font-normal text-muted-foreground">{row.ciclo}</span>}
+                    </td>
+                    {row.meses.flatMap((estado, mi) =>
+                      ([1, 2] as const).map((q) => {
+                        const labores = laboresEnQuincena(estado, q);
+                        const principal = labores[0];
+                        return (
+                          <td
+                            key={`${mi}-${q}`}
+                            title={`${meses[mi]} · ${quincenaLabel[q]}${labores.length ? `: ${labores.map((l) => actividadesLabel[l.actividad]).join(" y ")}` : ""}`}
+                            className={`p-0 bg-muted/30 ${q === 1 ? "border-l border-border/60" : ""}`}
+                          >
+                            <div className={`h-7 flex items-center justify-center text-[9px] font-semibold leading-none ${principal ? `${estadoEstilos[principal.actividad].fondo} text-foreground/80` : ""}`}>
+                              {labores.map((l) => l.actividad).join("")}
+                            </div>
+                          </td>
+                        );
+                      }),
+                    )}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -170,7 +162,8 @@ function TuHuertoPage() {
             >
               <Download className="h-4 w-4" /> Descarga de Fechas aconsejables de Trasplante
             </a>
-            <p className="text-xs text-muted-foreground">Vista semanal (4 semanas por mes) orientativa para la zona seleccionada.</p>
+            <BotonImprimirCalendario titulo="Calendario hortícola · Bajo Cinca" filas={filas} className="self-start" />
+            <p className="text-xs text-muted-foreground">Cada mes se divide en 1ª y 2ª quincena. Datos orientativos para la zona seleccionada.</p>
           </div>
         </Section>
       )}
