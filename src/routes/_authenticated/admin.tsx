@@ -729,7 +729,7 @@ function PanelCalendario() {
       )}
 
       {isLoading ? <Cargando /> : (data ?? []).length === 0 ? (
-        <Vacio texto="Todavía no hay filas de calendario. Importa el calendario actual para poder editarlo." />
+        <Vacio texto="Todavía no hay filas de calendario. Usa «Restaurar calendario base» o crea filas nuevas." />
       ) : (
         <>
           <div className="rounded-2xl border border-border bg-card p-4 flex flex-wrap items-end gap-3">
