@@ -14,6 +14,7 @@ import {
 import { usePlantas, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
+import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
@@ -614,39 +615,7 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           <div className="mt-6 grid gap-6">
             <CalendarioCultivo planta={planta} />
 
-            {plagasFicha.length > 0 && (
-              <div>
-                <h4 className="font-serif text-lg mb-2">Plagas, enfermedades y cómo combatirlas</h4>
-                <ul className="space-y-4">
-                  {plagasFicha.map((e) => (
-                    <li key={e.nombre} className="text-sm flex gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setZoom({ src: e.imagen, alt: e.nombre })}
-                        className="shrink-0 rounded-lg overflow-hidden border border-border hover:opacity-90 transition"
-                        aria-label={`Ampliar imagen de ${e.nombre}`}
-                      >
-                        <img src={e.imagen} alt={e.nombre} loading="lazy" className="h-16 w-16 object-cover" />
-                      </button>
-                      <div className="space-y-1">
-                        <p className="font-medium text-foreground">{e.nombre}</p>
-                        {e.descripcion && <p className="text-muted-foreground">{e.descripcion}</p>}
-                        {e.prevencion && (
-                          <p className="text-muted-foreground">
-                            <span className="text-foreground/80 font-medium">Prevención:</span> {e.prevencion}
-                          </p>
-                        )}
-                        {e.combate && (
-                          <p className="text-muted-foreground">
-                            <span className="text-foreground/80 font-medium">Cómo combatirla:</span> {e.combate}
-                          </p>
-                        )}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <SeccionPlagas plagas={plagasFicha} onZoom={setZoom} />
 
             {planta.comoSeCome && (
               <div>

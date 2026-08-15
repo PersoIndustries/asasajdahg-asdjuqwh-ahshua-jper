@@ -2,14 +2,16 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Loader2, Plus, Save, Trash2, Download, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert,
+  Loader2, Plus, Save, Trash2, Download, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X,
 } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, cerrarSesion } from "@/hooks/use-auth";
 import { plantasDestacadas, calendario as calendarioEstatico, meses } from "@/lib/mock-data";
 import { noticias as noticiasEstaticas } from "@/lib/noticias";
-import { plantToRow, noticiaToRow, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { plantToRow, noticiaToRow, IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
+import { SeccionPlagas } from "@/components/site/SeccionPlagas";
+import type { PlagaFicha } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -169,10 +171,82 @@ const plantaVacia: PlantaForm = {
   calendario_key: "", es_temporada: false, orden: 0, publicado: true,
 };
 
+/** Vista previa de la sección de plagas tal y como se verá en la ficha pública. */
+function PreviaPlagas({
+  nombre,
+  slug,
+  plagaIds,
+  onClose,
+}: {
+  nombre: string;
+  slug: string;
+  plagaIds: string[];
+  onClose: () => void;
+}) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "previa-plagas", plagaIds],
+    queryFn: async () => {
+      if (plagaIds.length === 0) return [] as PlagaRow[];
+      const { data, error } = await supabase
+        .from("plagas")
+        .select("id, slug, nombre, descripcion, prevencion, combate, imagen_url, plaga_imagenes(imagen_url, tag, orden)")
+        .in("id", plagaIds);
+      if (error) throw error;
+      return data as unknown as PlagaRow[];
+    },
+  });
+
+  const claves = [slug, nombre].filter(Boolean);
+  const orden = new Map(plagaIds.map((id, i) => [id, i]));
+  const fichas: PlagaFicha[] = (data ?? [])
+    .slice()
+    .sort((a, b) => (orden.get(a.id) ?? 0) - (orden.get(b.id) ?? 0))
+    .map((p) => ({
+      id: p.id,
+      nombre: p.nombre,
+      descripcion: p.descripcion?.trim() || undefined,
+      prevencion: p.prevencion?.trim() || undefined,
+      combate: p.combate?.trim() || undefined,
+      imagen: imagenDePlaga(p, claves),
+    }));
+
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
+      <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl p-6" onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs uppercase tracking-widest text-accent">Vista previa de la ficha</p>
+            <h3 className="font-serif text-2xl mt-1">{nombre || "Planta sin nombre"}</h3>
+            <p className="text-xs text-muted-foreground mt-1">
+              Así se verá el bloque de plagas y enfermedades en el catálogo público. Las imágenes se eligen por etiqueta ({claves.join(", ") || "sin claves"}).
+            </p>
+          </div>
+          <button type="button" onClick={onClose} className="p-2 rounded-full hover:bg-muted" aria-label="Cerrar vista previa">
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+
+        <div className="mt-6 border-t border-border pt-6">
+          {isLoading ? (
+            <Cargando />
+          ) : fichas.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Esta planta no tiene plagas asociadas: la sección no aparecerá en su ficha del catálogo.
+            </p>
+          ) : (
+            <SeccionPlagas plagas={fichas} />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function PanelPlantas() {
   const queryClient = useQueryClient();
   const [edit, setEdit] = useState<PlantaForm | null>(null);
   const [plagasSel, setPlagasSel] = useState<string[]>([]);
+  const [previa, setPrevia] = useState<{ nombre: string; slug: string; ids: string[] } | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
 
   const { data: plagas } = useQuery({
@@ -355,6 +429,10 @@ function PanelPlantas() {
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
             </button>
+            <button type="button" onClick={() => setPrevia({ nombre: edit.nombre, slug: edit.slug, ids: plagasSel })}
+              className={`${btn} border border-border hover:text-primary`}>
+              <Eye className="h-4 w-4" aria-hidden /> Vista previa de plagas
+            </button>
             <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
           </div>
         </form>
@@ -377,6 +455,15 @@ function PanelPlantas() {
                 <div className="flex items-center gap-1 shrink-0">
                   <IconoEstado activo={p.es_temporada} on={Star} off={StarOff} titulo="Producto de temporada" />
                   <IconoEstado activo={p.publicado} on={Eye} off={EyeOff} titulo="Publicada" />
+                  <button type="button" className="p-2 hover:text-primary" title="Vista previa de plagas"
+                    aria-label={`Vista previa de plagas de ${p.nombre}`}
+                    onClick={() => setPrevia({
+                      nombre: p.nombre,
+                      slug: p.slug,
+                      ids: (vinculos ?? []).filter((v) => v.planta_id === p.id).sort((a, b) => a.orden - b.orden).map((v) => v.plaga_id),
+                    })}>
+                    <Eye className="h-4 w-4" aria-hidden />
+                  </button>
                   <button type="button" className="p-2 hover:text-primary" onClick={() => {
                     setPlagasSel(
                       (vinculos ?? [])
@@ -403,6 +490,10 @@ function PanelPlantas() {
             ),
           }))}
         />
+      )}
+
+      {previa && (
+        <PreviaPlagas nombre={previa.nombre} slug={previa.slug} plagaIds={previa.ids} onClose={() => setPrevia(null)} />
       )}
     </div>
   );
