@@ -1,27 +1,28 @@
-Add a guides section ("Guías / Blog") to the remixed Jardiper site. Start with a static, SEO-friendly implementation that does not require a backend.
+# Dar permisos de admin a carlosperaltasorolla@gmail.com
 
-What will be built
-- `/guias` — a listing page showing all growing guides and articles, with search/filter by category (huerto, jardín, frutales, sustratos).
-- `/guias/$slug` — a detail page for each guide with rich text content, published date, reading time, related guides, and SEO metadata.
-- Guide data stored as static JSON/markdown modules under `src/content/guides/` so content is version-controlled and fast.
-- Navigation updated to include a "Guías" link in the top nav and footer.
-- i18n entries added for the new pages in `es`, `en`, `fr`, and `de`.
-- SEO: unique `head()` metadata, canonical links, and JSON-LD `Article` schema on detail pages.
+Tu cuenta ya existe y está verificada, pero solo tiene el rol `user`. Hay dos formas de arreglarlo.
 
-Initial content (5 guides)
-1. Calendario de siembra de primavera
-2. Cómo plantar tomates en el Bajo Cinca
-3. Poda básica de frutales de hoja caduca
-4. Elegir sustrato: tierra universal vs. específica
-5. Compostaje doméstico paso a paso
+## Opción A: lo hago yo (recomendado)
 
-Technical notes
-- Uses existing TanStack Start file-based routing.
-- No database or auth required; content is static.
-- Reuses existing `SiteLayout`, `Section`, and design tokens.
-- Keeps the existing PDF asset guides available and links them from the new section.
+Aplico una migración que añade el rol `admin` a tu usuario (id `53794c66-f6f7-4d9c-9044-3dd3c870e5ec`) en la tabla `user_roles`, sin tocar el resto de cuentas. Tras aprobarla, cierras sesión y vuelves a entrar y ya verás `/admin`.
 
-Verification
-- Build passes and routes resolve correctly.
-- Listing and detail pages render in the preview.
-- Navigation links work in desktop and mobile menus.
+## Opción B: lo haces tú desde Supabase
+
+1. Entra en el panel de Supabase, sección SQL Editor.
+2. Ejecuta:
+
+```sql
+insert into public.user_roles (user_id, role)
+select id, 'admin' from auth.users
+where email = 'carlosperaltasorolla@gmail.com'
+on conflict (user_id, role) do nothing;
+```
+
+3. Cierra sesión en la web y vuelve a entrar.
+
+Nota: `user_roles` no permite escritura desde la app (por seguridad), así que los roles se asignan siempre desde SQL o por un admin ya existente.
+
+## Detalle técnico
+
+- La tabla `public.user_roles` tiene RLS con solo lectura para el propio usuario; INSERT/UPDATE/DELETE están denegados a `authenticated`, por eso se hace vía migración/SQL editor.
+- El hook `useAuth` consulta `user_roles` al iniciar sesión, por lo que hace falta re-login (o refrescar) para que el rol se aplique.
