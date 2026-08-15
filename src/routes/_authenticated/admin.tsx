@@ -377,15 +377,22 @@ function PanelPlantas() {
     <div className="space-y-6">
       <Barra
         titulo="Plantas del catálogo"
-        descripcion="Lo que guardes aquí sustituye al contenido por defecto de la web (mismo identificador) y las plantas nuevas se añaden al catálogo."
+        descripcion="La base de datos manda: la web muestra exactamente estas plantas. Si borras una aquí, desaparece del catálogo público."
         aviso={aviso}
         acciones={
           <>
-            <button type="button" onClick={() => importar.mutate()} disabled={importar.isPending}
+            <button
+              type="button"
+              title="Añade las plantas del catálogo base que no estén en la base de datos (incluidas las que borraste)."
+              onClick={() => {
+                if (window.confirm("Se añadirán las plantas del catálogo base que falten, incluidas las que hayas borrado antes. Las existentes no se modifican. ¿Continuar?")) importar.mutate();
+              }}
+              disabled={importar.isPending}
               className={`${btn} border border-border hover:text-primary`}>
               {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Importar catálogo actual
+              Restaurar catálogo base
             </button>
+
             <button type="button" onClick={() => { setPlagasSel([]); setEdit({ ...plantaVacia }); }}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva planta
