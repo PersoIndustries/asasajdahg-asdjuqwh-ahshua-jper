@@ -103,7 +103,7 @@ function ProductosPage() {
     if (tab === "hortícolas") return todasLasPlantas.filter((p) => p.categoria === "hortícola");
     if (tab === "ornamentales")
       return todasLasPlantas.filter((p) =>
-        ["ornamental", "árbol", "arbusto", "flor", "aromática"].includes(p.categoria),
+        ["ornamental", "árbol", "arbusto", "flor", "aromática", "frutal"].includes(p.categoria),
       );
     return [] as Plant[];
   }, [tab, todasLasPlantas]);
