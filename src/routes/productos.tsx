@@ -7,10 +7,12 @@ import {
 } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
-  guias, plantasHortícolas, plantasOrnamentales, meses,
+  guias, meses,
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad,
 } from "@/lib/mock-data";
+import { usePlantas } from "@/lib/cms";
+
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
 
 
@@ -94,7 +96,17 @@ function ProductosPage() {
   const [mesHasta, setMesHasta] = useState(MES_ACTUAL);
   const [actividades, setActividades] = useState<Actividad[]>([]);
 
-  const listaBase = tab === "hortícolas" ? plantasHortícolas : tab === "ornamentales" ? plantasOrnamentales : [];
+  // Catálogo: contenido estático + lo publicado desde el gestor de la web.
+  const todasLasPlantas = usePlantas();
+  const listaBase = useMemo(() => {
+    if (tab === "hortícolas") return todasLasPlantas.filter((p) => p.categoria === "hortícola");
+    if (tab === "ornamentales")
+      return todasLasPlantas.filter((p) =>
+        ["ornamental", "árbol", "arbusto", "flor", "aromática"].includes(p.categoria),
+      );
+    return [] as Plant[];
+  }, [tab, todasLasPlantas]);
+
   const categoriasDisponibles = useMemo(
     () => Array.from(new Set(listaBase.map((p) => p.categoria))),
     [listaBase],
