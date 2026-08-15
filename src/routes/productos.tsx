@@ -9,9 +9,9 @@ import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   guias, meses,
   actividadesEnRango, actividadesLabel,
-  type Plant, type Actividad,
+  type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas } from "@/lib/cms";
+import { usePlantas, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
 
