@@ -769,7 +769,7 @@ function CalendarioCultivo({ planta }: { planta: Plant }) {
       <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1">
         {usados.map((l) => (
           <span key={l.codigo} className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
-            <span className={`inline-block h-3 w-3 rounded border ${estadoEstilos[l.codigo].clase}`} />
+            <span className={`inline-block h-3 w-3 rounded-sm border border-border/60 ${estadoEstilos[l.codigo].fondo}`} />
             {l.codigo} · {l.etiqueta}
           </span>
         ))}
