@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   plantasDestacadas,
-  calendario as calendarioEstatico,
   type Plant,
   type PlagaFicha,
   type FilaCalendario,
@@ -275,7 +274,7 @@ export function useNoticias(): Noticia[] {
     staleTime: 60_000,
     retry: false,
   });
-  const todas = contenido(noticiasEstaticas, data);
+  const todas = contenido(data);
   return todas.slice().sort((a: Noticia, b: Noticia) => b.fecha.localeCompare(a.fecha));
 
 }
