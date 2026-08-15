@@ -154,7 +154,6 @@ function TuHuertoPage() {
               </tbody>
             </table>
           </div>
-          <LeyendaCalendario />
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
             <a
               href={pdfFechas.url}
