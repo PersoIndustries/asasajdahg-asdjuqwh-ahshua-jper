@@ -917,6 +917,18 @@ function PanelBlog() {
 
 /* ───────────────────────── UI compartida ───────────────────────── */
 
+/** Bloque de documentación desplegable que explica cómo se usa cada panel. */
+function Ayuda({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+  return (
+    <details className="rounded-2xl border border-border bg-secondary/30 p-5 text-sm" open>
+      <summary className="cursor-pointer font-medium">{titulo}</summary>
+      <ul className="mt-3 space-y-2 list-disc pl-5 text-muted-foreground leading-relaxed [&_code]:rounded [&_code]:bg-background [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-xs [&_b]:text-foreground">
+        {children}
+      </ul>
+    </details>
+  );
+}
+
 function Barra({ titulo, descripcion, acciones, aviso }: {
   titulo: string; descripcion: string; acciones: React.ReactNode; aviso: string | null;
 }) {
