@@ -189,11 +189,12 @@ function PanelPlantas() {
 
   const refrescar = () => {
     void queryClient.invalidateQueries({ queryKey: ["admin", "plantas"] });
+    void queryClient.invalidateQueries({ queryKey: ["admin", "planta_plagas"] });
     void queryClient.invalidateQueries({ queryKey: ["cms"] });
   };
 
   const guardar = useMutation({
-    mutationFn: async (f: PlantaForm) => {
+    mutationFn: async ({ f, seleccion }: { f: PlantaForm; seleccion: string[] }) => {
       const fila = {
         slug: f.slug, nombre: f.nombre,
         nombre_cientifico: f.nombre_cientifico || null,
@@ -209,14 +210,26 @@ function PanelPlantas() {
         orden: Number(f.orden) || 0,
         publicado: f.publicado,
       };
-      const { error } = f.id
-        ? await supabase.from("plantas").update(fila).eq("id", f.id)
-        : await supabase.from("plantas").insert(fila);
+      const { data: guardada, error } = f.id
+        ? await supabase.from("plantas").update(fila).eq("id", f.id).select("id").single()
+        : await supabase.from("plantas").insert(fila).select("id").single();
       if (error) throw error;
+
+      // Se rehacen los vínculos con el catálogo de plagas.
+      const plantaId = guardada.id;
+      const { error: errBorrar } = await supabase.from("planta_plagas").delete().eq("planta_id", plantaId);
+      if (errBorrar) throw errBorrar;
+      if (seleccion.length > 0) {
+        const { error: errInsertar } = await supabase
+          .from("planta_plagas")
+          .insert(seleccion.map((plaga_id, i) => ({ planta_id: plantaId, plaga_id, orden: i })));
+        if (errInsertar) throw errInsertar;
+      }
     },
-    onSuccess: () => { setEdit(null); refrescar(); },
+    onSuccess: () => { setEdit(null); setPlagasSel([]); refrescar(); },
     onError: (e: Error) => setAviso(e.message),
   });
+
 
   const borrar = useMutation({
     mutationFn: async (id: string) => {
