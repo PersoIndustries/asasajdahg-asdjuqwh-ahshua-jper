@@ -169,7 +169,7 @@ export function imprimirCalendario(titulo: string, filas: FilaCal[]) {
   .leyenda { margin-top: 10px; font-family: Arial, sans-serif; font-size: 9px; color: #4a5a51; }
   .leyenda span { margin-right: 14px; }
   .leyenda i { display: inline-block; width: 14px; height: 9px; border: 1px solid #b9b9b9; margin-right: 4px; vertical-align: -1px; }
-  .pie { margin-top: 8px; font-family: Arial, sans-serif; font-size: 8px; color: #8a9views; }
+  .pie { margin-top: 8px; font-family: Arial, sans-serif; font-size: 8px; color: #8a978d; }
 </style></head><body>
   <h1>${titulo}</h1>
   <p class="sub">Jardiper · Bajo Cinca (Fraga, Huesca) — cada mes se divide en 1ª y 2ª quincena</p>
