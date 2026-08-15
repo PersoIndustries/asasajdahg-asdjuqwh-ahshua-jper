@@ -35,16 +35,7 @@ export const Route = createFileRoute("/tu-huerto")({
   component: TuHuertoPage,
 });
 
-const colorByActividad: Record<string, string> = {
-  S: "bg-sage/60 text-primary",
-  T: "bg-accent/70 text-white",
-  C: "bg-primary text-primary-foreground",
-  SC: "bg-tierra text-white",
-  "": "bg-muted/40",
-};
-
 const zonas = [{ id: "bajo-cinca", nombre: "Bajo Cinca, Lleida y alrededores" }];
-const SEMANAS_POR_MES = 4;
 
 
 type Tab = "calendario" | "guias" | "libro";
@@ -112,12 +103,8 @@ function TuHuertoPage() {
             </div>
             <input placeholder="Filtrar planta…" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-full md:w-64 rounded-full border border-input bg-background px-5 py-2.5 text-sm" />
           </div>
-          <div className="flex flex-wrap gap-4 mb-6 text-xs">
-            {[["S", "Siembra"], ["T", "Trasplante"], ["C", "Cosecha"]].map(([k, l]) => (
-              <span key={k} className="flex items-center gap-2">
-                <span className={`inline-block h-4 w-4 rounded ${colorByActividad[k]}`} /> {l}
-              </span>
-            ))}
+          <div className="mb-4">
+            <LeyendaCalendario />
           </div>
           <div className="overflow-x-auto rounded-2xl border border-border">
             <table className="min-w-[1100px] text-sm border-collapse">
