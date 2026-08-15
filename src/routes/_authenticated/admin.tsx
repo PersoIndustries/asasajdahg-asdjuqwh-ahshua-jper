@@ -135,7 +135,7 @@ function AdminPage() {
 
           {tab === "plantas" && <PanelPlantas />}
           {tab === "calendario" && <PanelCalendario />}
-          {tab === "enfermedades" && <PanelEnfermedades />}
+          {tab === "enfermedades" && <PanelPlagas />}
           {tab === "blog" && <PanelBlog />}
         </div>
       </section>
