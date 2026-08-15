@@ -633,6 +633,21 @@ function PanelCalendario() {
   });
 
 
+  const filas = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return (data ?? []).filter((f) => {
+      const texto = `${f.planta_nombre} ${f.ciclo ?? ""}`.toLowerCase();
+      if (q && !texto.includes(q)) return false;
+      if (cicloF === "con" && !f.ciclo) return false;
+      if (cicloF === "sin" && f.ciclo) return false;
+      const celdas = (f.meses ?? []).join("").toUpperCase();
+      if (laboresF === "vacias" && celdas.trim()) return false;
+      if (["S", "T", "C"].includes(laboresF) && !celdas.includes(laboresF)) return false;
+      return true;
+    });
+  }, [data, busqueda, cicloF, laboresF]);
+
+
   const importar = useMutation({
     mutationFn: async () => {
       const filas = calendarioEstatico.map((f, i) => ({
