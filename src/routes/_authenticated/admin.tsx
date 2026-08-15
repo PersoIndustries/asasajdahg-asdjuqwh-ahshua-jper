@@ -564,6 +564,10 @@ function PanelCalendario() {
   const queryClient = useQueryClient();
   const [aviso, setAviso] = useState<string | null>(null);
   const [nuevo, setNuevo] = useState<{ planta: string; ciclo: string } | null>(null);
+  const [busqueda, setBusqueda] = useState("");
+  const [cicloF, setCicloF] = useState<"todos" | "con" | "sin">("todos");
+  const [laboresF, setLaboresF] = useState<"todas" | "S" | "T" | "C" | "vacias">("todas");
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "calendario"],
