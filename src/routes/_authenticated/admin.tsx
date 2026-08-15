@@ -336,15 +336,28 @@ function PanelPlantas() {
 
   const importar = useMutation({
     mutationFn: async () => {
-      const filas = plantasDestacadas.map((p, i) =>
-        plantToRow(p, { orden: i, esTemporada: i < 6 }),
-      );
-      const { error } = await supabase.from("plantas").upsert(filas, { onConflict: "slug" });
+      // Solo inserta las plantas base que falten: no pisa lo que hayas editado.
+      const { data: existentes, error: errLeer } = await supabase.from("plantas").select("slug");
+      if (errLeer) throw errLeer;
+      const yaHay = new Set((existentes ?? []).map((p) => p.slug));
+      const filas = plantasDestacadas
+        .map((p, i) => plantToRow(p, { orden: i, esTemporada: i < 6 }))
+        .filter((f) => !yaHay.has(f.slug));
+      if (filas.length === 0) return 0;
+      const { error } = await supabase.from("plantas").insert(filas);
       if (error) throw error;
+      return filas.length;
     },
-    onSuccess: () => { setAviso("Catálogo actual importado a la base de datos."); refrescar(); },
+    onSuccess: (n) =>
+      setAviso(
+        n === 0
+          ? "No se ha añadido nada: todas las plantas base ya están en la base de datos."
+          : `Añadidas ${n} plantas del catálogo base (las existentes no se han tocado).`,
+      ),
     onError: (e: Error) => setAviso(e.message),
+    onSettled: refrescar,
   });
+
 
   const filtradas = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
