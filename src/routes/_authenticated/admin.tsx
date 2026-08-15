@@ -156,7 +156,27 @@ const plantaVacia: PlantaForm = {
 function PanelPlantas() {
   const queryClient = useQueryClient();
   const [edit, setEdit] = useState<PlantaForm | null>(null);
+  const [plagasSel, setPlagasSel] = useState<string[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
+
+  const { data: plagas } = useQuery({
+    queryKey: ["admin", "plagas", "lista"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("plagas").select("id, nombre, imagen_url").order("nombre");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: vinculos } = useQuery({
+    queryKey: ["admin", "planta_plagas"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("planta_plagas").select("planta_id, plaga_id, orden");
+      if (error) throw error;
+      return data;
+    },
+  });
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "plantas"],
