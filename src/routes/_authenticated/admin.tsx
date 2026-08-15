@@ -650,18 +650,37 @@ function PanelCalendario() {
 
   const importar = useMutation({
     mutationFn: async () => {
-      const filas = calendarioEstatico.map((f, i) => ({
-        planta_nombre: f.planta,
-        ciclo: f.ciclo ?? null,
-        meses: f.meses.map((m) => m ?? ""),
-        orden: i,
-      }));
+      // Solo añade las filas base que NO existan ya (misma planta + mismo ciclo),
+      // para no recrear las que el gestor haya borrado o duplicar las editadas.
+      const { data: existentes, error: errLeer } = await supabase
+        .from("planta_calendario")
+        .select("planta_nombre, ciclo");
+      if (errLeer) throw errLeer;
+      const clave = (n: string, c?: string | null) => `${n.trim().toLowerCase()}|${(c ?? "").trim().toLowerCase()}`;
+      const yaHay = new Set((existentes ?? []).map((f) => clave(f.planta_nombre, f.ciclo)));
+      const filas = calendarioEstatico
+        .map((f, i) => ({
+          planta_nombre: f.planta,
+          ciclo: f.ciclo ?? null,
+          meses: f.meses.map((m) => m ?? ""),
+          orden: i,
+        }))
+        .filter((f) => !yaHay.has(clave(f.planta_nombre, f.ciclo)));
+      if (filas.length === 0) return 0;
       const { error } = await supabase.from("planta_calendario").insert(filas);
       if (error) throw error;
+      return filas.length;
     },
-    onSuccess: () => { setAviso("Calendario actual importado."); refrescar(); },
+    onSuccess: (n) =>
+      setAviso(
+        n === 0
+          ? "No se ha añadido nada: todas las filas base ya existen en la base de datos."
+          : `Importadas ${n} filas nuevas del calendario base (las existentes no se han tocado).`,
+      ),
     onError: (e: Error) => setAviso(e.message),
+    onSettled: () => refrescar(),
   });
+
 
   return (
     <div className="space-y-6">
