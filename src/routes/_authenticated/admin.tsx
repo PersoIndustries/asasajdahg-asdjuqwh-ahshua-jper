@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Loader2, Plus, Save, Trash2, Download, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X, Search,
+  Loader2, Plus, Save, Trash2, Download, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X, Search, Copy,
 } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -564,6 +564,10 @@ function PanelCalendario() {
   const queryClient = useQueryClient();
   const [aviso, setAviso] = useState<string | null>(null);
   const [nuevo, setNuevo] = useState<{ planta: string; ciclo: string } | null>(null);
+  const [busqueda, setBusqueda] = useState("");
+  const [cicloF, setCicloF] = useState<"todos" | "con" | "sin">("todos");
+  const [laboresF, setLaboresF] = useState<"todas" | "S" | "T" | "C" | "vacias">("todas");
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "calendario"],
@@ -613,6 +617,36 @@ function PanelCalendario() {
     onSuccess: refrescar,
     onError: (e: Error) => setAviso(e.message),
   });
+
+  const duplicar = useMutation({
+    mutationFn: async (f: { planta_nombre: string; ciclo: string | null; orden: number; meses: string[] }) => {
+      const { error } = await supabase.from("planta_calendario").insert({
+        planta_nombre: f.planta_nombre,
+        ciclo: f.ciclo ? `${f.ciclo} (copia)` : "Ciclo nuevo",
+        meses: f.meses,
+        orden: f.orden,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => { setAviso("Fila duplicada."); refrescar(); },
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+
+  const filas = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return (data ?? []).filter((f) => {
+      const texto = `${f.planta_nombre} ${f.ciclo ?? ""}`.toLowerCase();
+      if (q && !texto.includes(q)) return false;
+      if (cicloF === "con" && !f.ciclo) return false;
+      if (cicloF === "sin" && f.ciclo) return false;
+      const celdas = (f.meses ?? []).join("").toUpperCase();
+      if (laboresF === "vacias" && celdas.trim()) return false;
+      if (["S", "T", "C"].includes(laboresF) && !celdas.includes(laboresF)) return false;
+      return true;
+    });
+  }, [data, busqueda, cicloF, laboresF]);
+
 
   const importar = useMutation({
     mutationFn: async () => {
@@ -671,29 +705,71 @@ function PanelCalendario() {
       {isLoading ? <Cargando /> : (data ?? []).length === 0 ? (
         <Vacio texto="Todavía no hay filas de calendario. Importa el calendario actual para poder editarlo." />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="min-w-[1100px] w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left p-3 font-medium">Planta y ciclo</th>
-                <th className="p-2 font-medium text-xs text-muted-foreground">Orden</th>
-                {meses.map((m) => <th key={m} className="p-2 font-medium text-xs text-muted-foreground">{m}</th>)}
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {(data ?? []).map((fila) => (
-                <FilaCalendarioEditable
-                  key={fila.id}
-                  fila={fila}
-                  onGuardar={(v) => guardarFila.mutate({ id: fila.id, ...v })}
-                  onBorrar={() => { if (confirm(`¿Borrar la fila de ${fila.planta_nombre}?`)) borrar.mutate(fila.id); }}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <div className="rounded-2xl border border-border bg-card p-4 flex flex-wrap items-end gap-3">
+            <Campo label="Buscar planta o ciclo">
+              <input className={input} value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Tomate, primavera…" />
+            </Campo>
+            <Campo label="Ciclo">
+              <select className={input} value={cicloF} onChange={(e) => setCicloF(e.target.value as typeof cicloF)}>
+                <option value="todos">Todos</option>
+                <option value="con">Con ciclo</option>
+                <option value="sin">Sin ciclo</option>
+              </select>
+            </Campo>
+            <Campo label="Labores">
+              <select className={input} value={laboresF} onChange={(e) => setLaboresF(e.target.value as typeof laboresF)}>
+                <option value="todas">Todas</option>
+                <option value="S">Con siembra (S)</option>
+                <option value="T">Con trasplante (T)</option>
+                <option value="C">Con cosecha (C)</option>
+                <option value="vacias">Sin labores</option>
+              </select>
+            </Campo>
+            <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
+              <span>{filas.length} de {(data ?? []).length} filas</span>
+              {(busqueda || cicloF !== "todos" || laboresF !== "todas") && (
+                <button type="button" onClick={() => { setBusqueda(""); setCicloF("todos"); setLaboresF("todas"); }}
+                  className="underline hover:text-primary">Limpiar</button>
+              )}
+            </div>
+          </div>
+
+          {filas.length === 0 ? (
+            <Vacio texto="Ninguna fila coincide con la búsqueda." />
+          ) : (
+            <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+              <table className="min-w-[1100px] w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="p-2 font-medium text-xs text-muted-foreground">Orden</th>
+                    <th className="text-left p-3 font-medium">Planta y ciclo</th>
+                    {meses.map((m) => <th key={m} className="p-2 font-medium text-xs text-muted-foreground">{m}</th>)}
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {filas.map((fila) => (
+                    <FilaCalendarioEditable
+                      key={fila.id}
+                      fila={fila}
+                      onGuardar={(v) => guardarFila.mutate({ id: fila.id, ...v })}
+                      onDuplicar={() => duplicar.mutate({
+                        planta_nombre: fila.planta_nombre,
+                        ciclo: fila.ciclo,
+                        orden: fila.orden,
+                        meses: Array.from({ length: 12 }, (_, i) => fila.meses[i] ?? ""),
+                      })}
+                      onBorrar={() => { if (confirm(`¿Borrar la fila de ${fila.planta_nombre}?`)) borrar.mutate(fila.id); }}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
+
     </div>
   );
 }
@@ -701,11 +777,13 @@ function PanelCalendario() {
 type FilaCalEdit = { planta_nombre: string; ciclo: string | null; orden: number; meses: string[] };
 
 function FilaCalendarioEditable({
-  fila, onGuardar, onBorrar,
+  fila, onGuardar, onBorrar, onDuplicar,
 }: {
   fila: { id: string; planta_nombre: string; ciclo: string | null; orden: number; meses: string[] };
   onGuardar: (valores: FilaCalEdit) => void;
   onBorrar: () => void;
+  onDuplicar: () => void;
+
 }) {
   const inicial = useMemo<FilaCalEdit>(
     () => ({
@@ -721,6 +799,15 @@ function FilaCalendarioEditable({
 
   return (
     <tr className="border-b border-border/60 last:border-0 align-top">
+      <td className="p-1">
+        <input
+          type="number"
+          aria-label="Orden"
+          className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-center text-xs"
+          value={v.orden}
+          onChange={(e) => setV({ ...v, orden: Number(e.target.value) })}
+        />
+      </td>
       <td className="p-2 space-y-1">
         <input
           aria-label="Nombre de la planta"
@@ -736,15 +823,7 @@ function FilaCalendarioEditable({
           onChange={(e) => setV({ ...v, ciclo: e.target.value })}
         />
       </td>
-      <td className="p-1">
-        <input
-          type="number"
-          aria-label="Orden"
-          className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-center text-xs"
-          value={v.orden}
-          onChange={(e) => setV({ ...v, orden: Number(e.target.value) })}
-        />
-      </td>
+
       {v.meses.map((celda, i) => (
         <td key={i} className="p-1">
           <input
@@ -760,7 +839,11 @@ function FilaCalendarioEditable({
           className="p-2 text-primary disabled:opacity-30" aria-label="Guardar fila">
           <Save className="h-4 w-4" aria-hidden />
         </button>
+        <button type="button" onClick={onDuplicar} className="p-2 text-muted-foreground hover:text-primary" aria-label="Duplicar fila" title="Duplicar ciclo">
+          <Copy className="h-4 w-4" aria-hidden />
+        </button>
         <button type="button" onClick={onBorrar} className="p-2 text-muted-foreground hover:text-destructive" aria-label="Borrar fila">
+
           <Trash2 className="h-4 w-4" aria-hidden />
         </button>
       </td>
