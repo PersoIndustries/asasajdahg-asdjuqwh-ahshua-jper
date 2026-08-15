@@ -618,6 +618,21 @@ function PanelCalendario() {
     onError: (e: Error) => setAviso(e.message),
   });
 
+  const duplicar = useMutation({
+    mutationFn: async (f: { planta_nombre: string; ciclo: string | null; orden: number; meses: string[] }) => {
+      const { error } = await supabase.from("planta_calendario").insert({
+        planta_nombre: f.planta_nombre,
+        ciclo: f.ciclo ? `${f.ciclo} (copia)` : "Ciclo nuevo",
+        meses: f.meses,
+        orden: f.orden,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => { setAviso("Fila duplicada."); refrescar(); },
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+
   const importar = useMutation({
     mutationFn: async () => {
       const filas = calendarioEstatico.map((f, i) => ({
