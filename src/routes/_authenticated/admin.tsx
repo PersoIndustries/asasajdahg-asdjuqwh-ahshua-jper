@@ -285,7 +285,7 @@ function PanelPlantas() {
 
       {edit && (
         <form
-          onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
+          onSubmit={(e) => { e.preventDefault(); guardar.mutate({ f: edit, seleccion: plagasSel }); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4"
         >
           <Campo label="Identificador (slug)"><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
