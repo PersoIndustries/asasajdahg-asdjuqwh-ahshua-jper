@@ -24,6 +24,7 @@ export type PlagaFicha = {
   descripcion?: string;
   prevencion?: string;
   combate?: string;
+  otrosDatos?: string;
   imagen: string;
 };
 
