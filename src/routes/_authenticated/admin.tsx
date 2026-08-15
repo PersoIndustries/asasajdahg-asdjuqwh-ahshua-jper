@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "plantas" | "calendario" | "blog";
+type Tab = "plantas" | "calendario" | "enfermedades" | "blog";
 
 const input =
   "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -102,6 +102,7 @@ function AdminPage() {
               [
                 ["plantas", "Catálogo y temporada"],
                 ["calendario", "Calendario de cultivo"],
+                ["enfermedades", "Plagas y enfermedades"],
                 ["blog", "Noticias del blog"],
               ] as [Tab, string][]
             ).map(([k, label]) => (
@@ -118,6 +119,7 @@ function AdminPage() {
 
           {tab === "plantas" && <PanelPlantas />}
           {tab === "calendario" && <PanelCalendario />}
+          {tab === "enfermedades" && <PanelEnfermedades />}
           {tab === "blog" && <PanelBlog />}
         </div>
       </section>
