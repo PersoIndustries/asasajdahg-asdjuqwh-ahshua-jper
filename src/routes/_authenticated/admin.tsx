@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Loader2, Plus, Save, Trash2, Download, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X,
+  Loader2, Plus, Save, Trash2, Download, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X, Search,
 } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
@@ -248,6 +248,10 @@ function PanelPlantas() {
   const [plagasSel, setPlagasSel] = useState<string[]>([]);
   const [previa, setPrevia] = useState<{ nombre: string; slug: string; ids: string[] } | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
+  const [busqueda, setBusqueda] = useState("");
+  const [categoriaF, setCategoriaF] = useState("todas");
+  const [temporadaF, setTemporadaF] = useState("todas");
+  const [publicadoF, setPublicadoF] = useState("todas");
 
   const { data: plagas } = useQuery({
     queryKey: ["admin", "plagas", "lista"],
