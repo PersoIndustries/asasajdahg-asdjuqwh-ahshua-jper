@@ -28,6 +28,8 @@ export type Plant = {
   /** Uso culinario: cómo se come / cómo se prepara. */
   comoSeCome?: string;
   enfermedades: { nombre: string; combate: string; imagen?: string }[];
+  /** Plagas del catálogo global asociadas a esta planta (base de datos). */
+  plagas?: PlagaFicha[];
   temporada: string;
   guiaId?: string;
   /** Clave opcional para enlazar con una fila del calendario de cultivo.
