@@ -377,15 +377,23 @@ function PanelPlantas() {
                 <div className="flex items-center gap-1 shrink-0">
                   <IconoEstado activo={p.es_temporada} on={Star} off={StarOff} titulo="Producto de temporada" />
                   <IconoEstado activo={p.publicado} on={Eye} off={EyeOff} titulo="Publicada" />
-                  <button type="button" className="p-2 hover:text-primary" onClick={() => setEdit({
-                    id: p.id, slug: p.slug, nombre: p.nombre,
-                    nombre_cientifico: p.nombre_cientifico ?? "", categoria: p.categoria,
-                    imagen_url: p.imagen_url ?? "", descripcion: p.descripcion,
-                    curiosidades: p.curiosidades ?? "", como_se_come: p.como_se_come ?? "",
-                    temporada: p.temporada ?? "", guia_id: p.guia_id ?? "",
-                    calendario_key: p.calendario_key ?? "", es_temporada: p.es_temporada,
-                    orden: p.orden, publicado: p.publicado,
-                  })}>Editar</button>
+                  <button type="button" className="p-2 hover:text-primary" onClick={() => {
+                    setPlagasSel(
+                      (vinculos ?? [])
+                        .filter((v) => v.planta_id === p.id)
+                        .sort((a, b) => a.orden - b.orden)
+                        .map((v) => v.plaga_id),
+                    );
+                    setEdit({
+                      id: p.id, slug: p.slug, nombre: p.nombre,
+                      nombre_cientifico: p.nombre_cientifico ?? "", categoria: p.categoria,
+                      imagen_url: p.imagen_url ?? "", descripcion: p.descripcion,
+                      curiosidades: p.curiosidades ?? "", como_se_come: p.como_se_come ?? "",
+                      temporada: p.temporada ?? "", guia_id: p.guia_id ?? "",
+                      calendario_key: p.calendario_key ?? "", es_temporada: p.es_temporada,
+                      orden: p.orden, publicado: p.publicado,
+                    });
+                  }}>Editar</button>
                   <button type="button" className="p-2 text-muted-foreground hover:text-destructive" aria-label={`Borrar ${p.nombre}`}
                     onClick={() => { if (confirm(`¿Borrar ${p.nombre}?`)) borrar.mutate(p.id); }}>
                     <Trash2 className="h-4 w-4" aria-hidden />
