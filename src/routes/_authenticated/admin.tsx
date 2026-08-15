@@ -7,9 +7,8 @@ import {
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, cerrarSesion } from "@/hooks/use-auth";
-import { plantasDestacadas, calendario as calendarioEstatico, meses } from "@/lib/mock-data";
-import { noticias as noticiasEstaticas } from "@/lib/noticias";
-import { plantToRow, noticiaToRow, IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
+import { plantasDestacadas, meses } from "@/lib/mock-data";
+import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 import type { PlagaFicha } from "@/lib/mock-data";
 
