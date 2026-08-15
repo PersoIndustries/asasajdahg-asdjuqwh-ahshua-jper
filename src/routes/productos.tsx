@@ -586,6 +586,16 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const guiaVinculada = planta.guiaId ? guias.find((g) => g.id === planta.guiaId) : undefined;
   const [guiaOpen, setGuiaOpen] = useState<(typeof guias)[number] | null>(null);
+  // Plagas del catálogo global; si la planta aún no tiene ninguna asociada se
+  // usan sus enfermedades de la ficha estática.
+  const plagasFicha: PlagaFicha[] =
+    planta.plagas && planta.plagas.length > 0
+      ? planta.plagas
+      : planta.enfermedades.map((e) => ({
+          nombre: e.nombre,
+          combate: e.combate,
+          imagen: e.imagen || IMAGEN_PLAGA_POR_DEFECTO,
+        }));
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
