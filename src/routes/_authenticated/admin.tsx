@@ -240,6 +240,16 @@ function PanelPlantas() {
         }
       />
 
+      <Ayuda titulo="Guía de campos del catálogo">
+        <li><b>Identificador (slug)</b>: nombre corto en minúsculas y con guiones. Identifica la planta y sustituye a la ficha estática con el mismo identificador.</li>
+        <li><b>Clave de calendario</b>: nombre con el que se busca su calendario en la pestaña «Calendario de cultivo». Déjalo vacío para usar el nombre de la planta (ej.: «Tomate cherry» encuentra la fila «Tomate»).</li>
+        <li><b>Guía asociada (id)</b>: identificador de una guía de cultivo de «Tu Huerto» (ej. <code>cultivar-calçots</code>). No confundir con el slug del blog.</li>
+        <li><b>Producto de temporada</b>: aparece en el bloque de temporada de la portada. <b>Publicada</b>: visible en el catálogo público.</li>
+        <li>Las plagas y enfermedades de cada planta se gestionan en su propia pestaña.</li>
+      </Ayuda>
+
+
+
       {edit && (
         <form
           onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
