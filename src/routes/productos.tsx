@@ -8,10 +8,10 @@ import {
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   guias, plantasHortícolas, plantasOrnamentales, meses,
-  getCalendariosPlanta, leyendaCalendario, actividadesEnRango, actividadesLabel,
-  parseCelda, laboresEnQuincena, quincenaLabel,
+  actividadesEnRango, actividadesLabel,
   type Plant, type Actividad,
 } from "@/lib/mock-data";
+import { CalendarioCultivo } from "@/components/site/CalendarioCultivo";
 
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
