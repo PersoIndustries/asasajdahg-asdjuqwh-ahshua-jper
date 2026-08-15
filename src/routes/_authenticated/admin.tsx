@@ -281,7 +281,7 @@ function PanelPlantas() {
               {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
               Importar catálogo actual
             </button>
-            <button type="button" onClick={() => setEdit({ ...plantaVacia })}
+            <button type="button" onClick={() => { setPlagasSel([]); setEdit({ ...plantaVacia }); }}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva planta
             </button>
