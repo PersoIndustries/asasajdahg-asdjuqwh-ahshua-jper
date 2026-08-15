@@ -9,9 +9,9 @@ import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
   guias, meses,
   actividadesEnRango, actividadesLabel,
-  type Plant, type Actividad,
+  type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas } from "@/lib/cms";
+import { usePlantas, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
 
@@ -586,6 +586,16 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const guiaVinculada = planta.guiaId ? guias.find((g) => g.id === planta.guiaId) : undefined;
   const [guiaOpen, setGuiaOpen] = useState<(typeof guias)[number] | null>(null);
+  // Plagas del catálogo global; si la planta aún no tiene ninguna asociada se
+  // usan sus enfermedades de la ficha estática.
+  const plagasFicha: PlagaFicha[] =
+    planta.plagas && planta.plagas.length > 0
+      ? planta.plagas
+      : planta.enfermedades.map((e) => ({
+          nombre: e.nombre,
+          combate: e.combate,
+          imagen: e.imagen || IMAGEN_PLAGA_POR_DEFECTO,
+        }));
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
       <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
@@ -604,29 +614,39 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           <div className="mt-6 grid gap-6">
             <CalendarioCultivo planta={planta} />
 
-            <div>
-              <h4 className="font-serif text-lg mb-2">Enfermedades y cómo combatirlas</h4>
-              <ul className="space-y-4">
-                {planta.enfermedades.map((e) => (
-                  <li key={e.nombre} className="text-sm flex gap-3">
-                    {e.imagen && (
+            {plagasFicha.length > 0 && (
+              <div>
+                <h4 className="font-serif text-lg mb-2">Plagas, enfermedades y cómo combatirlas</h4>
+                <ul className="space-y-4">
+                  {plagasFicha.map((e) => (
+                    <li key={e.nombre} className="text-sm flex gap-3">
                       <button
                         type="button"
-                        onClick={() => setZoom({ src: e.imagen!, alt: e.nombre })}
+                        onClick={() => setZoom({ src: e.imagen, alt: e.nombre })}
                         className="shrink-0 rounded-lg overflow-hidden border border-border hover:opacity-90 transition"
                         aria-label={`Ampliar imagen de ${e.nombre}`}
                       >
                         <img src={e.imagen} alt={e.nombre} loading="lazy" className="h-16 w-16 object-cover" />
                       </button>
-                    )}
-                    <div>
-                      <span className="font-medium text-foreground">{e.nombre}:</span>{" "}
-                      <span className="text-muted-foreground">{e.combate}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                      <div className="space-y-1">
+                        <p className="font-medium text-foreground">{e.nombre}</p>
+                        {e.descripcion && <p className="text-muted-foreground">{e.descripcion}</p>}
+                        {e.prevencion && (
+                          <p className="text-muted-foreground">
+                            <span className="text-foreground/80 font-medium">Prevención:</span> {e.prevencion}
+                          </p>
+                        )}
+                        {e.combate && (
+                          <p className="text-muted-foreground">
+                            <span className="text-foreground/80 font-medium">Cómo combatirla:</span> {e.combate}
+                          </p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {planta.comoSeCome && (
               <div>

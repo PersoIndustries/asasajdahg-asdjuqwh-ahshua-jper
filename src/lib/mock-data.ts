@@ -17,6 +17,16 @@ import imgRomero from "@/assets/aromaticas/romero.jpg";
 import imgAlbahaca from "@/assets/aromaticas/albahaca.jpg";
 import imgTomilloMenta from "@/assets/aromaticas/tomillo-menta.jpg";
 
+/** Ficha de una plaga o enfermedad ya resuelta para mostrar en el catálogo. */
+export type PlagaFicha = {
+  id?: string;
+  nombre: string;
+  descripcion?: string;
+  prevencion?: string;
+  combate?: string;
+  imagen: string;
+};
+
 export type Plant = {
   id: string;
   nombre: string;
@@ -28,6 +38,8 @@ export type Plant = {
   /** Uso culinario: cómo se come / cómo se prepara. */
   comoSeCome?: string;
   enfermedades: { nombre: string; combate: string; imagen?: string }[];
+  /** Plagas del catálogo global asociadas a esta planta (base de datos). */
+  plagas?: PlagaFicha[];
   temporada: string;
   guiaId?: string;
   /** Clave opcional para enlazar con una fila del calendario de cultivo.

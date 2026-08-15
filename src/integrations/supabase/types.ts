@@ -71,6 +71,77 @@ export type Database = {
         }
         Relationships: []
       }
+      plaga_imagenes: {
+        Row: {
+          created_at: string
+          id: string
+          imagen_url: string
+          orden: number
+          plaga_id: string
+          tag: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          imagen_url: string
+          orden?: number
+          plaga_id: string
+          tag?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          imagen_url?: string
+          orden?: number
+          plaga_id?: string
+          tag?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plaga_imagenes_plaga_id_fkey"
+            columns: ["plaga_id"]
+            isOneToOne: false
+            referencedRelation: "plagas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plagas: {
+        Row: {
+          combate: string
+          created_at: string
+          descripcion: string
+          id: string
+          imagen_url: string | null
+          nombre: string
+          prevencion: string
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          combate?: string
+          created_at?: string
+          descripcion?: string
+          id?: string
+          imagen_url?: string | null
+          nombre: string
+          prevencion?: string
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          combate?: string
+          created_at?: string
+          descripcion?: string
+          id?: string
+          imagen_url?: string | null
+          nombre?: string
+          prevencion?: string
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       planta_calendario: {
         Row: {
           ciclo: string | null
@@ -143,6 +214,45 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "planta_enfermedades_planta_id_fkey"
+            columns: ["planta_id"]
+            isOneToOne: false
+            referencedRelation: "plantas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      planta_plagas: {
+        Row: {
+          created_at: string
+          id: string
+          orden: number
+          plaga_id: string
+          planta_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          orden?: number
+          plaga_id: string
+          planta_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          orden?: number
+          plaga_id?: string
+          planta_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "planta_plagas_plaga_id_fkey"
+            columns: ["plaga_id"]
+            isOneToOne: false
+            referencedRelation: "plagas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "planta_plagas_planta_id_fkey"
             columns: ["planta_id"]
             isOneToOne: false
             referencedRelation: "plantas"

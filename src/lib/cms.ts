@@ -11,10 +11,27 @@ import {
   plantasDestacadas,
   calendario as calendarioEstatico,
   type Plant,
+  type PlagaFicha,
   type FilaCalendario,
 } from "@/lib/mock-data";
 import { noticias as noticiasEstaticas, type Noticia, type NoticiaSection, type CategoriaNoticia } from "@/lib/noticias";
 import placeholder from "@/assets/placeholder/under-construction-wide.jpg";
+
+/** Imagen por defecto de cualquier plaga sin foto propia. */
+export const IMAGEN_PLAGA_POR_DEFECTO = placeholder;
+
+export type PlagaImagenRow = { imagen_url: string; tag: string; orden: number };
+
+export type PlagaRow = {
+  id: string;
+  slug: string;
+  nombre: string;
+  descripcion: string;
+  prevencion: string;
+  combate: string;
+  imagen_url: string | null;
+  plaga_imagenes?: PlagaImagenRow[];
+};
 
 export type PlantaRow = {
   id: string;
@@ -33,11 +50,50 @@ export type PlantaRow = {
   orden: number;
   publicado: boolean;
   planta_enfermedades?: { nombre: string; combate: string; imagen_url: string | null; orden: number }[];
+  planta_plagas?: { orden: number; plagas: PlagaRow | null }[];
 };
 
 const imagenEstatica = (slug: string) => plantasDestacadas.find((p) => p.id === slug)?.imagen;
 
+export const normalizarTag = (t: string) =>
+  t
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+/** Elige la imagen de una plaga: primero la que tenga una etiqueta que case con
+ *  la planta, luego la imagen por defecto de la plaga y, si no hay ninguna, el
+ *  placeholder «web en construcción». */
+export function imagenDePlaga(plaga: PlagaRow, claves: string[]): string {
+  const objetivo = claves.map(normalizarTag).filter(Boolean);
+  const imagenes = (plaga.plaga_imagenes ?? []).slice().sort((a, b) => a.orden - b.orden);
+  const conTag = imagenes.find((im) => {
+    const tag = normalizarTag(im.tag ?? "");
+    if (!tag) return false;
+    return objetivo.some((c) => c === tag || c.includes(tag) || tag.includes(c));
+  });
+  return conTag?.imagen_url || plaga.imagen_url || imagenes[0]?.imagen_url || IMAGEN_PLAGA_POR_DEFECTO;
+}
+
 export function rowToPlant(row: PlantaRow): Plant {
+  const claves = [row.slug, row.nombre];
+  const plagas: PlagaFicha[] = (row.planta_plagas ?? [])
+    .filter((v) => v.plagas)
+    .sort((a, b) => a.orden - b.orden)
+    .map((v) => {
+      const p = v.plagas as PlagaRow;
+      return {
+        id: p.id,
+        nombre: p.nombre,
+        descripcion: p.descripcion?.trim() || undefined,
+        prevencion: p.prevencion?.trim() || undefined,
+        combate: p.combate?.trim() || undefined,
+        imagen: imagenDePlaga(p, claves),
+      };
+    });
+
   return {
     id: row.slug,
     nombre: row.nombre,
@@ -51,6 +107,7 @@ export function rowToPlant(row: PlantaRow): Plant {
       .slice()
       .sort((a, b) => a.orden - b.orden)
       .map((e) => ({ nombre: e.nombre, combate: e.combate, imagen: e.imagen_url ?? undefined })),
+    plagas,
     temporada: row.temporada ?? "",
     guiaId: row.guia_id ?? undefined,
     calendarioKey: row.calendario_key ?? undefined,
@@ -95,7 +152,9 @@ function fusionar<T extends { id: string }>(estaticos: T[], deBd: T[]): T[] {
 async function fetchPlantas(): Promise<Plant[]> {
   const { data, error } = await supabase
     .from("plantas")
-    .select("*, planta_enfermedades(nombre, combate, imagen_url, orden)")
+    .select(
+      "*, planta_enfermedades(nombre, combate, imagen_url, orden), planta_plagas(orden, plagas(id, slug, nombre, descripcion, prevencion, combate, imagen_url, plaga_imagenes(imagen_url, tag, orden)))",
+    )
     .eq("publicado", true)
     .order("orden", { ascending: true });
   if (error) throw error;

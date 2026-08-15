@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth, cerrarSesion } from "@/hooks/use-auth";
 import { plantasDestacadas, calendario as calendarioEstatico, meses } from "@/lib/mock-data";
 import { noticias as noticiasEstaticas } from "@/lib/noticias";
-import { plantToRow, noticiaToRow } from "@/lib/cms";
+import { plantToRow, noticiaToRow, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
@@ -32,6 +32,22 @@ const input =
   "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
 const btn =
   "inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-colors";
+
+/** Miniatura con respaldo: si no hay imagen (o falla) se muestra el placeholder. */
+function Miniatura({ src, alt, slug }: { src?: string | null; alt: string; slug?: string }) {
+  const estatica = slug ? plantasDestacadas.find((p) => p.id === slug)?.imagen : undefined;
+  const [url, setUrl] = useState(src || estatica || IMAGEN_PLAGA_POR_DEFECTO);
+  return (
+    <img
+      src={url}
+      alt={alt}
+      loading="lazy"
+      onError={() => setUrl(IMAGEN_PLAGA_POR_DEFECTO)}
+      className="h-10 w-10 rounded-lg object-cover border border-border shrink-0"
+    />
+  );
+}
+
 
 function AdminPage() {
   const { isAdmin, loading, user } = useAuth();
@@ -119,7 +135,7 @@ function AdminPage() {
 
           {tab === "plantas" && <PanelPlantas />}
           {tab === "calendario" && <PanelCalendario />}
-          {tab === "enfermedades" && <PanelEnfermedades />}
+          {tab === "enfermedades" && <PanelPlagas />}
           {tab === "blog" && <PanelBlog />}
         </div>
       </section>
@@ -156,7 +172,27 @@ const plantaVacia: PlantaForm = {
 function PanelPlantas() {
   const queryClient = useQueryClient();
   const [edit, setEdit] = useState<PlantaForm | null>(null);
+  const [plagasSel, setPlagasSel] = useState<string[]>([]);
   const [aviso, setAviso] = useState<string | null>(null);
+
+  const { data: plagas } = useQuery({
+    queryKey: ["admin", "plagas", "lista"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("plagas").select("id, nombre, imagen_url").order("nombre");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data: vinculos } = useQuery({
+    queryKey: ["admin", "planta_plagas"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("planta_plagas").select("planta_id, plaga_id, orden");
+      if (error) throw error;
+      return data;
+    },
+  });
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "plantas"],
@@ -169,11 +205,12 @@ function PanelPlantas() {
 
   const refrescar = () => {
     void queryClient.invalidateQueries({ queryKey: ["admin", "plantas"] });
+    void queryClient.invalidateQueries({ queryKey: ["admin", "planta_plagas"] });
     void queryClient.invalidateQueries({ queryKey: ["cms"] });
   };
 
   const guardar = useMutation({
-    mutationFn: async (f: PlantaForm) => {
+    mutationFn: async ({ f, seleccion }: { f: PlantaForm; seleccion: string[] }) => {
       const fila = {
         slug: f.slug, nombre: f.nombre,
         nombre_cientifico: f.nombre_cientifico || null,
@@ -189,14 +226,26 @@ function PanelPlantas() {
         orden: Number(f.orden) || 0,
         publicado: f.publicado,
       };
-      const { error } = f.id
-        ? await supabase.from("plantas").update(fila).eq("id", f.id)
-        : await supabase.from("plantas").insert(fila);
+      const { data: guardada, error } = f.id
+        ? await supabase.from("plantas").update(fila).eq("id", f.id).select("id").single()
+        : await supabase.from("plantas").insert(fila).select("id").single();
       if (error) throw error;
+
+      // Se rehacen los vínculos con el catálogo de plagas.
+      const plantaId = guardada.id;
+      const { error: errBorrar } = await supabase.from("planta_plagas").delete().eq("planta_id", plantaId);
+      if (errBorrar) throw errBorrar;
+      if (seleccion.length > 0) {
+        const { error: errInsertar } = await supabase
+          .from("planta_plagas")
+          .insert(seleccion.map((plaga_id, i) => ({ planta_id: plantaId, plaga_id, orden: i })));
+        if (errInsertar) throw errInsertar;
+      }
     },
-    onSuccess: () => { setEdit(null); refrescar(); },
+    onSuccess: () => { setEdit(null); setPlagasSel([]); refrescar(); },
     onError: (e: Error) => setAviso(e.message),
   });
+
 
   const borrar = useMutation({
     mutationFn: async (id: string) => {
@@ -232,7 +281,7 @@ function PanelPlantas() {
               {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
               Importar catálogo actual
             </button>
-            <button type="button" onClick={() => setEdit({ ...plantaVacia })}
+            <button type="button" onClick={() => { setPlagasSel([]); setEdit({ ...plantaVacia }); }}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva planta
             </button>
@@ -252,7 +301,7 @@ function PanelPlantas() {
 
       {edit && (
         <form
-          onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
+          onSubmit={(e) => { e.preventDefault(); guardar.mutate({ f: edit, seleccion: plagasSel }); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4"
         >
           <Campo label="Identificador (slug)"><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
@@ -275,6 +324,33 @@ function PanelPlantas() {
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.es_temporada} onChange={(e) => setEdit({ ...edit, es_temporada: e.target.checked })} /> Producto de temporada</label>
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.publicado} onChange={(e) => setEdit({ ...edit, publicado: e.target.checked })} /> Publicada</label>
           </div>
+          <div className="md:col-span-2">
+            <p className="text-sm font-medium mb-1">Plagas y enfermedades asociadas</p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Marca las plagas del catálogo global que afectan a esta planta. Se crean y editan en la pestaña
+              «Plagas y enfermedades». Si no marcas ninguna, la ficha del producto no mostrará esa sección.
+            </p>
+            {(plagas ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">Aún no hay plagas creadas.</p>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {(plagas ?? []).map((pl) => (
+                  <label key={pl.id} className="flex items-center gap-2 text-sm rounded-lg border border-border p-2">
+                    <input
+                      type="checkbox"
+                      checked={plagasSel.includes(pl.id)}
+                      onChange={(e) =>
+                        setPlagasSel(e.target.checked ? [...plagasSel, pl.id] : plagasSel.filter((x) => x !== pl.id))
+                      }
+                    />
+                    <Miniatura src={pl.imagen_url} alt={pl.nombre} />
+                    <span className="truncate">{pl.nombre}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
@@ -291,22 +367,33 @@ function PanelPlantas() {
             key: p.id,
             contenido: (
               <>
+                <Miniatura src={p.imagen_url} slug={p.slug} alt={p.nombre} />
                 <div className="min-w-0">
                   <p className="font-medium truncate">{p.nombre}</p>
-                  <p className="text-xs text-muted-foreground">{p.slug} · {p.categoria}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {p.slug} · {p.categoria} · {(vinculos ?? []).filter((v) => v.planta_id === p.id).length} plagas
+                  </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
                   <IconoEstado activo={p.es_temporada} on={Star} off={StarOff} titulo="Producto de temporada" />
                   <IconoEstado activo={p.publicado} on={Eye} off={EyeOff} titulo="Publicada" />
-                  <button type="button" className="p-2 hover:text-primary" onClick={() => setEdit({
-                    id: p.id, slug: p.slug, nombre: p.nombre,
-                    nombre_cientifico: p.nombre_cientifico ?? "", categoria: p.categoria,
-                    imagen_url: p.imagen_url ?? "", descripcion: p.descripcion,
-                    curiosidades: p.curiosidades ?? "", como_se_come: p.como_se_come ?? "",
-                    temporada: p.temporada ?? "", guia_id: p.guia_id ?? "",
-                    calendario_key: p.calendario_key ?? "", es_temporada: p.es_temporada,
-                    orden: p.orden, publicado: p.publicado,
-                  })}>Editar</button>
+                  <button type="button" className="p-2 hover:text-primary" onClick={() => {
+                    setPlagasSel(
+                      (vinculos ?? [])
+                        .filter((v) => v.planta_id === p.id)
+                        .sort((a, b) => a.orden - b.orden)
+                        .map((v) => v.plaga_id),
+                    );
+                    setEdit({
+                      id: p.id, slug: p.slug, nombre: p.nombre,
+                      nombre_cientifico: p.nombre_cientifico ?? "", categoria: p.categoria,
+                      imagen_url: p.imagen_url ?? "", descripcion: p.descripcion,
+                      curiosidades: p.curiosidades ?? "", como_se_come: p.como_se_come ?? "",
+                      temporada: p.temporada ?? "", guia_id: p.guia_id ?? "",
+                      calendario_key: p.calendario_key ?? "", es_temporada: p.es_temporada,
+                      orden: p.orden, publicado: p.publicado,
+                    });
+                  }}>Editar</button>
                   <button type="button" className="p-2 text-muted-foreground hover:text-destructive" aria-label={`Borrar ${p.nombre}`}
                     onClick={() => { if (confirm(`¿Borrar ${p.nombre}?`)) borrar.mutate(p.id); }}>
                     <Trash2 className="h-4 w-4" aria-hidden />
@@ -533,22 +620,43 @@ function FilaCalendarioEditable({
 
 /* ───────────────────────── Plagas y enfermedades ───────────────────────── */
 
-type EnfermedadForm = {
+type PlagaForm = {
   id?: string;
-  planta_id: string;
+  slug: string;
   nombre: string;
+  descripcion: string;
+  prevencion: string;
   combate: string;
   imagen_url: string;
-  orden: number;
 };
 
-const enfermedadVacia: EnfermedadForm = { planta_id: "", nombre: "", combate: "", imagen_url: "", orden: 0 };
+const plagaVacia: PlagaForm = { slug: "", nombre: "", descripcion: "", prevencion: "", combate: "", imagen_url: "" };
 
-function PanelEnfermedades() {
+const aSlug = (t: string) =>
+  t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
+function PanelPlagas() {
   const queryClient = useQueryClient();
-  const [edit, setEdit] = useState<EnfermedadForm | null>(null);
+  const [edit, setEdit] = useState<PlagaForm | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [filtro, setFiltro] = useState("");
+  const [imagenesDe, setImagenesDe] = useState<{ id: string; nombre: string } | null>(null);
+  const [nuevaImagen, setNuevaImagen] = useState({ imagen_url: "", tag: "" });
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "plagas"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("plagas")
+        .select("*, plaga_imagenes(id, imagen_url, tag, orden)")
+        .order("nombre");
+      if (error) throw error;
+      return data as unknown as (PlagaForm & {
+        id: string;
+        plaga_imagenes: { id: string; imagen_url: string; tag: string; orden: number }[];
+      })[];
+    },
+  });
 
   const { data: plantas } = useQuery({
     queryKey: ["admin", "plantas", "lista"],
@@ -559,35 +667,25 @@ function PanelEnfermedades() {
     },
   });
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin", "enfermedades"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("planta_enfermedades")
-        .select("*, plantas(nombre, slug)")
-        .order("orden");
-      if (error) throw error;
-      return data as unknown as (EnfermedadForm & { id: string; plantas: { nombre: string; slug: string } | null })[];
-    },
-  });
-
   const refrescar = () => {
-    void queryClient.invalidateQueries({ queryKey: ["admin", "enfermedades"] });
+    void queryClient.invalidateQueries({ queryKey: ["admin", "plagas"] });
+    void queryClient.invalidateQueries({ queryKey: ["admin", "planta_plagas"] });
     void queryClient.invalidateQueries({ queryKey: ["cms"] });
   };
 
   const guardar = useMutation({
-    mutationFn: async (f: EnfermedadForm) => {
+    mutationFn: async (f: PlagaForm) => {
       const fila = {
-        planta_id: f.planta_id,
+        slug: f.slug || aSlug(f.nombre),
         nombre: f.nombre,
+        descripcion: f.descripcion,
+        prevencion: f.prevencion,
         combate: f.combate,
         imagen_url: f.imagen_url || null,
-        orden: Number(f.orden) || 0,
       };
       const { error } = f.id
-        ? await supabase.from("planta_enfermedades").update(fila).eq("id", f.id)
-        : await supabase.from("planta_enfermedades").insert(fila);
+        ? await supabase.from("plagas").update(fila).eq("id", f.id)
+        : await supabase.from("plagas").insert(fila);
       if (error) throw error;
     },
     onSuccess: () => { setEdit(null); refrescar(); },
@@ -596,7 +694,25 @@ function PanelEnfermedades() {
 
   const borrar = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("planta_enfermedades").delete().eq("id", id);
+      const { error } = await supabase.from("plagas").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: refrescar,
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const anadirImagen = useMutation({
+    mutationFn: async ({ plagaId, imagen_url, tag }: { plagaId: string; imagen_url: string; tag: string }) => {
+      const { error } = await supabase.from("plaga_imagenes").insert({ plaga_id: plagaId, imagen_url, tag, orden: 0 });
+      if (error) throw error;
+    },
+    onSuccess: () => { setNuevaImagen({ imagen_url: "", tag: "" }); refrescar(); },
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const borrarImagen = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("plaga_imagenes").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: refrescar,
@@ -605,35 +721,59 @@ function PanelEnfermedades() {
 
   const importar = useMutation({
     mutationFn: async () => {
-      const porSlug = new Map((plantas ?? []).map((p) => [p.slug, p.id]));
-      const filas = plantasDestacadas.flatMap((p) => {
-        const plantaId = porSlug.get(p.id);
-        if (!plantaId) return [];
-        return (p.enfermedades ?? []).map((e, i) => ({
-          planta_id: plantaId,
-          nombre: e.nombre,
-          combate: e.combate,
-          imagen_url: e.imagen?.startsWith("http") ? e.imagen : null,
-          orden: i,
-        }));
-      });
-      if (filas.length === 0) throw new Error("Importa antes el catálogo de plantas en la pestaña «Catálogo y temporada».");
-      const { error } = await supabase.from("planta_enfermedades").insert(filas);
+      // 1) Catálogo global de plagas a partir del contenido estático.
+      const unicas = new Map<string, { slug: string; nombre: string; combate: string; imagen_url: string | null }>();
+      for (const p of plantasDestacadas) {
+        for (const e of p.enfermedades ?? []) {
+          const slug = aSlug(e.nombre);
+          if (!unicas.has(slug)) {
+            unicas.set(slug, {
+              slug,
+              nombre: e.nombre,
+              combate: e.combate,
+              imagen_url: e.imagen?.startsWith("http") ? e.imagen : null,
+            });
+          }
+        }
+      }
+      if (unicas.size === 0) throw new Error("No hay plagas en el contenido actual.");
+      const { error } = await supabase.from("plagas").upsert([...unicas.values()], { onConflict: "slug" });
       if (error) throw error;
+
+      // 2) Vínculos con las plantas ya guardadas en la base de datos.
+      const { data: todas, error: errPlagas } = await supabase.from("plagas").select("id, slug");
+      if (errPlagas) throw errPlagas;
+      const porSlugPlaga = new Map((todas ?? []).map((x) => [x.slug, x.id]));
+      const porSlugPlanta = new Map((plantas ?? []).map((x) => [x.slug, x.id]));
+      const vinculos = plantasDestacadas.flatMap((p) => {
+        const plantaId = porSlugPlanta.get(p.id);
+        if (!plantaId) return [];
+        return (p.enfermedades ?? []).flatMap((e, i) => {
+          const plagaId = porSlugPlaga.get(aSlug(e.nombre));
+          return plagaId ? [{ planta_id: plantaId, plaga_id: plagaId, orden: i }] : [];
+        });
+      });
+      if (vinculos.length > 0) {
+        const { error: errV } = await supabase
+          .from("planta_plagas")
+          .upsert(vinculos, { onConflict: "planta_id,plaga_id" });
+        if (errV) throw errV;
+      }
     },
-    onSuccess: () => { setAviso("Plagas y enfermedades del contenido actual importadas."); refrescar(); },
+    onSuccess: () => { setAviso("Catálogo de plagas importado y asociado a las plantas existentes."); refrescar(); },
     onError: (e: Error) => setAviso(e.message),
   });
 
   const visibles = (data ?? []).filter((e) =>
-    filtro ? `${e.nombre} ${e.plantas?.nombre ?? ""}`.toLowerCase().includes(filtro.toLowerCase()) : true,
+    filtro ? e.nombre.toLowerCase().includes(filtro.toLowerCase()) : true,
   );
+  const plagaImagenes = imagenesDe ? (data ?? []).find((p) => p.id === imagenesDe.id)?.plaga_imagenes ?? [] : [];
 
   return (
     <div className="space-y-6">
       <Barra
         titulo="Plagas y enfermedades"
-        descripcion="Cada ficha del catálogo muestra la lista de plagas y enfermedades de esa planta con la forma de combatirlas. Aquí puedes añadir, editar o quitar fichas."
+        descripcion="Catálogo global de plagas. Cada plaga se crea una sola vez y luego se asocia a las plantas que quieras desde la pestaña «Catálogo y temporada»."
         aviso={aviso}
         acciones={
           <>
@@ -642,35 +782,32 @@ function PanelEnfermedades() {
               {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
               Importar las actuales
             </button>
-            <button type="button" onClick={() => setEdit({ ...enfermedadVacia, planta_id: plantas?.[0]?.id ?? "" })}
+            <button type="button" onClick={() => setEdit({ ...plagaVacia })}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
-              <Plus className="h-4 w-4" aria-hidden /> Nueva enfermedad
+              <Plus className="h-4 w-4" aria-hidden /> Nueva plaga
             </button>
           </>
         }
       />
 
-      <Ayuda titulo="Qué se guarda en cada ficha">
-        <li><b>Planta</b>: a qué planta del catálogo pertenece. Solo aparecen las plantas guardadas en la base de datos (pestaña «Catálogo y temporada»).</li>
-        <li><b>Nombre</b>: nombre de la plaga o enfermedad (ej. «Mildiu», «Pulgón»).</li>
-        <li><b>Cómo combatirla</b>: tratamiento y prevención recomendados; es el texto que lee el cliente en la ficha.</li>
-        <li><b>Imagen</b>: URL opcional; si la dejas vacía se usa la imagen por defecto.</li>
-        <li><b>Orden</b>: posición dentro de la lista de esa planta.</li>
+      <Ayuda titulo="Cómo funcionan las plagas">
+        <li><b>Catálogo global</b>: creas la plaga una vez (por ejemplo «Pulgón») y la reutilizas en todas las plantas que la sufran.</li>
+        <li><b>Asociar a una planta</b>: en «Catálogo y temporada», edita la planta y marca las plagas que le afectan.</li>
+        <li><b>Descripción, Prevención y Cómo combatirla</b>: si dejas un campo vacío, no se muestra en la ficha del producto.</li>
+        <li><b>Imágenes con etiqueta</b>: puedes subir varias fotos por plaga y ponerles una etiqueta (ej. «tomate», «berenjena»). En la ficha de esa planta se muestra la foto cuya etiqueta coincide.</li>
+        <li><b>Imagen por defecto</b>: si la plaga no tiene foto para esa planta se usa su imagen principal y, si tampoco existe, el placeholder «web en construcción».</li>
+        <li>Si una planta no tiene ninguna plaga asociada, la sección de enfermedades no aparece en su ficha.</li>
       </Ayuda>
 
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
-          <Campo label="Planta">
-            <select className={input} required value={edit.planta_id} onChange={(e) => setEdit({ ...edit, planta_id: e.target.value })}>
-              <option value="">— Selecciona una planta —</option>
-              {(plantas ?? []).map((p) => <option key={p.id} value={p.id}>{p.nombre}</option>)}
-            </select>
-          </Campo>
           <Campo label="Nombre de la plaga o enfermedad"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
-          <Campo label="Cómo combatirla" ancho><textarea className={input} rows={3} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
-          <Campo label="URL de imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
-          <Campo label="Orden"><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
+          <Campo label="Identificador (slug, se genera solo si lo dejas vacío)"><input className={input} value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
+          <Campo label="Descripción (opcional)" ancho><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
+          <Campo label="Prevención (opcional)" ancho><textarea className={input} rows={2} value={edit.prevencion} onChange={(e) => setEdit({ ...edit, prevencion: e.target.value })} /></Campo>
+          <Campo label="Cómo combatirla (opcional)" ancho><textarea className={input} rows={2} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
+          <Campo label="URL de imagen principal (opcional)" ancho><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
@@ -680,33 +817,78 @@ function PanelEnfermedades() {
         </form>
       )}
 
+      {imagenesDe && (
+        <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+          <div className="flex items-center justify-between gap-3">
+            <h3 className="font-serif text-lg">Imágenes de «{imagenesDe.nombre}»</h3>
+            <button type="button" onClick={() => setImagenesDe(null)} className={`${btn} border border-border hover:text-primary`}>Cerrar</button>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            La etiqueta indica en qué planta se usa esa foto (por ejemplo «tomate»). Sin etiqueta, la foto sirve como imagen general.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {plagaImagenes.map((im) => (
+              <div key={im.id} className="flex items-center gap-3 rounded-xl border border-border p-2">
+                <Miniatura src={im.imagen_url} alt={im.tag || imagenesDe.nombre} />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium truncate">{im.tag || "Sin etiqueta"}</p>
+                  <p className="text-xs text-muted-foreground truncate">{im.imagen_url}</p>
+                </div>
+                <button type="button" className="p-2 text-muted-foreground hover:text-destructive" aria-label="Borrar imagen"
+                  onClick={() => borrarImagen.mutate(im.id)}>
+                  <Trash2 className="h-4 w-4" aria-hidden />
+                </button>
+              </div>
+            ))}
+            {plagaImagenes.length === 0 && <p className="text-sm text-muted-foreground">Sin imágenes todavía: se usará el placeholder.</p>}
+          </div>
+          <form
+            className="grid sm:grid-cols-[2fr_1fr_auto] gap-2 items-end"
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!nuevaImagen.imagen_url) return;
+              anadirImagen.mutate({ plagaId: imagenesDe.id, ...nuevaImagen });
+            }}
+          >
+            <Campo label="URL de la imagen"><input className={input} value={nuevaImagen.imagen_url} onChange={(e) => setNuevaImagen({ ...nuevaImagen, imagen_url: e.target.value })} /></Campo>
+            <Campo label="Etiqueta (planta)"><input className={input} placeholder="tomate" value={nuevaImagen.tag} onChange={(e) => setNuevaImagen({ ...nuevaImagen, tag: e.target.value })} /></Campo>
+            <button type="submit" disabled={anadirImagen.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
+              <Plus className="h-4 w-4" aria-hidden /> Añadir
+            </button>
+          </form>
+        </div>
+      )}
+
       <input
         className={`${input} max-w-sm`}
-        placeholder="Buscar por planta o enfermedad…"
+        placeholder="Buscar plaga…"
         value={filtro}
         onChange={(e) => setFiltro(e.target.value)}
       />
 
       {isLoading ? <Cargando /> : (
         <Tabla
-          vacio="Todavía no hay plagas ni enfermedades en la base de datos."
+          vacio="Todavía no hay plagas en la base de datos. Usa «Importar las actuales» para empezar."
           filas={visibles.map((e) => ({
             key: e.id,
             contenido: (
               <>
+                <Miniatura src={e.imagen_url || e.plaga_imagenes?.[0]?.imagen_url} alt={e.nombre} />
                 <div className="min-w-0">
                   <p className="font-medium truncate">{e.nombre}</p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {e.plantas?.nombre ?? "Sin planta"} · {e.combate.slice(0, 80)}
+                    {e.plaga_imagenes?.length ?? 0} imágenes · {(e.combate || e.descripcion || "Sin texto").slice(0, 80)}
                   </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
+                  <button type="button" className="p-2 hover:text-primary" onClick={() => setImagenesDe({ id: e.id, nombre: e.nombre })}>Imágenes</button>
                   <button type="button" className="p-2 hover:text-primary" onClick={() => setEdit({
-                    id: e.id, planta_id: e.planta_id, nombre: e.nombre, combate: e.combate,
-                    imagen_url: e.imagen_url ?? "", orden: e.orden,
+                    id: e.id, slug: e.slug, nombre: e.nombre,
+                    descripcion: e.descripcion ?? "", prevencion: e.prevencion ?? "",
+                    combate: e.combate ?? "", imagen_url: e.imagen_url ?? "",
                   })}>Editar</button>
                   <button type="button" className="p-2 text-muted-foreground hover:text-destructive" aria-label={`Borrar ${e.nombre}`}
-                    onClick={() => { if (confirm(`¿Borrar "${e.nombre}"?`)) borrar.mutate(e.id); }}>
+                    onClick={() => { if (confirm(`¿Borrar "${e.nombre}"? Se quitará de todas las plantas.`)) borrar.mutate(e.id); }}>
                     <Trash2 className="h-4 w-4" aria-hidden />
                   </button>
                 </div>
@@ -718,6 +900,7 @@ function PanelEnfermedades() {
     </div>
   );
 }
+
 
 /* ───────────────────────── Blog ───────────────────────── */
 
@@ -887,6 +1070,7 @@ function PanelBlog() {
             key: n.id,
             contenido: (
               <>
+                <Miniatura src={n.imagen_url} alt={n.titulo} />
                 <div className="min-w-0">
                   <p className="font-medium truncate">{n.titulo}</p>
                   <p className="text-xs text-muted-foreground">{n.fecha} · {n.categoria}</p>
