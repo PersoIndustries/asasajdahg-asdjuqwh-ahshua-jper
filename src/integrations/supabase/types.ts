@@ -114,6 +114,7 @@ export type Database = {
           id: string
           imagen_url: string | null
           nombre: string
+          otros_datos: string
           prevencion: string
           slug: string
           updated_at: string
@@ -125,6 +126,7 @@ export type Database = {
           id?: string
           imagen_url?: string | null
           nombre: string
+          otros_datos?: string
           prevencion?: string
           slug: string
           updated_at?: string
@@ -136,6 +138,7 @@ export type Database = {
           id?: string
           imagen_url?: string | null
           nombre?: string
+          otros_datos?: string
           prevencion?: string
           slug?: string
           updated_at?: string
