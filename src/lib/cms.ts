@@ -275,6 +275,7 @@ export function useNoticias(): Noticia[] {
     staleTime: 60_000,
     retry: false,
   });
-  const todas = fusionar(noticiasEstaticas, data ?? []);
-  return todas.slice().sort((a, b) => b.fecha.localeCompare(a.fecha));
+  const todas = contenido(noticiasEstaticas, data);
+  return todas.slice().sort((a: Noticia, b: Noticia) => b.fecha.localeCompare(a.fecha));
+
 }
