@@ -2,14 +2,13 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
-  Loader2, Plus, Save, Trash2, Download, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X, Search, Copy,
+  Loader2, Plus, Save, Trash2, RefreshCw, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X, Search, Copy,
 } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, cerrarSesion } from "@/hooks/use-auth";
-import { plantasDestacadas, calendario as calendarioEstatico, meses } from "@/lib/mock-data";
-import { noticias as noticiasEstaticas } from "@/lib/noticias";
-import { plantToRow, noticiaToRow, IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
+import { plantasDestacadas, meses } from "@/lib/mock-data";
+import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 import type { PlagaFicha } from "@/lib/mock-data";
 
@@ -334,29 +333,15 @@ function PanelPlantas() {
     onError: (e: Error) => setAviso(e.message),
   });
 
-  const importar = useMutation({
-    mutationFn: async () => {
-      // Solo inserta las plantas base que falten: no pisa lo que hayas editado.
-      const { data: existentes, error: errLeer } = await supabase.from("plantas").select("slug");
-      if (errLeer) throw errLeer;
-      const yaHay = new Set((existentes ?? []).map((p) => p.slug));
-      const filas = plantasDestacadas
-        .map((p, i) => plantToRow(p, { orden: i, esTemporada: i < 6 }))
-        .filter((f) => !yaHay.has(f.slug));
-      if (filas.length === 0) return 0;
-      const { error } = await supabase.from("plantas").insert(filas);
-      if (error) throw error;
-      return filas.length;
-    },
-    onSuccess: (n) =>
-      setAviso(
-        n === 0
-          ? "No se ha añadido nada: todas las plantas base ya están en la base de datos."
-          : `Añadidas ${n} plantas del catálogo base (las existentes no se han tocado).`,
-      ),
-    onError: (e: Error) => setAviso(e.message),
-    onSettled: refrescar,
-  });
+  const [refrescando, setRefrescando] = useState(false);
+  const recargar = async () => {
+    setRefrescando(true);
+    await queryClient.refetchQueries({ queryKey: ["admin", "plantas"] });
+    await queryClient.refetchQueries({ queryKey: ["admin", "planta_plagas"] });
+    void queryClient.invalidateQueries({ queryKey: ["cms"] });
+    setRefrescando(false);
+    setAviso("Datos recargados desde la base de datos.");
+  };
 
 
   const filtradas = useMemo(() => {
@@ -383,14 +368,12 @@ function PanelPlantas() {
           <>
             <button
               type="button"
-              title="Añade las plantas del catálogo base que no estén en la base de datos (incluidas las que borraste)."
-              onClick={() => {
-                if (window.confirm("Se añadirán las plantas del catálogo base que falten, incluidas las que hayas borrado antes. Las existentes no se modifican. ¿Continuar?")) importar.mutate();
-              }}
-              disabled={importar.isPending}
+              title="Vuelve a leer las plantas de la base de datos. No añade ni restaura nada."
+              onClick={() => void recargar()}
+              disabled={refrescando}
               className={`${btn} border border-border hover:text-primary`}>
-              {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Restaurar catálogo base
+              {refrescando ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <RefreshCw className="h-4 w-4" aria-hidden />}
+              Refrescar datos
             </button>
 
             <button type="button" onClick={() => { setPlagasSel([]); setEdit({ ...plantaVacia }); }}
@@ -668,38 +651,14 @@ function PanelCalendario() {
   }, [data, busqueda, cicloF, laboresF]);
 
 
-  const importar = useMutation({
-    mutationFn: async () => {
-      // Solo añade las filas base que NO existan ya (misma planta + mismo ciclo),
-      // para no recrear las que el gestor haya borrado o duplicar las editadas.
-      const { data: existentes, error: errLeer } = await supabase
-        .from("planta_calendario")
-        .select("planta_nombre, ciclo");
-      if (errLeer) throw errLeer;
-      const clave = (n: string, c?: string | null) => `${n.trim().toLowerCase()}|${(c ?? "").trim().toLowerCase()}`;
-      const yaHay = new Set((existentes ?? []).map((f) => clave(f.planta_nombre, f.ciclo)));
-      const filas = calendarioEstatico
-        .map((f, i) => ({
-          planta_nombre: f.planta,
-          ciclo: f.ciclo ?? null,
-          meses: f.meses.map((m) => m ?? ""),
-          orden: i,
-        }))
-        .filter((f) => !yaHay.has(clave(f.planta_nombre, f.ciclo)));
-      if (filas.length === 0) return 0;
-      const { error } = await supabase.from("planta_calendario").insert(filas);
-      if (error) throw error;
-      return filas.length;
-    },
-    onSuccess: (n) =>
-      setAviso(
-        n === 0
-          ? "No se ha añadido nada: todas las filas base ya existen en la base de datos."
-          : `Importadas ${n} filas nuevas del calendario base (las existentes no se han tocado).`,
-      ),
-    onError: (e: Error) => setAviso(e.message),
-    onSettled: () => refrescar(),
-  });
+  const [refrescando, setRefrescando] = useState(false);
+  const recargar = async () => {
+    setRefrescando(true);
+    await queryClient.refetchQueries({ queryKey: ["admin", "calendario"] });
+    void queryClient.invalidateQueries({ queryKey: ["cms"] });
+    setRefrescando(false);
+    setAviso("Datos recargados desde la base de datos.");
+  };
 
 
   return (
@@ -712,14 +671,12 @@ function PanelCalendario() {
           <>
             <button
               type="button"
-              title="Vuelve a añadir las filas del calendario base que no estén en la base de datos. Las que hayas borrado a propósito volverán a aparecer."
-              onClick={() => {
-                if (window.confirm("Se añadirán las filas del calendario base que falten (incluidas las que borraste antes). Las filas existentes no se modifican. ¿Continuar?")) importar.mutate();
-              }}
-              disabled={importar.isPending}
+              title="Vuelve a leer el calendario de la base de datos. No añade ni restaura nada."
+              onClick={() => void recargar()}
+              disabled={refrescando}
               className={`${btn} border border-border hover:text-primary`}>
-              {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Restaurar calendario base
+              {refrescando ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <RefreshCw className="h-4 w-4" aria-hidden />}
+              Refrescar datos
             </button>
 
             <button type="button" onClick={() => setNuevo({ planta: "", ciclo: "" })}
@@ -749,7 +706,7 @@ function PanelCalendario() {
       )}
 
       {isLoading ? <Cargando /> : (data ?? []).length === 0 ? (
-        <Vacio texto="Todavía no hay filas de calendario. Usa «Restaurar calendario base» o crea filas nuevas." />
+        <Vacio texto="Todavía no hay filas de calendario. Crea filas nuevas con «Nueva fila»." />
       ) : (
         <>
           <div className="rounded-2xl border border-border bg-card p-4 flex flex-wrap items-end gap-3">
@@ -998,50 +955,15 @@ function PanelPlagas() {
     onError: (e: Error) => setAviso(e.message),
   });
 
-  const importar = useMutation({
-    mutationFn: async () => {
-      // 1) Catálogo global de plagas a partir del contenido estático.
-      const unicas = new Map<string, { slug: string; nombre: string; combate: string; imagen_url: string | null }>();
-      for (const p of plantasDestacadas) {
-        for (const e of p.enfermedades ?? []) {
-          const slug = aSlug(e.nombre);
-          if (!unicas.has(slug)) {
-            unicas.set(slug, {
-              slug,
-              nombre: e.nombre,
-              combate: e.combate,
-              imagen_url: e.imagen?.startsWith("http") ? e.imagen : null,
-            });
-          }
-        }
-      }
-      if (unicas.size === 0) throw new Error("No hay plagas en el contenido actual.");
-      const { error } = await supabase.from("plagas").upsert([...unicas.values()], { onConflict: "slug" });
-      if (error) throw error;
-
-      // 2) Vínculos con las plantas ya guardadas en la base de datos.
-      const { data: todas, error: errPlagas } = await supabase.from("plagas").select("id, slug");
-      if (errPlagas) throw errPlagas;
-      const porSlugPlaga = new Map((todas ?? []).map((x) => [x.slug, x.id]));
-      const porSlugPlanta = new Map((plantas ?? []).map((x) => [x.slug, x.id]));
-      const vinculos = plantasDestacadas.flatMap((p) => {
-        const plantaId = porSlugPlanta.get(p.id);
-        if (!plantaId) return [];
-        return (p.enfermedades ?? []).flatMap((e, i) => {
-          const plagaId = porSlugPlaga.get(aSlug(e.nombre));
-          return plagaId ? [{ planta_id: plantaId, plaga_id: plagaId, orden: i }] : [];
-        });
-      });
-      if (vinculos.length > 0) {
-        const { error: errV } = await supabase
-          .from("planta_plagas")
-          .upsert(vinculos, { onConflict: "planta_id,plaga_id" });
-        if (errV) throw errV;
-      }
-    },
-    onSuccess: () => { setAviso("Catálogo de plagas importado y asociado a las plantas existentes."); refrescar(); },
-    onError: (e: Error) => setAviso(e.message),
-  });
+  const [refrescando, setRefrescando] = useState(false);
+  const recargar = async () => {
+    setRefrescando(true);
+    await queryClient.refetchQueries({ queryKey: ["admin", "plagas"] });
+    await queryClient.refetchQueries({ queryKey: ["admin", "planta_plagas"] });
+    void queryClient.invalidateQueries({ queryKey: ["cms"] });
+    setRefrescando(false);
+    setAviso("Datos recargados desde la base de datos.");
+  };
 
   const visibles = (data ?? []).filter((e) =>
     filtro ? e.nombre.toLowerCase().includes(filtro.toLowerCase()) : true,
@@ -1056,10 +978,11 @@ function PanelPlagas() {
         aviso={aviso}
         acciones={
           <>
-            <button type="button" onClick={() => importar.mutate()} disabled={importar.isPending}
+            <button type="button" onClick={() => void recargar()} disabled={refrescando}
+              title="Vuelve a leer las plagas de la base de datos. No añade ni restaura nada."
               className={`${btn} border border-border hover:text-primary`}>
-              {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Importar las actuales
+              {refrescando ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <RefreshCw className="h-4 w-4" aria-hidden />}
+              Refrescar datos
             </button>
             <button type="button" onClick={() => setEdit({ ...plagaVacia })}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
@@ -1268,26 +1191,14 @@ function PanelBlog() {
     onError: (e: Error) => setAviso(e.message),
   });
 
-  const importar = useMutation({
-    mutationFn: async () => {
-      const { data: existentes, error: errLeer } = await supabase.from("noticias").select("slug");
-      if (errLeer) throw errLeer;
-      const yaHay = new Set((existentes ?? []).map((n) => n.slug));
-      const filas = noticiasEstaticas.map(noticiaToRow).filter((n) => !yaHay.has(n.slug));
-      if (filas.length === 0) return 0;
-      const { error } = await supabase.from("noticias").insert(filas);
-      if (error) throw error;
-      return filas.length;
-    },
-    onSuccess: (n) =>
-      setAviso(
-        n === 0
-          ? "No se ha añadido nada: todas las noticias base ya están en la base de datos."
-          : `Añadidas ${n} noticias base (las existentes no se han tocado).`,
-      ),
-    onError: (e: Error) => setAviso(e.message),
-    onSettled: refrescar,
-  });
+  const [refrescando, setRefrescando] = useState(false);
+  const recargar = async () => {
+    setRefrescando(true);
+    await queryClient.refetchQueries({ queryKey: ["admin", "noticias"] });
+    void queryClient.invalidateQueries({ queryKey: ["cms"] });
+    setRefrescando(false);
+    setAviso("Datos recargados desde la base de datos.");
+  };
 
   return (
     <div className="space-y-6">
@@ -1299,14 +1210,12 @@ function PanelBlog() {
           <>
             <button
               type="button"
-              title="Añade las noticias base que no estén en la base de datos (incluidas las que borraste)."
-              onClick={() => {
-                if (window.confirm("Se añadirán las noticias base que falten, incluidas las que hayas borrado antes. ¿Continuar?")) importar.mutate();
-              }}
-              disabled={importar.isPending}
+              title="Vuelve a leer las noticias de la base de datos. No añade ni restaura nada."
+              onClick={() => void recargar()}
+              disabled={refrescando}
               className={`${btn} border border-border hover:text-primary`}>
-              {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Restaurar noticias base
+              {refrescando ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <RefreshCw className="h-4 w-4" aria-hidden />}
+              Refrescar datos
             </button>
 
             <button type="button" onClick={() => setEdit({ ...noticiaVacia })}

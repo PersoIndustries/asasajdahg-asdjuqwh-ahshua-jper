@@ -9,7 +9,6 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   plantasDestacadas,
-  calendario as calendarioEstatico,
   type Plant,
   type PlagaFicha,
   type FilaCalendario,
@@ -134,11 +133,11 @@ export function plantToRow(p: Plant, extra?: { orden?: number; esTemporada?: boo
   };
 }
 
-/** La base de datos manda. El contenido estático solo se usa como semilla
- *  mientras la tabla esté vacía; en cuanto hay filas, lo que se ve en la web es
- *  exactamente lo que hay en la base de datos (si borras algo, desaparece). */
-function contenido<T extends { id: string }>(estaticos: T[], deBd: T[] | undefined): T[] {
-  return deBd && deBd.length > 0 ? deBd : estaticos;
+/** La base de datos es la única fuente de verdad: la web muestra exactamente
+ *  las filas que hay en Supabase. Si borras algo en el gestor, desaparece de la
+ *  web y no vuelve. El contenido estático solo se usa para imágenes locales. */
+function contenido<T extends { id: string }>(deBd: T[] | undefined): T[] {
+  return deBd ?? [];
 }
 
 
@@ -162,7 +161,7 @@ export function usePlantas(): Plant[] {
     staleTime: 60_000,
     retry: false,
   });
-  return contenido(plantasDestacadas, data);
+  return contenido(data);
 }
 
 export function useTemporada(): Plant[] {
@@ -206,7 +205,7 @@ export function useCalendario(): FilaCalendario[] {
     staleTime: 60_000,
     retry: false,
   });
-  return data && data.length > 0 ? data : calendarioEstatico;
+  return data ?? [];
 }
 
 export function rowToNoticia(row: {
@@ -275,7 +274,7 @@ export function useNoticias(): Noticia[] {
     staleTime: 60_000,
     retry: false,
   });
-  const todas = contenido(noticiasEstaticas, data);
+  const todas = contenido(data);
   return todas.slice().sort((a: Noticia, b: Noticia) => b.fecha.localeCompare(a.fecha));
 
 }
