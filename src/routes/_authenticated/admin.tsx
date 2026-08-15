@@ -799,6 +799,15 @@ function FilaCalendarioEditable({
 
   return (
     <tr className="border-b border-border/60 last:border-0 align-top">
+      <td className="p-1">
+        <input
+          type="number"
+          aria-label="Orden"
+          className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-center text-xs"
+          value={v.orden}
+          onChange={(e) => setV({ ...v, orden: Number(e.target.value) })}
+        />
+      </td>
       <td className="p-2 space-y-1">
         <input
           aria-label="Nombre de la planta"
@@ -814,15 +823,7 @@ function FilaCalendarioEditable({
           onChange={(e) => setV({ ...v, ciclo: e.target.value })}
         />
       </td>
-      <td className="p-1">
-        <input
-          type="number"
-          aria-label="Orden"
-          className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-center text-xs"
-          value={v.orden}
-          onChange={(e) => setV({ ...v, orden: Number(e.target.value) })}
-        />
-      </td>
+
       {v.meses.map((celda, i) => (
         <td key={i} className="p-1">
           <input
