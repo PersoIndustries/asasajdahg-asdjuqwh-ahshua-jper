@@ -26,7 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "plantas" | "calendario" | "blog";
+type Tab = "plantas" | "calendario" | "enfermedades" | "blog";
 
 const input =
   "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -102,6 +102,7 @@ function AdminPage() {
               [
                 ["plantas", "Catálogo y temporada"],
                 ["calendario", "Calendario de cultivo"],
+                ["enfermedades", "Plagas y enfermedades"],
                 ["blog", "Noticias del blog"],
               ] as [Tab, string][]
             ).map(([k, label]) => (
@@ -118,6 +119,7 @@ function AdminPage() {
 
           {tab === "plantas" && <PanelPlantas />}
           {tab === "calendario" && <PanelCalendario />}
+          {tab === "enfermedades" && <PanelEnfermedades />}
           {tab === "blog" && <PanelBlog />}
         </div>
       </section>
@@ -238,6 +240,16 @@ function PanelPlantas() {
         }
       />
 
+      <Ayuda titulo="Guía de campos del catálogo">
+        <li><b>Identificador (slug)</b>: nombre corto en minúsculas y con guiones. Identifica la planta y sustituye a la ficha estática con el mismo identificador.</li>
+        <li><b>Clave de calendario</b>: nombre con el que se busca su calendario en la pestaña «Calendario de cultivo». Déjalo vacío para usar el nombre de la planta (ej.: «Tomate cherry» encuentra la fila «Tomate»).</li>
+        <li><b>Guía asociada (id)</b>: identificador de una guía de cultivo de «Tu Huerto» (ej. <code>cultivar-calçots</code>). No confundir con el slug del blog.</li>
+        <li><b>Producto de temporada</b>: aparece en el bloque de temporada de la portada. <b>Publicada</b>: visible en el catálogo público.</li>
+        <li>Las plagas y enfermedades de cada planta se gestionan en su propia pestaña.</li>
+      </Ayuda>
+
+
+
       {edit && (
         <form
           onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
@@ -330,9 +342,12 @@ function PanelCalendario() {
     void queryClient.invalidateQueries({ queryKey: ["cms"] });
   };
 
-  const guardarCelda = useMutation({
-    mutationFn: async ({ id, meses: m }: { id: string; meses: string[] }) => {
-      const { error } = await supabase.from("planta_calendario").update({ meses: m }).eq("id", id);
+  const guardarFila = useMutation({
+    mutationFn: async (f: { id: string; planta_nombre: string; ciclo: string | null; orden: number; meses: string[] }) => {
+      const { error } = await supabase
+        .from("planta_calendario")
+        .update({ planta_nombre: f.planta_nombre, ciclo: f.ciclo, orden: f.orden, meses: f.meses })
+        .eq("id", f.id);
       if (error) throw error;
     },
     onSuccess: refrescar,
@@ -381,7 +396,7 @@ function PanelCalendario() {
     <div className="space-y-6">
       <Barra
         titulo="Calendario de cultivo"
-        descripcion="Cada fila es un ciclo. Escribe en cada mes las labores: S = siembra, T = trasplante, C = cosecha, y 1 o 2 para la quincena (ej. «T1», «S1C2»)."
+        descripcion="Cada fila es un ciclo de una planta (una misma planta puede tener varias filas: por ejemplo «ciclo de primavera» y «ciclo de otoño»). Puedes editar el nombre, el ciclo, el orden y los meses directamente en la tabla."
         aviso={aviso}
         acciones={
           <>
@@ -398,6 +413,14 @@ function PanelCalendario() {
         }
       />
 
+      <Ayuda titulo="Cómo se rellena el calendario">
+        <li><b>Nombre de planta</b>: es la clave de enlace. La ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario» (campo <i>calendario_key</i> en la pestaña Catálogo). Ej.: fila «Tomate» → se muestra en «Tomate cherry», «Tomate rosa», etc.</li>
+        <li><b>Ciclo</b>: texto libre que aparece como subtítulo del bloque en la web («Ciclo de primavera», «Siembra temprana»…). Déjalo vacío si la planta solo tiene un ciclo.</li>
+        <li><b>Meses</b>: en cada casilla escribe las labores. <b>S</b> = siembra, <b>T</b> = trasplante, <b>C</b> = cosecha. Añade <b>1</b> (primera quincena) o <b>2</b> (segunda quincena) detrás de la letra.</li>
+        <li>Ejemplos: <code>T1</code> = trasplante a inicios de mes · <code>C</code> = cosecha todo el mes · <code>S1C2</code> = siembra la primera quincena y cosecha la segunda.</li>
+        <li><b>Orden</b>: controla la posición de la fila en la tabla de «Tu Huerto». Números más bajos aparecen antes.</li>
+      </Ayuda>
+
       {nuevo && (
         <form onSubmit={(e) => { e.preventDefault(); crear.mutate(nuevo); }}
           className="rounded-2xl border border-border bg-card p-6 flex flex-wrap gap-4 items-end">
@@ -412,10 +435,11 @@ function PanelCalendario() {
         <Vacio texto="Todavía no hay filas de calendario. Importa el calendario actual para poder editarlo." />
       ) : (
         <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="min-w-[900px] w-full text-sm">
+          <table className="min-w-[1100px] w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left p-3 font-medium">Planta</th>
+                <th className="text-left p-3 font-medium">Planta y ciclo</th>
+                <th className="p-2 font-medium text-xs text-muted-foreground">Orden</th>
                 {meses.map((m) => <th key={m} className="p-2 font-medium text-xs text-muted-foreground">{m}</th>)}
                 <th />
               </tr>
@@ -425,7 +449,7 @@ function PanelCalendario() {
                 <FilaCalendarioEditable
                   key={fila.id}
                   fila={fila}
-                  onGuardar={(m) => guardarCelda.mutate({ id: fila.id, meses: m })}
+                  onGuardar={(v) => guardarFila.mutate({ id: fila.id, ...v })}
                   onBorrar={() => { if (confirm(`¿Borrar la fila de ${fila.planta_nombre}?`)) borrar.mutate(fila.id); }}
                 />
               ))}
@@ -437,38 +461,65 @@ function PanelCalendario() {
   );
 }
 
+type FilaCalEdit = { planta_nombre: string; ciclo: string | null; orden: number; meses: string[] };
+
 function FilaCalendarioEditable({
   fila, onGuardar, onBorrar,
 }: {
-  fila: { id: string; planta_nombre: string; ciclo: string | null; meses: string[] };
-  onGuardar: (meses: string[]) => void;
+  fila: { id: string; planta_nombre: string; ciclo: string | null; orden: number; meses: string[] };
+  onGuardar: (valores: FilaCalEdit) => void;
   onBorrar: () => void;
 }) {
-  const inicial = useMemo(
-    () => Array.from({ length: 12 }, (_, i) => fila.meses[i] ?? ""),
-    [fila.meses],
+  const inicial = useMemo<FilaCalEdit>(
+    () => ({
+      planta_nombre: fila.planta_nombre,
+      ciclo: fila.ciclo ?? "",
+      orden: fila.orden,
+      meses: Array.from({ length: 12 }, (_, i) => fila.meses[i] ?? ""),
+    }),
+    [fila],
   );
-  const [valores, setValores] = useState<string[]>(inicial);
-  const sucio = valores.join("|") !== inicial.join("|");
+  const [v, setV] = useState<FilaCalEdit>(inicial);
+  const sucio = JSON.stringify(v) !== JSON.stringify(inicial);
 
   return (
-    <tr className="border-b border-border/60 last:border-0">
-      <td className="p-3">
-        <p className="font-medium">{fila.planta_nombre}</p>
-        {fila.ciclo && <p className="text-xs text-muted-foreground">{fila.ciclo}</p>}
+    <tr className="border-b border-border/60 last:border-0 align-top">
+      <td className="p-2 space-y-1">
+        <input
+          aria-label="Nombre de la planta"
+          className="w-40 rounded-lg border border-border bg-background px-2 py-1 text-sm font-medium"
+          value={v.planta_nombre}
+          onChange={(e) => setV({ ...v, planta_nombre: e.target.value })}
+        />
+        <input
+          aria-label="Ciclo"
+          placeholder="Ciclo (opcional)"
+          className="w-40 rounded-lg border border-border bg-background px-2 py-1 text-xs text-muted-foreground"
+          value={v.ciclo ?? ""}
+          onChange={(e) => setV({ ...v, ciclo: e.target.value })}
+        />
       </td>
-      {valores.map((v, i) => (
+      <td className="p-1">
+        <input
+          type="number"
+          aria-label="Orden"
+          className="w-16 rounded-lg border border-border bg-background px-2 py-1 text-center text-xs"
+          value={v.orden}
+          onChange={(e) => setV({ ...v, orden: Number(e.target.value) })}
+        />
+      </td>
+      {v.meses.map((celda, i) => (
         <td key={i} className="p-1">
           <input
-            aria-label={`${fila.planta_nombre} ${meses[i]}`}
+            aria-label={`${v.planta_nombre} ${meses[i]}`}
             className="w-14 rounded-lg border border-border bg-background px-2 py-1 text-center text-xs uppercase"
-            value={v}
-            onChange={(e) => setValores(valores.map((x, j) => (j === i ? e.target.value.toUpperCase() : x)))}
+            value={celda}
+            onChange={(e) => setV({ ...v, meses: v.meses.map((x, j) => (j === i ? e.target.value.toUpperCase() : x)) })}
           />
         </td>
       ))}
       <td className="p-2 whitespace-nowrap">
-        <button type="button" disabled={!sucio} onClick={() => onGuardar(valores)}
+        <button type="button" disabled={!sucio} onClick={() => onGuardar({ ...v, ciclo: v.ciclo?.trim() ? v.ciclo.trim() : null })}
           className="p-2 text-primary disabled:opacity-30" aria-label="Guardar fila">
           <Save className="h-4 w-4" aria-hidden />
         </button>
@@ -477,6 +528,194 @@ function FilaCalendarioEditable({
         </button>
       </td>
     </tr>
+  );
+}
+
+/* ───────────────────────── Plagas y enfermedades ───────────────────────── */
+
+type EnfermedadForm = {
+  id?: string;
+  planta_id: string;
+  nombre: string;
+  combate: string;
+  imagen_url: string;
+  orden: number;
+};
+
+const enfermedadVacia: EnfermedadForm = { planta_id: "", nombre: "", combate: "", imagen_url: "", orden: 0 };
+
+function PanelEnfermedades() {
+  const queryClient = useQueryClient();
+  const [edit, setEdit] = useState<EnfermedadForm | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
+  const [filtro, setFiltro] = useState("");
+
+  const { data: plantas } = useQuery({
+    queryKey: ["admin", "plantas", "lista"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("plantas").select("id, nombre, slug").order("nombre");
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "enfermedades"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("planta_enfermedades")
+        .select("*, plantas(nombre, slug)")
+        .order("orden");
+      if (error) throw error;
+      return data as unknown as (EnfermedadForm & { id: string; plantas: { nombre: string; slug: string } | null })[];
+    },
+  });
+
+  const refrescar = () => {
+    void queryClient.invalidateQueries({ queryKey: ["admin", "enfermedades"] });
+    void queryClient.invalidateQueries({ queryKey: ["cms"] });
+  };
+
+  const guardar = useMutation({
+    mutationFn: async (f: EnfermedadForm) => {
+      const fila = {
+        planta_id: f.planta_id,
+        nombre: f.nombre,
+        combate: f.combate,
+        imagen_url: f.imagen_url || null,
+        orden: Number(f.orden) || 0,
+      };
+      const { error } = f.id
+        ? await supabase.from("planta_enfermedades").update(fila).eq("id", f.id)
+        : await supabase.from("planta_enfermedades").insert(fila);
+      if (error) throw error;
+    },
+    onSuccess: () => { setEdit(null); refrescar(); },
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const borrar = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("planta_enfermedades").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: refrescar,
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const importar = useMutation({
+    mutationFn: async () => {
+      const porSlug = new Map((plantas ?? []).map((p) => [p.slug, p.id]));
+      const filas = plantasDestacadas.flatMap((p) => {
+        const plantaId = porSlug.get(p.id);
+        if (!plantaId) return [];
+        return (p.enfermedades ?? []).map((e, i) => ({
+          planta_id: plantaId,
+          nombre: e.nombre,
+          combate: e.combate,
+          imagen_url: e.imagen?.startsWith("http") ? e.imagen : null,
+          orden: i,
+        }));
+      });
+      if (filas.length === 0) throw new Error("Importa antes el catálogo de plantas en la pestaña «Catálogo y temporada».");
+      const { error } = await supabase.from("planta_enfermedades").insert(filas);
+      if (error) throw error;
+    },
+    onSuccess: () => { setAviso("Plagas y enfermedades del contenido actual importadas."); refrescar(); },
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const visibles = (data ?? []).filter((e) =>
+    filtro ? `${e.nombre} ${e.plantas?.nombre ?? ""}`.toLowerCase().includes(filtro.toLowerCase()) : true,
+  );
+
+  return (
+    <div className="space-y-6">
+      <Barra
+        titulo="Plagas y enfermedades"
+        descripcion="Cada ficha del catálogo muestra la lista de plagas y enfermedades de esa planta con la forma de combatirlas. Aquí puedes añadir, editar o quitar fichas."
+        aviso={aviso}
+        acciones={
+          <>
+            <button type="button" onClick={() => importar.mutate()} disabled={importar.isPending}
+              className={`${btn} border border-border hover:text-primary`}>
+              {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
+              Importar las actuales
+            </button>
+            <button type="button" onClick={() => setEdit({ ...enfermedadVacia, planta_id: plantas?.[0]?.id ?? "" })}
+              className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
+              <Plus className="h-4 w-4" aria-hidden /> Nueva enfermedad
+            </button>
+          </>
+        }
+      />
+
+      <Ayuda titulo="Qué se guarda en cada ficha">
+        <li><b>Planta</b>: a qué planta del catálogo pertenece. Solo aparecen las plantas guardadas en la base de datos (pestaña «Catálogo y temporada»).</li>
+        <li><b>Nombre</b>: nombre de la plaga o enfermedad (ej. «Mildiu», «Pulgón»).</li>
+        <li><b>Cómo combatirla</b>: tratamiento y prevención recomendados; es el texto que lee el cliente en la ficha.</li>
+        <li><b>Imagen</b>: URL opcional; si la dejas vacía se usa la imagen por defecto.</li>
+        <li><b>Orden</b>: posición dentro de la lista de esa planta.</li>
+      </Ayuda>
+
+      {edit && (
+        <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
+          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          <Campo label="Planta">
+            <select className={input} required value={edit.planta_id} onChange={(e) => setEdit({ ...edit, planta_id: e.target.value })}>
+              <option value="">— Selecciona una planta —</option>
+              {(plantas ?? []).map((p) => <option key={p.id} value={p.id}>{p.nombre}</option>)}
+            </select>
+          </Campo>
+          <Campo label="Nombre de la plaga o enfermedad"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
+          <Campo label="Cómo combatirla" ancho><textarea className={input} rows={3} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
+          <Campo label="URL de imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
+          <Campo label="Orden"><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
+          <div className="md:col-span-2 flex gap-3">
+            <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
+              {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
+            </button>
+            <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
+          </div>
+        </form>
+      )}
+
+      <input
+        className={`${input} max-w-sm`}
+        placeholder="Buscar por planta o enfermedad…"
+        value={filtro}
+        onChange={(e) => setFiltro(e.target.value)}
+      />
+
+      {isLoading ? <Cargando /> : (
+        <Tabla
+          vacio="Todavía no hay plagas ni enfermedades en la base de datos."
+          filas={visibles.map((e) => ({
+            key: e.id,
+            contenido: (
+              <>
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{e.nombre}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {e.plantas?.nombre ?? "Sin planta"} · {e.combate.slice(0, 80)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button type="button" className="p-2 hover:text-primary" onClick={() => setEdit({
+                    id: e.id, planta_id: e.planta_id, nombre: e.nombre, combate: e.combate,
+                    imagen_url: e.imagen_url ?? "", orden: e.orden,
+                  })}>Editar</button>
+                  <button type="button" className="p-2 text-muted-foreground hover:text-destructive" aria-label={`Borrar ${e.nombre}`}
+                    onClick={() => { if (confirm(`¿Borrar "${e.nombre}"?`)) borrar.mutate(e.id); }}>
+                    <Trash2 className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+              </>
+            ),
+          }))}
+        />
+      )}
+    </div>
   );
 }
 
@@ -599,6 +838,17 @@ function PanelBlog() {
         }
       />
 
+      <Ayuda titulo="El blog NO son las guías de cultivo">
+        <li>Esta pestaña gestiona el <b>blog de noticias y curiosidades</b> (<code>/blog</code>): novedades del vivero, ferias, curiosidades del mundo vegetal. Las <b>guías de cultivo</b> son otra cosa y viven en la página «Tu Huerto» (PDFs y fichas), no se editan aquí.</li>
+        <li><b>Identificador (slug)</b>: es únicamente la dirección web del artículo (<code>/blog/mi-slug</code>). <b>No</b> tiene relación con la guía de una planta. Usa minúsculas y guiones, y no lo cambies una vez publicado (rompería los enlaces).</li>
+        <li>El campo «Guía asociada» de una planta (pestaña Catálogo) sí enlaza con una guía de «Tu Huerto», pero es un campo distinto de este slug.</li>
+        <li><b>Resumen</b>: texto que se ve en el listado. <b>Entradilla</b>: primer párrafo destacado dentro del artículo.</li>
+        <li><b>Cuerpo</b>: escribe párrafos normales; una línea que empiece por <code>##</code> se convierte en subtítulo de sección.</li>
+        <li><b>Destacada</b> resalta el artículo en la portada del blog; <b>Publicada</b> lo hace visible al público.</li>
+      </Ayuda>
+
+
+
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
@@ -666,6 +916,18 @@ function PanelBlog() {
 }
 
 /* ───────────────────────── UI compartida ───────────────────────── */
+
+/** Bloque de documentación desplegable que explica cómo se usa cada panel. */
+function Ayuda({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+  return (
+    <details className="rounded-2xl border border-border bg-secondary/30 p-5 text-sm" open>
+      <summary className="cursor-pointer font-medium">{titulo}</summary>
+      <ul className="mt-3 space-y-2 list-disc pl-5 text-muted-foreground leading-relaxed [&_code]:rounded [&_code]:bg-background [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-xs [&_b]:text-foreground">
+        {children}
+      </ul>
+    </details>
+  );
+}
 
 function Barra({ titulo, descripcion, acciones, aviso }: {
   titulo: string; descripcion: string; acciones: React.ReactNode; aviso: string | null;
