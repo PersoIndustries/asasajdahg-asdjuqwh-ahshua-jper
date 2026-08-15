@@ -308,6 +308,33 @@ function PanelPlantas() {
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.es_temporada} onChange={(e) => setEdit({ ...edit, es_temporada: e.target.checked })} /> Producto de temporada</label>
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.publicado} onChange={(e) => setEdit({ ...edit, publicado: e.target.checked })} /> Publicada</label>
           </div>
+          <div className="md:col-span-2">
+            <p className="text-sm font-medium mb-1">Plagas y enfermedades asociadas</p>
+            <p className="text-xs text-muted-foreground mb-2">
+              Marca las plagas del catálogo global que afectan a esta planta. Se crean y editan en la pestaña
+              «Plagas y enfermedades». Si no marcas ninguna, la ficha del producto no mostrará esa sección.
+            </p>
+            {(plagas ?? []).length === 0 ? (
+              <p className="text-sm text-muted-foreground">Aún no hay plagas creadas.</p>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                {(plagas ?? []).map((pl) => (
+                  <label key={pl.id} className="flex items-center gap-2 text-sm rounded-lg border border-border p-2">
+                    <input
+                      type="checkbox"
+                      checked={plagasSel.includes(pl.id)}
+                      onChange={(e) =>
+                        setPlagasSel(e.target.checked ? [...plagasSel, pl.id] : plagasSel.filter((x) => x !== pl.id))
+                      }
+                    />
+                    <Miniatura src={pl.imagen_url} alt={pl.nombre} />
+                    <span className="truncate">{pl.nombre}</span>
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
