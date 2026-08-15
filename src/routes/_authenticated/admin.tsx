@@ -690,29 +690,71 @@ function PanelCalendario() {
       {isLoading ? <Cargando /> : (data ?? []).length === 0 ? (
         <Vacio texto="Todavía no hay filas de calendario. Importa el calendario actual para poder editarlo." />
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border bg-card">
-          <table className="min-w-[1100px] w-full text-sm">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left p-3 font-medium">Planta y ciclo</th>
-                <th className="p-2 font-medium text-xs text-muted-foreground">Orden</th>
-                {meses.map((m) => <th key={m} className="p-2 font-medium text-xs text-muted-foreground">{m}</th>)}
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {(data ?? []).map((fila) => (
-                <FilaCalendarioEditable
-                  key={fila.id}
-                  fila={fila}
-                  onGuardar={(v) => guardarFila.mutate({ id: fila.id, ...v })}
-                  onBorrar={() => { if (confirm(`¿Borrar la fila de ${fila.planta_nombre}?`)) borrar.mutate(fila.id); }}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <>
+          <div className="rounded-2xl border border-border bg-card p-4 flex flex-wrap items-end gap-3">
+            <Campo label="Buscar planta o ciclo">
+              <input className={input} value={busqueda} onChange={(e) => setBusqueda(e.target.value)} placeholder="Tomate, primavera…" />
+            </Campo>
+            <Campo label="Ciclo">
+              <select className={input} value={cicloF} onChange={(e) => setCicloF(e.target.value as typeof cicloF)}>
+                <option value="todos">Todos</option>
+                <option value="con">Con ciclo</option>
+                <option value="sin">Sin ciclo</option>
+              </select>
+            </Campo>
+            <Campo label="Labores">
+              <select className={input} value={laboresF} onChange={(e) => setLaboresF(e.target.value as typeof laboresF)}>
+                <option value="todas">Todas</option>
+                <option value="S">Con siembra (S)</option>
+                <option value="T">Con trasplante (T)</option>
+                <option value="C">Con cosecha (C)</option>
+                <option value="vacias">Sin labores</option>
+              </select>
+            </Campo>
+            <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
+              <span>{filas.length} de {(data ?? []).length} filas</span>
+              {(busqueda || cicloF !== "todos" || laboresF !== "todas") && (
+                <button type="button" onClick={() => { setBusqueda(""); setCicloF("todos"); setLaboresF("todas"); }}
+                  className="underline hover:text-primary">Limpiar</button>
+              )}
+            </div>
+          </div>
+
+          {filas.length === 0 ? (
+            <Vacio texto="Ninguna fila coincide con la búsqueda." />
+          ) : (
+            <div className="overflow-x-auto rounded-2xl border border-border bg-card">
+              <table className="min-w-[1100px] w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    <th className="p-2 font-medium text-xs text-muted-foreground">Orden</th>
+                    <th className="text-left p-3 font-medium">Planta y ciclo</th>
+                    {meses.map((m) => <th key={m} className="p-2 font-medium text-xs text-muted-foreground">{m}</th>)}
+                    <th />
+                  </tr>
+                </thead>
+                <tbody>
+                  {filas.map((fila) => (
+                    <FilaCalendarioEditable
+                      key={fila.id}
+                      fila={fila}
+                      onGuardar={(v) => guardarFila.mutate({ id: fila.id, ...v })}
+                      onDuplicar={() => duplicar.mutate({
+                        planta_nombre: fila.planta_nombre,
+                        ciclo: fila.ciclo,
+                        orden: fila.orden,
+                        meses: Array.from({ length: 12 }, (_, i) => fila.meses[i] ?? ""),
+                      })}
+                      onBorrar={() => { if (confirm(`¿Borrar la fila de ${fila.planta_nombre}?`)) borrar.mutate(fila.id); }}
+                    />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </>
       )}
+
     </div>
   );
 }
