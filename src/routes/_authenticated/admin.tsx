@@ -839,7 +839,11 @@ function FilaCalendarioEditable({
           className="p-2 text-primary disabled:opacity-30" aria-label="Guardar fila">
           <Save className="h-4 w-4" aria-hidden />
         </button>
+        <button type="button" onClick={onDuplicar} className="p-2 text-muted-foreground hover:text-primary" aria-label="Duplicar fila" title="Duplicar ciclo">
+          <Copy className="h-4 w-4" aria-hidden />
+        </button>
         <button type="button" onClick={onBorrar} className="p-2 text-muted-foreground hover:text-destructive" aria-label="Borrar fila">
+
           <Trash2 className="h-4 w-4" aria-hidden />
         </button>
       </td>
