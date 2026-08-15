@@ -14,6 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
+      materiales: {
+        Row: {
+          created_at: string
+          detalle: string
+          formato: string
+          id: string
+          imagen_url: string | null
+          marca: string
+          nombre: string
+          orden: number
+          publicado: boolean
+          seccion: string
+          updated_at: string
+          uso: string
+        }
+        Insert: {
+          created_at?: string
+          detalle?: string
+          formato?: string
+          id?: string
+          imagen_url?: string | null
+          marca?: string
+          nombre: string
+          orden?: number
+          publicado?: boolean
+          seccion?: string
+          updated_at?: string
+          uso?: string
+        }
+        Update: {
+          created_at?: string
+          detalle?: string
+          formato?: string
+          id?: string
+          imagen_url?: string | null
+          marca?: string
+          nombre?: string
+          orden?: number
+          publicado?: boolean
+          seccion?: string
+          updated_at?: string
+          uso?: string
+        }
+        Relationships: []
+      }
       noticias: {
         Row: {
           autor: string
