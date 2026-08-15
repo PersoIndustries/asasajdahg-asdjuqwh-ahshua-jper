@@ -17,6 +17,16 @@ import imgRomero from "@/assets/aromaticas/romero.jpg";
 import imgAlbahaca from "@/assets/aromaticas/albahaca.jpg";
 import imgTomilloMenta from "@/assets/aromaticas/tomillo-menta.jpg";
 
+/** Ficha de una plaga o enfermedad ya resuelta para mostrar en el catálogo. */
+export type PlagaFicha = {
+  id?: string;
+  nombre: string;
+  descripcion?: string;
+  prevencion?: string;
+  combate?: string;
+  imagen: string;
+};
+
 export type Plant = {
   id: string;
   nombre: string;
