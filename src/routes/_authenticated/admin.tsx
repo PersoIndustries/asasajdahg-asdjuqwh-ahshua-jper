@@ -1270,28 +1270,45 @@ function PanelBlog() {
 
   const importar = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase
-        .from("noticias")
-        .upsert(noticiasEstaticas.map(noticiaToRow), { onConflict: "slug" });
+      const { data: existentes, error: errLeer } = await supabase.from("noticias").select("slug");
+      if (errLeer) throw errLeer;
+      const yaHay = new Set((existentes ?? []).map((n) => n.slug));
+      const filas = noticiasEstaticas.map(noticiaToRow).filter((n) => !yaHay.has(n.slug));
+      if (filas.length === 0) return 0;
+      const { error } = await supabase.from("noticias").insert(filas);
       if (error) throw error;
+      return filas.length;
     },
-    onSuccess: () => { setAviso("Noticias actuales importadas."); refrescar(); },
+    onSuccess: (n) =>
+      setAviso(
+        n === 0
+          ? "No se ha añadido nada: todas las noticias base ya están en la base de datos."
+          : `Añadidas ${n} noticias base (las existentes no se han tocado).`,
+      ),
     onError: (e: Error) => setAviso(e.message),
+    onSettled: refrescar,
   });
 
   return (
     <div className="space-y-6">
       <Barra
         titulo="Noticias y curiosidades"
-        descripcion="Publica novedades del vivero. En el cuerpo, una línea que empiece por ## crea un subtítulo; el resto son párrafos."
+        descripcion="La base de datos manda: el blog muestra exactamente estas noticias. Si borras una aquí, desaparece de la web. En el cuerpo, una línea que empiece por ## crea un subtítulo."
         aviso={aviso}
         acciones={
           <>
-            <button type="button" onClick={() => importar.mutate()} disabled={importar.isPending}
+            <button
+              type="button"
+              title="Añade las noticias base que no estén en la base de datos (incluidas las que borraste)."
+              onClick={() => {
+                if (window.confirm("Se añadirán las noticias base que falten, incluidas las que hayas borrado antes. ¿Continuar?")) importar.mutate();
+              }}
+              disabled={importar.isPending}
               className={`${btn} border border-border hover:text-primary`}>
               {importar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Download className="h-4 w-4" aria-hidden />}
-              Importar noticias actuales
+              Restaurar noticias base
             </button>
+
             <button type="button" onClick={() => setEdit({ ...noticiaVacia })}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva noticia
