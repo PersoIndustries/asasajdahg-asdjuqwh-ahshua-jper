@@ -162,7 +162,7 @@ export function usePlantas(): Plant[] {
     staleTime: 60_000,
     retry: false,
   });
-  return fusionar(plantasDestacadas, data ?? []);
+  return contenido(plantasDestacadas, data);
 }
 
 export function useTemporada(): Plant[] {
