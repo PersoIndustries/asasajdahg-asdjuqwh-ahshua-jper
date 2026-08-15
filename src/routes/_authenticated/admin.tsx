@@ -346,6 +346,20 @@ function PanelPlantas() {
     onError: (e: Error) => setAviso(e.message),
   });
 
+  const filtradas = useMemo(() => {
+    const q = busqueda.trim().toLowerCase();
+    return (data ?? []).filter((p) => {
+      const texto = `${p.nombre} ${p.slug} ${p.nombre_cientifico ?? ""} ${p.categoria}`.toLowerCase();
+      if (q && !texto.includes(q)) return false;
+      if (categoriaF !== "todas" && p.categoria !== categoriaF) return false;
+      if (temporadaF === "si" && !p.es_temporada) return false;
+      if (temporadaF === "no" && p.es_temporada) return false;
+      if (publicadoF === "si" && !p.publicado) return false;
+      if (publicadoF === "no" && p.publicado) return false;
+      return true;
+    });
+  }, [data, busqueda, categoriaF, temporadaF, publicadoF]);
+
   return (
     <div className="space-y-6">
       <Barra
@@ -375,7 +389,46 @@ function PanelPlantas() {
         <li>Las plagas y enfermedades de cada planta se gestionan en su propia pestaña.</li>
       </Ayuda>
 
-
+      <div className="rounded-2xl border border-border bg-card p-4 flex flex-col lg:flex-row lg:items-end gap-3">
+        <div className="flex-1 min-w-0">
+          <label className="block text-xs text-muted-foreground mb-1" htmlFor="buscar-plantas">Buscar</label>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden />
+            <input id="buscar-plantas" type="search" className={`${input} pl-9`} placeholder="Nombre, slug o nombre científico…"
+              value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
+          </div>
+        </div>
+        <div className="w-full lg:w-48">
+          <label className="block text-xs text-muted-foreground mb-1" htmlFor="filtro-categoria">Categoría</label>
+          <select id="filtro-categoria" className={input} value={categoriaF} onChange={(e) => setCategoriaF(e.target.value)}>
+            <option value="todas">Todas</option>
+            {["hortícola", "ornamental", "árbol", "arbusto", "flor", "aromática"].map((c) => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </div>
+        <div className="w-full lg:w-44">
+          <label className="block text-xs text-muted-foreground mb-1" htmlFor="filtro-temporada">Temporada</label>
+          <select id="filtro-temporada" className={input} value={temporadaF} onChange={(e) => setTemporadaF(e.target.value)}>
+            <option value="todas">Todas</option>
+            <option value="si">Solo de temporada</option>
+            <option value="no">Fuera de temporada</option>
+          </select>
+        </div>
+        <div className="w-full lg:w-40">
+          <label className="block text-xs text-muted-foreground mb-1" htmlFor="filtro-publicado">Estado</label>
+          <select id="filtro-publicado" className={input} value={publicadoF} onChange={(e) => setPublicadoF(e.target.value)}>
+            <option value="todas">Todas</option>
+            <option value="si">Publicadas</option>
+            <option value="no">Ocultas</option>
+          </select>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs text-muted-foreground whitespace-nowrap">{filtradas.length} de {(data ?? []).length}</span>
+          <button type="button" className={`${btn} border border-border hover:text-primary`}
+            onClick={() => { setBusqueda(""); setCategoriaF("todas"); setTemporadaF("todas"); setPublicadoF("todas"); }}>
+            Limpiar
+          </button>
+        </div>
+      </div>
 
       {edit && (
         <form
@@ -444,8 +497,10 @@ function PanelPlantas() {
 
       {isLoading ? <Cargando /> : (
         <Tabla
-          vacio="Todavía no hay plantas en la base de datos. Usa «Importar catálogo actual» para empezar."
-          filas={(data ?? []).map((p) => ({
+          vacio={(data ?? []).length === 0
+            ? "Todavía no hay plantas en la base de datos. Usa «Importar catálogo actual» para empezar."
+            : "Ninguna planta coincide con la búsqueda o los filtros."}
+          filas={filtradas.map((p) => ({
             key: p.id,
             contenido: (
               <>
