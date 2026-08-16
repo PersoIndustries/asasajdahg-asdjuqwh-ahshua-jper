@@ -11,7 +11,7 @@ import {
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { usePlantas, useMateriales, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
@@ -52,13 +52,13 @@ export const Route = createFileRoute("/productos")({
 
 type TabKey = "hortícolas" | "ornamentales" | "tierras" | "material";
 
-const MES_ACTUAL_PLACEHOLDER = null;
 
 
 const MES_ACTUAL = new Date().getMonth();
 
 function ProductosPage() {
   const [tab, setTab] = useState<TabKey>("hortícolas");
+  const { sustratos: sustratosSuliflor, compost: composts, piedras, macetas } = useMateriales();
   const [busqueda, setBusqueda] = useState("");
   const [catFiltro, setCatFiltro] = useState<string>("todas");
   const [ficha, setFicha] = useState<Plant | null>(null);
@@ -356,15 +356,15 @@ function ProductosPage() {
           <Section eyebrow="Suliflor España" title="Tierras y sustratos" intro="Distribuidor oficial Suliflor. Disponibles en tienda física en Fraga y venta al por mayor.">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {sustratosSuliflor.map((p) => (
-                <article key={p.nombre} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
+                <article key={p.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                     <img src={p.imagen} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <span className="absolute top-3 right-3 text-xs rounded-full bg-background/95 backdrop-blur px-3 py-1 font-medium">{p.peso}</span>
+                    <span className="absolute top-3 right-3 text-xs rounded-full bg-background/95 backdrop-blur px-3 py-1 font-medium">{p.formato}</span>
                   </div>
                   <div className="p-6 flex-1 flex flex-col">
                     <div className="flex items-center gap-2 mb-2">
                       <Package className="h-4 w-4 text-primary" />
-                      <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Suliflor España</span>
+                      <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{p.marca || "Suliflor España"}</span>
                     </div>
                     <h3 className="font-serif text-xl leading-snug">{p.nombre}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{p.uso}</p>
@@ -399,13 +399,13 @@ function ProductosPage() {
 
               <div className="max-w-3xl">
                 {composts.map((c) => (
-                  <article key={c.nombre} className="group rounded-2xl border border-border overflow-hidden bg-card hover-lift flex flex-col md:flex-row">
+                  <article key={c.id} className="group rounded-2xl border border-border overflow-hidden bg-card hover-lift flex flex-col md:flex-row">
                     <div className="relative md:w-2/5 aspect-[4/3] md:aspect-auto overflow-hidden bg-secondary">
                       <img src={c.imagen} alt={c.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     </div>
                     <div className="p-6 md:p-7 flex-1 flex flex-col">
                       <span className="inline-flex self-start items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted-foreground mb-2">
-                        <Recycle className="h-3.5 w-3.5 text-primary" /> Liett Ibérica
+                        <Recycle className="h-3.5 w-3.5 text-primary" /> {c.marca || "Liett Ibérica"}
                       </span>
                       <h3 className="font-serif text-2xl leading-snug">{c.nombre}</h3>
                       <p className="text-sm text-muted-foreground mt-1">{c.uso}</p>
@@ -429,7 +429,7 @@ function ProductosPage() {
           <Section eyebrow="Piedras y áridos decorativos" title="Piedras para jardín" intro="Piedras marmolinas, canto rodado, volcánica y corteza — en saco o a granel.">
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {piedras.map((c) => (
-                <article key={c.nombre} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
+                <article key={c.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                     <img src={c.imagen} alt={c.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <span className="absolute top-3 right-3 text-xs rounded-full bg-background/95 backdrop-blur px-3 py-1 font-medium">{c.formato}</span>
@@ -455,7 +455,7 @@ function ProductosPage() {
           <Section eyebrow="Macetas y jardineras" title="Todo tipo de macetas" intro="Terracota, cerámica esmaltada, plástico técnico, madera y grandes formatos corporativos.">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {macetas.map((c) => (
-                <article key={c.nombre} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
+                <article key={c.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
                     <img src={c.imagen} alt={c.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                     <span className="absolute top-3 right-3 text-xs rounded-full bg-background/95 backdrop-blur px-3 py-1 font-medium">{c.formato}</span>
