@@ -52,37 +52,8 @@ export const Route = createFileRoute("/productos")({
 
 type TabKey = "hortícolas" | "ornamentales" | "tierras" | "material";
 
-const uimg = (id: string, w = 800) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+const MES_ACTUAL_PLACEHOLDER = null;
 
-const sustratosSuliflor = [
-  { nombre: "Sustrato Universal Premium", uso: "Huerto, macetas, jardín", peso: "70 L", detalle: "Turba rubia, coco y perlita.", imagen: imgPlaceholder },
-  { nombre: "Sustrato para Hortícolas", uso: "Semilleros y trasplantes", peso: "50 L", detalle: "pH ajustado, drenaje óptimo.", imagen: uimg("1416879595882-3373a0480b5b") },
-  { nombre: "Sustrato Ácido", uso: "Azaleas, camelias, hortensias", peso: "20 L", detalle: "Turba rubia + fibra.", imagen: imgPlaceholder },
-  { nombre: "Sustrato Cactus & Suculentas", uso: "Ornamental interior", peso: "10 L", detalle: "Alto drenaje, mineral.", imagen: uimg("1459411552884-841db9b3cc2a") },
-  { nombre: "Mantillo de Corteza", uso: "Acolchado y decoración", peso: "50 L", detalle: "Pino seleccionado.", imagen: uimg("1508766206392-8bd5cf550d1c") },
-  { nombre: "Turba Rubia", uso: "Base de mezclas profesionales", peso: "80 L", detalle: "Fibra larga, baja densidad.", imagen: uimg("1466692476868-aef1dfb1e735") },
-];
-
-const composts = [
-  { nombre: "Compost ECO", uso: "Huerto, agricultura ecológica y enmienda de suelos", formato: "Big bag 1 m³", detalle: "Materia orgánica compostada y certificada para uso ecológico. Mejora la estructura, fertilidad y retención hídrica del suelo.", imagen: uimg("1500595046743-cd271d694d30") },
-];
-
-const piedras = [
-  { nombre: "Piedras Marmolinas", uso: "Jardines, senderos y macetas decorativas", formato: "Sacos y a granel", detalle: "Acabado natural en tonos claros, ideal para acentuar zonas de grava.", imagen: imgPlaceholder },
-  { nombre: "Canto Rodado", uso: "Bordes de arriates, fuentes y paisajismo", formato: "Sacos y a granel", detalle: "Piedra redondeada de río en diferentes granulometrías.", imagen: imgPlaceholder },
-  { nombre: "Piedra Volcánica", uso: "Drenaje, decoración y acolchado", formato: "Sacos y a granel", detalle: "Ligera, porosa y resistente a las heladas.", imagen: uimg("1504198458649-3128b932f49e") },
-  { nombre: "Corteza de Pino", uso: "Acolchado de parterres y árboles", formato: "Sacos de 50 L", detalle: "Mantiene la humedad, frena malas hierbas y aporta orden visual.", imagen: uimg("1502082553048-f009c37129b9") },
-];
-
-const macetas = [
-  { nombre: "Maceta de Terracota", uso: "Interior y exterior, aspecto clásico", formato: "Ø 10–60 cm", detalle: "Barro cocido tradicional, transpirable y duradero.", imagen: uimg("1485955900006-10f4d324d411") },
-  { nombre: "Maceta de Cerámica Esmaltada", uso: "Decoración de interior", formato: "Ø 12–35 cm", detalle: "Acabados en colores mate y satinado, con plato incluido.", imagen: uimg("1509423350716-97f9360b4e09") },
-  { nombre: "Maceta de Plástico", uso: "Vivero, huerto y trasplantes", formato: "0,5 L – 50 L", detalle: "Ligera, resistente y económica. Ideal para cultivo intensivo.", imagen: uimg("1459411552884-841db9b3cc2a") },
-  { nombre: "Jardinera de Madera", uso: "Balcón, terraza y huerto urbano", formato: "60–120 cm", detalle: "Madera tratada para exterior, con lámina interior protectora.", imagen: uimg("1416879595882-3373a0480b5b") },
-  { nombre: "Maceta Colgante", uso: "Plantas colgantes y aromáticas", formato: "Ø 20–30 cm", detalle: "Con cadena o cordón, en fibra, plástico o metal.", imagen: uimg("1466692476868-aef1dfb1e735") },
-  { nombre: "Macetero XXL / Corporativo", uso: "Grandes espacios y proyectos", formato: "Ø 60–120 cm", detalle: "Fibra de vidrio, hormigón ligero o rotomoldeado. Consúltanos.", imagen: uimg("1523712999610-f77fbcfc3843") },
-];
 
 const MES_ACTUAL = new Date().getMonth();
 
