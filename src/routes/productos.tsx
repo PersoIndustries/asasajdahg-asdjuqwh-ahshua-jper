@@ -18,7 +18,6 @@ import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
-import imgPlaceholder from "@/assets/placeholder/under-construction-square.jpg";
 import macetas3d from "@/assets/material/macetas-3d.jpg";
 
 export const Route = createFileRoute("/productos")({
