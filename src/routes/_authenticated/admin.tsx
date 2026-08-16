@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "plantas" | "calendario" | "enfermedades" | "blog";
+type Tab = "plantas" | "calendario" | "enfermedades" | "materiales" | "blog";
 
 const input =
   "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -120,6 +120,7 @@ function AdminPage() {
                 ["plantas", "Catálogo y temporada"],
                 ["calendario", "Calendario de cultivo"],
                 ["enfermedades", "Plagas y enfermedades"],
+                ["materiales", "Tierras y material"],
                 ["blog", "Noticias del blog"],
               ] as [Tab, string][]
             ).map(([k, label]) => (
@@ -137,6 +138,7 @@ function AdminPage() {
           {tab === "plantas" && <PanelPlantas />}
           {tab === "calendario" && <PanelCalendario />}
           {tab === "enfermedades" && <PanelPlagas />}
+          {tab === "materiales" && <PanelMateriales />}
           {tab === "blog" && <PanelBlog />}
         </div>
       </section>
@@ -1108,7 +1110,225 @@ function PanelPlagas() {
 }
 
 
+
+/* ───────────────────── Tierras y material ───────────────────── */
+
+type MaterialForm = {
+  id?: string;
+  seccion: string;
+  nombre: string;
+  uso: string;
+  formato: string;
+  detalle: string;
+  marca: string;
+  imagen_url: string;
+  orden: number;
+  publicado: boolean;
+};
+
+const SECCIONES_MATERIAL: [string, string][] = [
+  ["sustratos", "Tierras y sustratos"],
+  ["compost", "Compost"],
+  ["piedras", "Piedras y áridos"],
+  ["macetas", "Macetas y jardineras"],
+];
+
+const materialVacio: MaterialForm = {
+  seccion: "sustratos", nombre: "", uso: "", formato: "", detalle: "", marca: "",
+  imagen_url: "", orden: 0, publicado: true,
+};
+
+function PanelMateriales() {
+  const queryClient = useQueryClient();
+  const [edit, setEdit] = useState<MaterialForm | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
+  const [filtro, setFiltro] = useState("");
+  const [seccionFiltro, setSeccionFiltro] = useState("todas");
+  const [refrescando, setRefrescando] = useState(false);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "materiales"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("materiales")
+        .select("*")
+        .order("seccion")
+        .order("orden");
+      if (error) throw error;
+      return data as unknown as (MaterialForm & { id: string })[];
+    },
+  });
+
+  const refrescar = () => {
+    void queryClient.invalidateQueries({ queryKey: ["admin", "materiales"] });
+    void queryClient.invalidateQueries({ queryKey: ["cms"] });
+  };
+
+  const guardar = useMutation({
+    mutationFn: async (f: MaterialForm) => {
+      const fila = {
+        seccion: f.seccion, nombre: f.nombre, uso: f.uso, formato: f.formato,
+        detalle: f.detalle, marca: f.marca, imagen_url: f.imagen_url || null,
+        orden: Number(f.orden) || 0, publicado: f.publicado,
+      };
+      const { error } = f.id
+        ? await supabase.from("materiales").update(fila).eq("id", f.id)
+        : await supabase.from("materiales").insert(fila);
+      if (error) throw error;
+    },
+    onSuccess: () => { setEdit(null); refrescar(); },
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const borrar = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("materiales").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: refrescar,
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const duplicar = useMutation({
+    mutationFn: async (m: MaterialForm & { id: string }) => {
+      const { id: _id, ...resto } = m;
+      const { error } = await supabase.from("materiales").insert({
+        ...resto, nombre: `${m.nombre} (copia)`, imagen_url: m.imagen_url || null,
+      });
+      if (error) throw error;
+    },
+    onSuccess: refrescar,
+    onError: (e: Error) => setAviso(e.message),
+  });
+
+  const recargar = async () => {
+    setRefrescando(true);
+    await queryClient.refetchQueries({ queryKey: ["admin", "materiales"] });
+    void queryClient.invalidateQueries({ queryKey: ["cms"] });
+    setRefrescando(false);
+    setAviso("Datos recargados desde la base de datos.");
+  };
+
+  const visibles = (data ?? []).filter((m) => {
+    const texto = `${m.nombre} ${m.uso} ${m.marca} ${m.detalle}`.toLowerCase();
+    if (filtro && !texto.includes(filtro.toLowerCase())) return false;
+    if (seccionFiltro !== "todas" && m.seccion !== seccionFiltro) return false;
+    return true;
+  });
+
+  return (
+    <div className="space-y-6">
+      <Barra
+        titulo="Tierras, sustratos y material de jardinería"
+        descripcion="Contenido de las pestañas «Tierras y sustratos» y «Material para jardinería» de la página de Productos: sustratos, compost, piedras y macetas."
+        aviso={aviso}
+        acciones={
+          <>
+            <button type="button" onClick={() => void recargar()} disabled={refrescando}
+              title="Vuelve a leer los materiales de la base de datos. No añade ni restaura nada."
+              className={`${btn} border border-border hover:text-primary`}>
+              {refrescando ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <RefreshCw className="h-4 w-4" aria-hidden />}
+              Refrescar datos
+            </button>
+            <button type="button" onClick={() => setEdit({ ...materialVacio })}
+              className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
+              <Plus className="h-4 w-4" aria-hidden /> Nuevo material
+            </button>
+          </>
+        }
+      />
+
+      <Ayuda titulo="Cómo se muestran estos productos en la web">
+        <li><b>Sección</b>: decide dónde aparece. «Tierras y sustratos» y «Compost» van en la pestaña <b>Tierras y sustratos</b>; «Piedras y áridos» y «Macetas» en <b>Material para jardinería</b>.</li>
+        <li><b>Formato</b>: se muestra como etiqueta sobre la foto (por ejemplo «70 L», «Big bag 1 m³», «Ø 10–60 cm»).</li>
+        <li><b>Uso</b>: frase corta bajo el nombre. <b>Detalle</b>: línea con el check verde.</li>
+        <li><b>Marca</b>: texto pequeño en mayúsculas (Suliflor España, Liett Ibérica…). Si lo dejas vacío se usa el de por defecto de la sección.</li>
+        <li><b>Imagen</b>: pega una URL. Si la dejas vacía se usa el placeholder «web en construcción».</li>
+        <li><b>Orden</b>: número menor = aparece antes. <b>Publicado</b>: si lo desmarcas, deja de verse en la web.</li>
+      </Ayuda>
+
+      {edit && (
+        <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
+          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          <Campo label="Sección">
+            <select className={input} value={edit.seccion} onChange={(e) => setEdit({ ...edit, seccion: e.target.value })}>
+              {SECCIONES_MATERIAL.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+            </select>
+          </Campo>
+          <Campo label="Nombre"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
+          <Campo label="Uso (frase corta)"><input className={input} value={edit.uso} onChange={(e) => setEdit({ ...edit, uso: e.target.value })} /></Campo>
+          <Campo label="Formato o medida (etiqueta sobre la foto)"><input className={input} value={edit.formato} onChange={(e) => setEdit({ ...edit, formato: e.target.value })} /></Campo>
+          <Campo label="Marca o proveedor (opcional)"><input className={input} value={edit.marca} onChange={(e) => setEdit({ ...edit, marca: e.target.value })} /></Campo>
+          <Campo label="URL de la imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
+          <Campo label="Detalle" ancho><textarea className={input} rows={2} value={edit.detalle} onChange={(e) => setEdit({ ...edit, detalle: e.target.value })} /></Campo>
+          <Campo label="Orden"><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
+          <label className="flex items-center gap-2 text-sm mt-6">
+            <input type="checkbox" checked={edit.publicado} onChange={(e) => setEdit({ ...edit, publicado: e.target.checked })} />
+            Publicado en la web
+          </label>
+          <div className="md:col-span-2 flex gap-3">
+            <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
+              {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
+            </button>
+            <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
+          </div>
+        </form>
+      )}
+
+      <div className="flex flex-wrap gap-2 items-center">
+        <div className="relative">
+          <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden />
+          <input className={`${input} pl-9 w-64`} placeholder="Buscar material…" value={filtro} onChange={(e) => setFiltro(e.target.value)} />
+        </div>
+        <select className={`${input} w-auto`} value={seccionFiltro} onChange={(e) => setSeccionFiltro(e.target.value)}>
+          <option value="todas">Todas las secciones</option>
+          {SECCIONES_MATERIAL.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+        </select>
+      </div>
+
+      {isLoading ? <Cargando /> : (
+        <Tabla
+          vacio="No hay materiales que coincidan con la búsqueda."
+          filas={visibles.map((m) => ({
+            key: m.id,
+            contenido: (
+              <>
+                <span className="w-10 text-xs text-muted-foreground tabular-nums shrink-0">{m.orden}</span>
+                <Miniatura src={m.imagen_url} alt={m.nombre} />
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium truncate">{m.nombre}</p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {SECCIONES_MATERIAL.find(([k]) => k === m.seccion)?.[1] ?? m.seccion}
+                    {m.formato ? ` · ${m.formato}` : ""}{m.uso ? ` · ${m.uso}` : ""}
+                  </p>
+                </div>
+                <IconoEstado activo={m.publicado} on={Eye} off={EyeOff} titulo="Publicado" />
+                <div className="flex items-center gap-1 shrink-0">
+                  <button type="button" className="p-2 hover:text-primary" aria-label={`Duplicar ${m.nombre}`}
+                    onClick={() => duplicar.mutate(m)}>
+                    <Copy className="h-4 w-4" aria-hidden />
+                  </button>
+                  <button type="button" className="p-2 hover:text-primary" onClick={() => setEdit({
+                    id: m.id, seccion: m.seccion, nombre: m.nombre, uso: m.uso ?? "", formato: m.formato ?? "",
+                    detalle: m.detalle ?? "", marca: m.marca ?? "", imagen_url: m.imagen_url ?? "",
+                    orden: m.orden ?? 0, publicado: m.publicado,
+                  })}>Editar</button>
+                  <button type="button" className="p-2 text-muted-foreground hover:text-destructive" aria-label={`Borrar ${m.nombre}`}
+                    onClick={() => { if (confirm(`¿Borrar "${m.nombre}"? Desaparecerá de la web.`)) borrar.mutate(m.id); }}>
+                    <Trash2 className="h-4 w-4" aria-hidden />
+                  </button>
+                </div>
+              </>
+            ),
+          }))}
+        />
+      )}
+    </div>
+  );
+}
+
 /* ───────────────────────── Blog ───────────────────────── */
+
 
 type NoticiaForm = {
   id?: string;

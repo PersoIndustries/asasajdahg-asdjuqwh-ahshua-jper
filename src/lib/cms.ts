@@ -280,3 +280,54 @@ export function useNoticias(): Noticia[] {
   return todas.slice().sort((a: Noticia, b: Noticia) => b.fecha.localeCompare(a.fecha));
 
 }
+
+/* ─────────── Tierras, sustratos y material de jardinería ─────────── */
+
+export type SeccionMaterial = "sustratos" | "compost" | "piedras" | "macetas";
+
+export type Material = {
+  id: string;
+  seccion: SeccionMaterial;
+  nombre: string;
+  uso: string;
+  formato: string;
+  detalle: string;
+  marca: string;
+  imagen: string;
+};
+
+/** Materiales publicados agrupados por sección (sustratos, compost, piedras, macetas). */
+export function useMateriales(): Record<SeccionMaterial, Material[]> {
+  const { data } = useQuery({
+    queryKey: ["cms", "materiales"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("materiales")
+        .select("id, seccion, nombre, uso, formato, detalle, marca, imagen_url, orden")
+        .eq("publicado", true)
+        .order("orden", { ascending: true });
+      if (error) throw error;
+      return data.map((r) => ({
+        id: r.id,
+        seccion: r.seccion as SeccionMaterial,
+        nombre: r.nombre,
+        uso: r.uso ?? "",
+        formato: r.formato ?? "",
+        detalle: r.detalle ?? "",
+        marca: r.marca ?? "",
+        imagen: r.imagen_url || placeholder,
+      })) as Material[];
+    },
+    placeholderData: [] as Material[],
+    staleTime: 60_000,
+    retry: false,
+  });
+  const filas = data ?? [];
+  return {
+    sustratos: filas.filter((m) => m.seccion === "sustratos"),
+    compost: filas.filter((m) => m.seccion === "compost"),
+    piedras: filas.filter((m) => m.seccion === "piedras"),
+    macetas: filas.filter((m) => m.seccion === "macetas"),
+  };
+}
+
