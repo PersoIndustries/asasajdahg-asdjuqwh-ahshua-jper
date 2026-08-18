@@ -1504,8 +1504,13 @@ export function mesesEnRango(desde: number, hasta: number): number[] {
 }
 
 /** Actividades de cultivo de una planta dentro de un rango de meses. */
-export function actividadesEnRango(planta: Plant, desde: number, hasta: number): Actividad[] {
-  const filas = getCalendariosPlanta(planta);
+export function actividadesEnRango(
+  planta: Plant,
+  desde: number,
+  hasta: number,
+  fuente?: FilaCalendario[],
+): Actividad[] {
+  const filas = fuente ? filasCalendarioPara(planta, fuente) : getCalendariosPlanta(planta);
   if (!filas.length) return [];
   const set = new Set<Actividad>();
   for (const fila of filas) {
