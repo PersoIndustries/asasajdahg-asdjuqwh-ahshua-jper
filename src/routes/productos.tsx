@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
-  X, Search, ChevronRight, Clock, Download,
+  X, Search, ChevronRight, Clock, Download, Printer,
   Check, Package, Truck, Sprout, Leaf, Recycle, Mountain, TreePine, Gem,
   FlowerIcon, Info, CalendarDays, Boxes,
 } from "lucide-react";
@@ -15,6 +15,8 @@ import { usePlantas, useMateriales, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
+import { imprimirFichaPlanta, DISCLAIMER_FICHA } from "@/lib/imprimir-ficha";
+
 
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
@@ -574,8 +576,19 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
         <img src={planta.imagen} alt={planta.nombre} className="w-full h-64 object-cover" />
         <div className="p-8">
           <p className="text-xs uppercase tracking-widest text-accent capitalize">{planta.categoria}</p>
-          <h3 className="font-serif text-3xl mt-2">{planta.nombre}</h3>
-          <p className="text-sm italic text-muted-foreground">{planta.nombreCientifico}</p>
+          <div className="mt-2 flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <h3 className="font-serif text-3xl">{planta.nombre}</h3>
+              <p className="text-sm italic text-muted-foreground">{planta.nombreCientifico}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => imprimirFichaPlanta(planta, plagasFicha)}
+              className="shrink-0 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3.5 py-1.5 text-xs font-medium hover:bg-secondary transition-colors"
+            >
+              <Printer className="h-3.5 w-3.5" /> Exportar ficha en PDF
+            </button>
+          </div>
           <p className="mt-4 text-foreground/80 leading-relaxed">{planta.descripcion}</p>
 
           <div className="mt-4 rounded-lg bg-secondary/60 px-4 py-3 text-sm">
@@ -583,9 +596,10 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           </div>
 
           <div className="mt-6 grid gap-6">
-            <CalendarioCultivo planta={planta} />
+            <CalendarioCultivo planta={planta} mostrarExportar={false} />
 
             <SeccionPlagas plagas={plagasFicha} onZoom={setZoom} />
+
 
             {planta.comoSeCome && (
               <div>
@@ -619,7 +633,15 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
             </div>
           </div>
 
+          <p className="mt-8 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
+            {DISCLAIMER_FICHA}{" "}
+            <Link to="/contacto" className="underline hover:text-primary">
+              Contacta con nosotros
+            </Link>
+            .
+          </p>
         </div>
+
       </div>
       {zoom && (
         <div
