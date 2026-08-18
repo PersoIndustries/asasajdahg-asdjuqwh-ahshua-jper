@@ -148,9 +148,24 @@ export function imprimirFichaPlanta(
   .chips { font-family: Arial, sans-serif; font-size: 8.5px; color: #3f5a49; margin: 0 0 8px; }
   .chips span { display: inline-block; border: 1px solid #cfe3cb; background: #f3f8f2; border-radius: 999px; padding: 2px 8px; margin-right: 5px; text-transform: capitalize; }
 
-  .plaga { break-inside: avoid; display: flex; gap: 9px; border: 1px solid #e2e6df; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; background: #fcfdfb; }
-  .plaga img, .plaga .sinimg { width: 74px; height: 74px; object-fit: cover; border-radius: 5px; border: 1px solid #e2e6df; flex: 0 0 74px; background: #eef1ea; }
-  .plaga .txt { flex: 1; min-width: 0; }
+  /* Rejilla de plagas: 3 por fila */
+  table.plagas { width: 100%; border-collapse: separate; border-spacing: 6px 6px; table-layout: fixed; }
+  table.plagas tr { break-inside: avoid; }
+  td.plaga { width: 33.33%; vertical-align: top; break-inside: avoid;
+    border: 1px solid #e2e6df; border-radius: 6px; padding: 7px 8px; background: #fcfdfb; }
+  td.vacia { border: 0; background: none; }
+  td.plaga img, td.plaga .sinimg { display: block; width: 100%; aspect-ratio: 1 / 1; height: auto;
+    object-fit: cover; border-radius: 5px; border: 1px solid #e2e6df; background: #eef1ea; margin-bottom: 5px; }
+  td.plaga h3 { font-size: 9.5px; }
+  td.plaga p { font-size: 7.8px; line-height: 1.4; margin: 0 0 3px; }
+
+  /* Portada: imagen principal del producto junto a la descripción */
+  .intro { display: flex; gap: 12px; align-items: flex-start; break-inside: avoid; }
+  .intro .foto { flex: 0 0 46mm; }
+  .intro .foto img { width: 46mm; height: 36mm; object-fit: cover; border-radius: 6px; border: 1px solid #e2e6df; }
+  .intro .txt { flex: 1; min-width: 0; }
+  .intro h2 { margin-top: 0; }
+
 
   table.cal { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; table-layout: fixed; }
   table.cal th, table.cal td { border: 1px solid #d8d8d8; text-align: center; font-size: 6.5px; height: 15px; }
