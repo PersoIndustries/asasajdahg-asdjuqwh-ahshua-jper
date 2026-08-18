@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
-  X, Search, ChevronRight, Clock, Download,
+  X, Search, ChevronRight, Clock, Download, Printer,
   Check, Package, Truck, Sprout, Leaf, Recycle, Mountain, TreePine, Gem,
   FlowerIcon, Info, CalendarDays, Boxes,
 } from "lucide-react";
@@ -15,6 +15,8 @@ import { usePlantas, useMateriales, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
 import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
+import { imprimirFichaPlanta, DISCLAIMER_FICHA } from "@/lib/imprimir-ficha";
+
 
 
 import sustratos from "@/assets/tierras/sustratos.jpg";
