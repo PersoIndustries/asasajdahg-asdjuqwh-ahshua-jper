@@ -9,7 +9,9 @@ import {
   formatearFecha,
   type CategoriaNoticia,
 } from "@/lib/noticias";
-import { useNoticias } from "@/lib/cms";
+import { useNoticias, useCargandoCms } from "@/lib/cms";
+import { GridSkeleton } from "@/components/site/Cargando";
+
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
