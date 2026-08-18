@@ -87,25 +87,37 @@ export function imprimirFichaPlanta(
        </section>`
     : "";
 
+  // Rejilla de 3 plagas por fila (tabla: es lo que respeta mejor el paginado
+  // del navegador al imprimir).
+  const filasPlagas: PlagaFicha[][] = [];
+  for (let i = 0; i < plagas.length; i += 3) filasPlagas.push(plagas.slice(i, i + 3));
+
+  const tarjetaPlaga = (p?: PlagaFicha) => {
+    if (!p) return `<td class="vacia"></td>`;
+    return `<td class="plaga">
+      ${p.imagen ? `<img src="${esc(urlAbsoluta(p.imagen))}" alt="">` : `<div class="sinimg"></div>`}
+      <h3>${esc(p.nombre)}</h3>
+      ${p.descripcion ? `<p>${esc(p.descripcion)}</p>` : ""}
+      ${p.prevencion ? `<p><b>Prevención:</b> ${esc(p.prevencion)}</p>` : ""}
+      ${p.combate ? `<p><b>Cómo combatirla:</b> ${esc(p.combate)}</p>` : ""}
+      ${p.otrosDatos ? `<p><b>Otros datos:</b> ${esc(p.otrosDatos)}</p>` : ""}
+    </td>`;
+  };
+
   const bloquePlagas = plagas.length
     ? `<section class="bloque">
          <h2>Plagas, enfermedades y cómo combatirlas</h2>
-         ${plagas
-           .map(
-             (p) => `<div class="plaga">
-               ${p.imagen ? `<img src="${esc(p.imagen)}" alt="">` : `<div class="sinimg"></div>`}
-               <div class="txt">
-                 <h3>${esc(p.nombre)}</h3>
-                 ${p.descripcion ? `<p>${esc(p.descripcion)}</p>` : ""}
-                 ${p.prevencion ? `<p><b>Prevención:</b> ${esc(p.prevencion)}</p>` : ""}
-                 ${p.combate ? `<p><b>Cómo combatirla:</b> ${esc(p.combate)}</p>` : ""}
-                 ${p.otrosDatos ? `<p><b>Otros datos:</b> ${esc(p.otrosDatos)}</p>` : ""}
-               </div>
-             </div>`,
-           )
-           .join("")}
+         <table class="plagas">
+           ${filasPlagas
+             .map(
+               (fila) =>
+                 `<tr>${[fila[0], fila[1], fila[2]].map(tarjetaPlaga).join("")}</tr>`,
+             )
+             .join("")}
+         </table>
        </section>`
     : "";
+
 
   const titulo = `jardiper-ficha-${slug(planta.nombre)}`;
 
