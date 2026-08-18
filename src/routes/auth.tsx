@@ -126,17 +126,38 @@ function AuthPage() {
                 />
               </div>
 
+              {modo === "registro" && (
+                <label className="flex items-start gap-3 text-xs text-muted-foreground leading-relaxed">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={aceptaTerminos}
+                    onChange={(e) => setAceptaTerminos(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 rounded border-border accent-[var(--color-primary,currentColor)]"
+                  />
+                  <span>
+                    Acepto los <strong className="text-foreground">términos y condiciones</strong> y
+                    la política de privacidad de Jardiper SC. Tratamos tu email para crear y
+                    gestionar tu cuenta, y registramos datos básicos de tráfico y de uso de la web
+                    (páginas visitadas, dispositivo y estadísticas agregadas) para mantener el
+                    servicio y mejorarlo. No vendemos tus datos a terceros y puedes solicitar su
+                    eliminación escribiéndonos.
+                  </span>
+                </label>
+              )}
+
               {error && <p className="text-sm text-destructive">{error}</p>}
               {mensaje && <p className="text-sm text-primary">{mensaje}</p>}
 
               <button
                 type="submit"
-                disabled={enviando}
+                disabled={enviando || (modo === "registro" && !aceptaTerminos)}
                 className="w-full inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-3 text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-60"
               >
                 {enviando ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : modo === "login" ? <LogIn className="h-4 w-4" aria-hidden /> : <Mail className="h-4 w-4" aria-hidden />}
                 {modo === "login" ? "Entrar" : "Crear cuenta"}
               </button>
+
             </form>
 
             <button
