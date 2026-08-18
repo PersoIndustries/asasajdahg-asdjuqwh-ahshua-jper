@@ -149,7 +149,7 @@ function TuHuertoPage() {
             <CargandoLinea texto="Cargando calendario de cultivo…" />
           )}
           <div className={`overflow-x-auto rounded-2xl border border-border${cargandoCalendario && calendario.length === 0 ? " hidden" : ""}`}>
-            <table className="min-w-[1040px] text-sm border-collapse">
+            <table className="w-full min-w-[1040px] text-sm border-collapse">
               <thead>
                 <tr className="bg-secondary/60">
                   <th rowSpan={2} className="text-left py-2 px-3 font-medium sticky left-0 bg-secondary/60 z-20 w-[170px] min-w-[170px]">
