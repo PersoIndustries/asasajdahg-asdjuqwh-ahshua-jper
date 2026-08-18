@@ -324,7 +324,9 @@ function ProductosPage() {
             )}
           </div>
 
-          {listaFiltrada.length === 0 && (
+          {cargandoCatalogo && <GridSkeleton items={8} />}
+
+          {!cargandoCatalogo && listaFiltrada.length === 0 && (
             <p className="text-sm text-muted-foreground py-12 text-center">
               {filtroCalendarioActivo
                 ? "Ninguna variedad tiene labores de cultivo en el periodo seleccionado."
@@ -332,7 +334,8 @@ function ProductosPage() {
             </p>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6${cargandoCatalogo ? " hidden" : ""}`}>
+
             {listaFiltrada.map((p) => {
               const acts = filtroCalendarioActivo ? actividadesEnRango(p, mesDesde, mesHasta, filasCalendarioBd.length ? filasCalendarioBd : undefined) : [];
               return (
