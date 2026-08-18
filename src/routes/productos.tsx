@@ -11,7 +11,9 @@ import {
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas, useMateriales, useCalendario, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { usePlantas, useMateriales, useCalendario, useCargandoCms, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { GridSkeleton, CargandoLinea } from "@/components/site/Cargando";
+
 
 import { CalendarioCultivo, estadoEstilos, useFilasCalendario } from "@/components/site/CalendarioCultivo";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
