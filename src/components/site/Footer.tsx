@@ -65,7 +65,7 @@ export function Footer() {
       </div>
       <div className="border-t border-border/60">
         <div className="container-page py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} Jardiper · Horticultura Peralta S.L. · {t("footer.rights")}</p>
+          <p>© {new Date().getFullYear()} Jardiper SC · {t("footer.rights")}</p>
           <p>Fraga · Bajo Cinca · Huesca</p>
         </div>
       </div>
