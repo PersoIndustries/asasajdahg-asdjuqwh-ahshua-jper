@@ -49,20 +49,32 @@ function TuHuertoPage() {
   const [zona, setZona] = useState(zonas[0].id);
   const [tagGuia, setTagGuia] = useState<string>("todas");
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
+  const [soloAhora, setSoloAhora] = useState(false);
+
+  // Mes y quincena actuales, para resaltar la columna y el filtro "¿Qué planto ahora?".
+  const hoy = new Date();
+  const mesActual = hoy.getMonth();
+  const quincenaActual: 1 | 2 = hoy.getDate() <= 15 ? 1 : 2;
 
   const calendario = useCalendario();
   const cargandoCalendario = useCargandoCms("calendario");
 
-  const filas = useMemo(
-    () => calendario.filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase())),
-    [filtro, calendario],
-  );
+  const filas = useMemo(() => {
+    const q = filtro.toLowerCase().trim();
+    return calendario.filter((r) => {
+      if (!r.planta.toLowerCase().includes(q)) return false;
+      if (!soloAhora) return true;
+      const labores = laboresEnQuincena(r.meses[mesActual] ?? "", quincenaActual);
+      return labores.some((l) => l.actividad === "S" || l.actividad === "T");
+    });
+  }, [filtro, calendario, soloAhora, mesActual, quincenaActual]);
 
   const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);
   const guiasFiltradas = useMemo(
     () => (tagGuia === "todas" ? guias : guias.filter((g) => g.tags.includes(tagGuia))),
     [tagGuia],
   );
+
 
   return (
     <SiteLayout>
@@ -98,37 +110,72 @@ function TuHuertoPage() {
 
       {tab === "calendario" && (
         <Section eyebrow="Cuándo sembrar" title="Calendario Horticola" intro="Datos orientativos">
-          <div className="mb-6 flex flex-col md:flex-row md:items-end gap-4 md:justify-between">
-            <div>
+          <div className="mb-6 flex flex-col lg:flex-row lg:items-end gap-4 lg:justify-between">
+            <div className="min-w-0">
               <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground mb-2">
                 <MapPin className="h-3.5 w-3.5" /> Zona de cultivo
               </label>
-              <select value={zona} onChange={(e) => setZona(e.target.value)} className="rounded-full border border-input bg-background px-5 py-2.5 text-sm min-w-[280px]">
+              <select value={zona} onChange={(e) => setZona(e.target.value)} className="w-full lg:w-auto rounded-full border border-input bg-background px-5 py-2.5 text-sm lg:min-w-[280px]">
                 {zonas.map((z) => <option key={z.id} value={z.id}>{z.nombre}</option>)}
               </select>
             </div>
-            <input placeholder="Filtrar planta…" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-full md:w-64 rounded-full border border-input bg-background px-5 py-2.5 text-sm" />
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setSoloAhora((v) => !v)}
+                aria-pressed={soloAhora}
+                className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
+                  soloAhora
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-input bg-background text-foreground/80 hover:bg-secondary/60"
+                }`}
+              >
+                <Sprout className="h-4 w-4 shrink-0" />
+                <span className="truncate">¿Qué planto ahora? · {meses[mesActual]}</span>
+              </button>
+              <input placeholder="Filtrar planta…" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-full sm:w-56 rounded-full border border-input bg-background px-5 py-2.5 text-sm" />
+            </div>
           </div>
           <div className="mb-4">
             <LeyendaCalendario />
           </div>
+          {soloAhora && (
+            <p className="mb-4 text-sm text-muted-foreground">
+              Mostrando solo variedades con siembra o trasplante en {meses[mesActual]} ({quincenaLabel[quincenaActual]}).
+              {filas.length === 0 && " No hay labores registradas en este periodo."}
+            </p>
+          )}
           {cargandoCalendario && calendario.length === 0 && (
             <CargandoLinea texto="Cargando calendario de cultivo…" />
           )}
           <div className={`overflow-x-auto rounded-2xl border border-border${cargandoCalendario && calendario.length === 0 ? " hidden" : ""}`}>
-
-            <table className="min-w-[1100px] text-sm border-collapse">
+            <table className="w-full min-w-[1040px] text-sm border-collapse">
               <thead>
                 <tr className="bg-secondary/60">
-                  <th rowSpan={2} className="text-left py-3 px-4 font-medium sticky left-0 bg-secondary/60 z-10">Planta</th>
-                  {meses.map((m) => (
-                    <th key={m} colSpan={2} className="py-2 px-2 font-medium text-xs border-l border-border/60">{m}</th>
+                  <th rowSpan={2} className="text-left py-2 px-3 font-medium sticky left-0 bg-secondary/60 z-20 w-[170px] min-w-[170px]">
+                    Planta
+                  </th>
+                  {meses.map((m, mi) => (
+                    <th
+                      key={m}
+                      colSpan={2}
+                      className={`py-2 px-1 font-medium text-xs border-l border-border/60 ${
+                        mi === mesActual ? "bg-primary/15 text-primary" : ""
+                      }`}
+                    >
+                      {m}
+                    </th>
                   ))}
                 </tr>
                 <tr className="bg-secondary/40">
-                  {meses.flatMap((m) =>
+                  {meses.flatMap((m, mi) =>
                     ([1, 2] as const).map((q) => (
-                      <th key={`${m}-${q}`} className={`py-1.5 px-1 font-normal text-[10px] text-muted-foreground border-b border-border ${q === 1 ? "border-l border-border/60" : ""}`}>
+                      <th
+                        key={`${m}-${q}`}
+                        className={`py-1 px-1 font-normal text-[10px] border-b border-border ${q === 1 ? "border-l border-border/60" : ""} ${
+                          mi === mesActual ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground"
+                        }`}
+                      >
                         {q === 1 ? "1ª" : "2ª"}
                       </th>
                     )),
@@ -137,22 +184,33 @@ function TuHuertoPage() {
               </thead>
               <tbody>
                 {filas.map((row, ri) => (
-                  <tr key={`${row.planta}-${row.ciclo ?? ri}`} className="border-t border-border hover:bg-secondary/30 transition-colors">
-                    <td className="py-3 px-4 font-medium sticky left-0 bg-background z-10 whitespace-nowrap">
-                      {row.planta}
-                      {row.ciclo && <span className="block text-[10px] font-normal text-muted-foreground">{row.ciclo}</span>}
+                  <tr key={`${row.planta}-${row.ciclo ?? ri}`} className="border-t border-border group">
+                    <td className="p-0 sticky left-0 bg-background z-10 w-[170px] min-w-[170px] border-r border-border/60">
+                      <div className="h-11 px-3 flex flex-col justify-center overflow-hidden group-hover:bg-secondary/30 transition-colors">
+                        <span className="font-medium leading-tight truncate" title={row.planta}>{row.planta}</span>
+                        {row.ciclo && (
+                          <span className="text-[10px] font-normal leading-tight text-muted-foreground truncate" title={row.ciclo}>
+                            {row.ciclo}
+                          </span>
+                        )}
+                      </div>
                     </td>
                     {row.meses.flatMap((estado, mi) =>
                       ([1, 2] as const).map((q) => {
                         const labores = laboresEnQuincena(estado, q);
                         const principal = labores[0];
+                        const esAhora = mi === mesActual;
                         return (
                           <td
                             key={`${mi}-${q}`}
                             title={`${meses[mi]} · ${quincenaLabel[q]}${labores.length ? `: ${labores.map((l) => actividadesLabel[l.actividad]).join(" y ")}` : ""}`}
-                            className={`p-0 bg-muted/30 ${q === 1 ? "border-l border-border/60" : ""}`}
+                            className={`p-0 ${esAhora ? "bg-primary/10" : "bg-muted/30"} ${q === 1 ? "border-l border-border/60" : ""}`}
                           >
-                            <div className={`h-7 flex items-center justify-center text-[9px] font-semibold leading-none ${principal ? `${estadoEstilos[principal.actividad].fondo} text-foreground/80` : ""}`}>
+                            <div
+                              className={`h-11 flex items-center justify-center text-[9px] font-semibold leading-none group-hover:brightness-95 transition-all ${
+                                principal ? `${estadoEstilos[principal.actividad].fondo} text-foreground/80` : ""
+                              }`}
+                            >
                               {labores.map((l) => l.actividad).join("")}
                             </div>
                           </td>
@@ -164,6 +222,7 @@ function TuHuertoPage() {
               </tbody>
             </table>
           </div>
+
           <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
             <a
               href={pdfFechas.url}
