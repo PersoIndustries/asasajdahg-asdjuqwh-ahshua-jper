@@ -49,20 +49,32 @@ function TuHuertoPage() {
   const [zona, setZona] = useState(zonas[0].id);
   const [tagGuia, setTagGuia] = useState<string>("todas");
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
+  const [soloAhora, setSoloAhora] = useState(false);
+
+  // Mes y quincena actuales, para resaltar la columna y el filtro "¿Qué planto ahora?".
+  const hoy = new Date();
+  const mesActual = hoy.getMonth();
+  const quincenaActual: 1 | 2 = hoy.getDate() <= 15 ? 1 : 2;
 
   const calendario = useCalendario();
   const cargandoCalendario = useCargandoCms("calendario");
 
-  const filas = useMemo(
-    () => calendario.filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase())),
-    [filtro, calendario],
-  );
+  const filas = useMemo(() => {
+    const q = filtro.toLowerCase().trim();
+    return calendario.filter((r) => {
+      if (!r.planta.toLowerCase().includes(q)) return false;
+      if (!soloAhora) return true;
+      const labores = laboresEnQuincena(r.meses[mesActual] ?? "", quincenaActual);
+      return labores.some((l) => l.actividad === "S" || l.actividad === "T");
+    });
+  }, [filtro, calendario, soloAhora, mesActual, quincenaActual]);
 
   const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);
   const guiasFiltradas = useMemo(
     () => (tagGuia === "todas" ? guias : guias.filter((g) => g.tags.includes(tagGuia))),
     [tagGuia],
   );
+
 
   return (
     <SiteLayout>
