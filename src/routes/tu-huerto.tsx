@@ -51,6 +51,8 @@ function TuHuertoPage() {
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
 
   const calendario = useCalendario();
+  const cargandoCalendario = useCargandoCms("calendario");
+
   const filas = useMemo(
     () => calendario.filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase())),
     [filtro, calendario],
