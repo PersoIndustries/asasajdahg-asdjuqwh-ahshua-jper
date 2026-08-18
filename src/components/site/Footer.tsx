@@ -64,8 +64,13 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-border/60">
-        <div className="container-page py-6 flex flex-col md:flex-row items-center justify-between gap-2 text-xs text-muted-foreground">
+        <div className="container-page py-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <p>© {new Date().getFullYear()} Jardiper SC · {t("footer.rights")}</p>
+          <nav aria-label="Legal" className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
+            <Link to="/aviso-legal" className="hover:text-primary">{t("footer.legalNotice")}</Link>
+            <Link to="/privacidad" className="hover:text-primary">{t("footer.privacy")}</Link>
+            <Link to="/cookies" className="hover:text-primary">{t("footer.cookiesPolicy")}</Link>
+          </nav>
           <p>Fraga · Bajo Cinca · Huesca</p>
         </div>
       </div>
