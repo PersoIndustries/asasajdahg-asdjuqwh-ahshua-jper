@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { X, Cookie } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -48,7 +49,10 @@ export function CookieConsent() {
           </div>
           <div className="flex-1">
             <p className="text-sm md:text-base text-foreground leading-relaxed">
-              {t("cookies.text")}
+              {t("cookies.text")}{" "}
+              <Link to="/cookies" className="text-primary underline underline-offset-2 hover:no-underline">
+                {t("cookies.more")}
+              </Link>
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
