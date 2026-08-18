@@ -474,7 +474,11 @@ function ProductosPage() {
           </Section>
 
           <Section eyebrow="Macetas y jardineras" title="Todo tipo de macetas" intro="Terracota, cerámica esmaltada, plástico técnico, madera y grandes formatos corporativos.">
+            {cargandoMateriales && macetas.length === 0 && (
+              <GridSkeleton items={3} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" aspect="aspect-[4/3]" />
+            )}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
               {macetas.map((c) => (
                 <article key={c.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
