@@ -100,18 +100,20 @@ export function imprimirFichaPlanta(
 
   const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${titulo}</title>
 <style>
-  @page { size: A4 portrait; margin: 26mm 14mm 20mm; }
+  @page { size: A4 portrait; margin: 12mm 13mm; }
   * { box-sizing: border-box; }
-  body { font-family: Georgia, "Times New Roman", serif; color: #24302a; margin: 0; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #24302a; margin: 0; padding: 20mm 0 12mm; }
 
   /* Cabecera y pie repetidos en todas las páginas */
-  .run-header, .run-footer { position: fixed; left: 0; right: 0; }
-  .run-header { top: -18mm; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #cfe3cb; padding-bottom: 6px; }
-  .run-header img { height: 34px; }
+  .run-header, .run-footer { position: fixed; left: 0; right: 0; background: #fff; }
+  .run-header { top: 0; height: 17mm; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #cfe3cb; padding-bottom: 5px; }
+  .run-header img { height: 32px; }
   .run-header .t { flex: 1; }
   .run-header h1 { font-size: 15px; margin: 0; }
   .run-header .sci { font-style: italic; color: #6b7a71; font-size: 9px; margin: 1px 0 0; }
-  .run-footer { bottom: -14mm; border-top: 1px solid #e2e6df; padding-top: 4px;
+  .run-header .meta { text-align: right; }
+  .run-footer { bottom: 0; height: 9mm; border-top: 1px solid #e2e6df; padding-top: 4px;
+
     font-family: Arial, sans-serif; font-size: 8px; color: #6b7a71; display: flex; justify-content: space-between; gap: 10px; }
 
   h2 { font-size: 12px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .08em; color: #3f5a49; font-family: Arial, sans-serif;
