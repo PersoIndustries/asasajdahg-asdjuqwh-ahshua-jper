@@ -582,6 +582,8 @@ function ProductosPage() {
 function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const filasCalendario = useFilasCalendario(planta);
+  const cargandoFicha = useCargandoCms("plantas", "calendario");
+
   const guiaVinculada = planta.guiaId ? guias.find((g) => g.id === planta.guiaId) : undefined;
   const [guiaOpen, setGuiaOpen] = useState<(typeof guias)[number] | null>(null);
   // Plagas del catálogo global; si la planta aún no tiene ninguna asociada se
