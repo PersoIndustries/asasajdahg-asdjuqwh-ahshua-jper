@@ -5,7 +5,7 @@
 // Así el gestor de la web puede editar/añadir contenido sin romper nada aunque
 // la base de datos todavía esté vacía.
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useIsFetching } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
   plantasDestacadas,
