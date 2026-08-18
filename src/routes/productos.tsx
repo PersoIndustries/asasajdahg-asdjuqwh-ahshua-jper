@@ -621,7 +621,12 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           </div>
 
           <div className="mt-6 grid gap-6">
-            <CalendarioCultivo planta={planta} mostrarExportar={false} />
+            {cargandoFicha && filasCalendario.length === 0 ? (
+              <CargandoLinea texto="Cargando calendario de cultivo…" />
+            ) : (
+              <CalendarioCultivo planta={planta} mostrarExportar={false} />
+            )}
+
 
             <SeccionPlagas plagas={plagasFicha} onZoom={setZoom} />
 
