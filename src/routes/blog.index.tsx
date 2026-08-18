@@ -67,6 +67,8 @@ function BlogPage() {
   const [categoria, setCategoria] = useState<CategoriaNoticia | "Todas">("Todas");
 
   const todas = useNoticias();
+  const cargandoNoticias = useCargandoCms("noticias");
+
   const filtradas = useMemo(() => {
     const q = busqueda.toLowerCase().trim();
     return todas.filter((n) => {
