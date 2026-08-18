@@ -100,21 +100,22 @@ export function imprimirFichaPlanta(
 
   const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${titulo}</title>
 <style>
-  @page { size: A4 portrait; margin: 12mm 13mm; }
+  @page { size: A4 portrait; margin: 11mm 13mm; }
   * { box-sizing: border-box; }
-  body { font-family: Georgia, "Times New Roman", serif; color: #24302a; margin: 0; padding: 20mm 0 12mm; }
+  body { font-family: Georgia, "Times New Roman", serif; color: #24302a; margin: 0; }
 
-  /* Cabecera y pie repetidos en todas las páginas */
-  .run-header, .run-footer { position: fixed; left: 0; right: 0; background: #fff; }
-  .run-header { top: 0; height: 17mm; display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #cfe3cb; padding-bottom: 5px; }
-  .run-header img { height: 32px; }
+  /* La tabla exterior hace que la cabecera (thead) y el pie (tfoot)
+     se repitan automáticamente en todas las páginas impresas. */
+  table.page { width: 100%; border-collapse: collapse; }
+  table.page > thead > tr > td, table.page > tbody > tr > td, table.page > tfoot > tr > td { padding: 0; border: 0; }
+  .run-header { display: flex; align-items: center; gap: 12px; border-bottom: 2px solid #cfe3cb; padding: 0 0 6px; margin-bottom: 10px; }
+  .run-header img { height: 34px; }
   .run-header .t { flex: 1; }
   .run-header h1 { font-size: 15px; margin: 0; }
   .run-header .sci { font-style: italic; color: #6b7a71; font-size: 9px; margin: 1px 0 0; }
   .run-header .meta { text-align: right; }
-  .run-footer { bottom: 0; height: 9mm; border-top: 1px solid #e2e6df; padding-top: 4px;
-
-    font-family: Arial, sans-serif; font-size: 8px; color: #6b7a71; display: flex; justify-content: space-between; gap: 10px; }
+  .run-footer { border-top: 1px solid #e2e6df; margin-top: 8px; padding-top: 4px;
+    font-family: Arial, sans-serif; font-size: 7.5px; color: #6b7a71; display: flex; justify-content: space-between; gap: 10px; }
 
   h2 { font-size: 12px; margin: 14px 0 6px; text-transform: uppercase; letter-spacing: .08em; color: #3f5a49; font-family: Arial, sans-serif;
        border-left: 3px solid #6fa07a; padding-left: 6px; }
@@ -123,48 +124,52 @@ export function imprimirFichaPlanta(
   .meta { font-family: Arial, sans-serif; font-size: 9px; color: #6b7a71; }
   .chips { font-family: Arial, sans-serif; font-size: 8.5px; color: #3f5a49; margin: 0 0 8px; }
   .chips span { display: inline-block; border: 1px solid #cfe3cb; background: #f3f8f2; border-radius: 999px; padding: 2px 8px; margin-right: 5px; text-transform: capitalize; }
-  .bloque { break-inside: auto; }
 
-  .plaga { break-inside: avoid; display: flex; gap: 8px; border: 1px solid #e2e6df; border-radius: 6px; padding: 7px 9px; margin-bottom: 6px; background: #fcfdfb; }
+  .plaga { break-inside: avoid; display: flex; gap: 9px; border: 1px solid #e2e6df; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; background: #fcfdfb; }
   .plaga img, .plaga .sinimg { width: 74px; height: 74px; object-fit: cover; border-radius: 5px; border: 1px solid #e2e6df; flex: 0 0 74px; background: #eef1ea; }
-  .plaga .txt { flex: 1; }
+  .plaga .txt { flex: 1; min-width: 0; }
 
   table.cal { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; table-layout: fixed; }
   table.cal th, table.cal td { border: 1px solid #d8d8d8; text-align: center; font-size: 6.5px; height: 15px; }
   table.cal thead th { background: #eef1ea; font-size: 7.5px; padding: 2px 0; }
-  th.planta { text-align: left; padding: 3px 5px; font-size: 8px; width: 78px; background: #f7f8f5; }
+  th.planta { text-align: left; padding: 3px 5px; font-size: 8px; width: 82px; background: #f7f8f5; }
   th.planta small { font-weight: normal; color: #6b7a71; font-size: 7px; }
-  tr { break-inside: avoid; }
+  table.cal tr { break-inside: avoid; }
   .leyenda { margin-top: 6px; font-family: Arial, sans-serif; font-size: 8px; color: #4a5a51; }
   .leyenda span { margin-right: 12px; white-space: nowrap; }
   .leyenda i { display: inline-block; width: 12px; height: 8px; border: 1px solid #b9b9b9; margin-right: 3px; vertical-align: -1px; }
   .nota { font-family: Arial, sans-serif; font-size: 7.5px; color: #8a978d; }
   .disclaimer { margin-top: 12px; border-top: 1px dashed #d8ded4; padding-top: 5px; font-family: Arial, sans-serif; font-size: 7.5px; color: #8a978d; }
-  @media print { .plaga, tr, h2 { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }
   body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 </style></head><body>
-  <div class="run-header">
-    <img src="${logo.url}" alt="Jardiper">
-    <div class="t">
-      <h1>${esc(planta.nombre)}</h1>
-      ${planta.nombreCientifico ? `<p class="sci">${esc(planta.nombreCientifico)}</p>` : ""}
+<table class="page">
+  <thead><tr><td>
+    <div class="run-header">
+      <img src="${logo.url}" alt="Jardiper">
+      <div class="t">
+        <h1>${esc(planta.nombre)}</h1>
+        ${planta.nombreCientifico ? `<p class="sci">${esc(planta.nombreCientifico)}</p>` : ""}
+      </div>
+      <p class="meta">Ficha de cultivo<br>Jardiper SC · Fraga (Huesca)</p>
     </div>
-    <p class="meta">Ficha de cultivo<br>Jardiper SC · Fraga (Huesca)</p>
-  </div>
+  </td></tr></thead>
+  <tfoot><tr><td>
+    <div class="run-footer">
+      <span>Jardiper SC · Fraga (Huesca) · 974 47 21 58 · info@jardiper.com</span>
+      <span>jardiper.com</span>
+    </div>
+  </td></tr></tfoot>
+  <tbody><tr><td>
+    <p class="chips"><span>${esc(planta.categoria)}</span>${planta.temporada ? `<span>${esc(planta.temporada)}</span>` : ""}</p>
+    ${planta.descripcion ? `<section class="bloque"><h2>Descripción</h2><p>${esc(planta.descripcion)}</p></section>` : ""}
+    ${bloqueCalendario}
+    ${planta.comoSeCome ? `<section class="bloque"><h2>Cómo se come</h2><p>${esc(planta.comoSeCome)}</p></section>` : ""}
+    ${planta.curiosidades ? `<section class="bloque"><h2>Curiosidades</h2><p>${esc(planta.curiosidades)}</p></section>` : ""}
+    ${bloquePlagas}
+    <p class="disclaimer">${esc(DISCLAIMER_FICHA)}</p>
+  </td></tr></tbody>
+</table>
 
-  <div class="run-footer">
-    <span>Jardiper SC · Ctra. de Zaragoza, Fraga (Huesca) · 974 47 21 58 · info@jardiper.com</span>
-    <span>jardiper.com</span>
-  </div>
-
-  <p class="chips"><span>${esc(planta.categoria)}</span>${planta.temporada ? `<span>${esc(planta.temporada)}</span>` : ""}</p>
-  ${planta.descripcion ? `<section class="bloque"><h2>Descripción</h2><p>${esc(planta.descripcion)}</p></section>` : ""}
-  ${bloqueCalendario}
-  ${bloquePlagas}
-  ${planta.comoSeCome ? `<section class="bloque"><h2>Cómo se come</h2><p>${esc(planta.comoSeCome)}</p></section>` : ""}
-  ${planta.curiosidades ? `<section class="bloque"><h2>Curiosidades</h2><p>${esc(planta.curiosidades)}</p></section>` : ""}
-
-  <p class="disclaimer">${esc(DISCLAIMER_FICHA)}</p>
   <script>
     window.onload = function () {
       var imgs = Array.prototype.slice.call(document.images);
