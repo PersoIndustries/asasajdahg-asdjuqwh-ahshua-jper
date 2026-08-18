@@ -74,6 +74,10 @@ function ProductosPage() {
   // Catálogo: contenido estático + lo publicado desde el gestor de la web.
   const todasLasPlantas = usePlantas();
   const filasCalendarioBd = useCalendario();
+  // Loaders: mientras Supabase responde mostramos esqueletos en lugar de listas vacías.
+  const cargandoCatalogo = useCargandoCms("plantas", "calendario") && todasLasPlantas.length === 0;
+  const cargandoMateriales = useCargandoCms("materiales");
+
   const listaBase = useMemo(() => {
     if (tab === "hortícolas") return todasLasPlantas.filter((p) => p.categoria === "hortícola");
     if (tab === "ornamentales")
