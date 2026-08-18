@@ -111,7 +111,7 @@ function HistoriaPage() {
       </Section>
 
       <Section eyebrow="La familia" title="Tres generaciones detrás del mostrador">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {familia.map((f) => (
             <article key={f.nombre} className="rounded-2xl bg-secondary/50 p-6 hover-lift">
               <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary to-accent mb-4 flex items-center justify-center text-primary-foreground font-serif text-2xl">
@@ -124,6 +124,33 @@ function HistoriaPage() {
           ))}
         </div>
       </Section>
+
+      <Section
+        eyebrow="Galería"
+        title="Nuestras instalaciones"
+        intro="Más de 5.000 m² de vivero junto a la A-131: invernaderos, zona exterior de árboles y arbustos, tienda y patio de sustratos."
+      >
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[
+            { src: galInvernadero, alt: "Interior del invernadero de Jardiper con plantas ornamentales" },
+            { src: galExterior, alt: "Zona exterior del vivero con árboles y arbustos en contenedor" },
+            { src: galTienda, alt: "Tienda de Jardiper con macetas, herramientas y semillas" },
+            { src: galSustratos, alt: "Patio de sustratos y compost en sacas y palés" },
+          ].map((g) => (
+            <figure key={g.alt} className="overflow-hidden rounded-2xl shadow-lg">
+              <img
+                src={g.src}
+                alt={g.alt}
+                width={1280}
+                height={960}
+                loading="lazy"
+                className="w-full h-full object-cover aspect-[4/3] transition-transform duration-500 hover:scale-105"
+              />
+            </figure>
+          ))}
+        </div>
+      </Section>
+
 
       <section className="bg-secondary/40 py-20">
         <div className="container-page grid md:grid-cols-3 gap-8">
