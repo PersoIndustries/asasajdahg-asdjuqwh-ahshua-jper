@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock } from "lucide-react";
-import { useCalendario } from "@/lib/cms";
+import { useCalendario, useCargandoCms } from "@/lib/cms";
+import { CargandoLinea } from "@/components/site/Cargando";
+
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
 import { meses, guias, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
@@ -49,6 +51,8 @@ function TuHuertoPage() {
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
 
   const calendario = useCalendario();
+  const cargandoCalendario = useCargandoCms("calendario");
+
   const filas = useMemo(
     () => calendario.filter((r) => r.planta.toLowerCase().includes(filtro.toLowerCase())),
     [filtro, calendario],
@@ -108,7 +112,11 @@ function TuHuertoPage() {
           <div className="mb-4">
             <LeyendaCalendario />
           </div>
-          <div className="overflow-x-auto rounded-2xl border border-border">
+          {cargandoCalendario && calendario.length === 0 && (
+            <CargandoLinea texto="Cargando calendario de cultivo…" />
+          )}
+          <div className={`overflow-x-auto rounded-2xl border border-border${cargandoCalendario && calendario.length === 0 ? " hidden" : ""}`}>
+
             <table className="min-w-[1100px] text-sm border-collapse">
               <thead>
                 <tr className="bg-secondary/60">

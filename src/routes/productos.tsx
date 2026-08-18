@@ -11,7 +11,9 @@ import {
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas, useMateriales, useCalendario, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { usePlantas, useMateriales, useCalendario, useCargandoCms, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { GridSkeleton, CargandoLinea } from "@/components/site/Cargando";
+
 
 import { CalendarioCultivo, estadoEstilos, useFilasCalendario } from "@/components/site/CalendarioCultivo";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
@@ -72,6 +74,10 @@ function ProductosPage() {
   // Catálogo: contenido estático + lo publicado desde el gestor de la web.
   const todasLasPlantas = usePlantas();
   const filasCalendarioBd = useCalendario();
+  // Loaders: mientras Supabase responde mostramos esqueletos en lugar de listas vacías.
+  const cargandoCatalogo = useCargandoCms("plantas", "calendario") && todasLasPlantas.length === 0;
+  const cargandoMateriales = useCargandoCms("materiales");
+
   const listaBase = useMemo(() => {
     if (tab === "hortícolas") return todasLasPlantas.filter((p) => p.categoria === "hortícola");
     if (tab === "ornamentales")
@@ -318,7 +324,9 @@ function ProductosPage() {
             )}
           </div>
 
-          {listaFiltrada.length === 0 && (
+          {cargandoCatalogo && <GridSkeleton items={8} />}
+
+          {!cargandoCatalogo && listaFiltrada.length === 0 && (
             <p className="text-sm text-muted-foreground py-12 text-center">
               {filtroCalendarioActivo
                 ? "Ninguna variedad tiene labores de cultivo en el periodo seleccionado."
@@ -326,7 +334,8 @@ function ProductosPage() {
             </p>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className={`grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6${cargandoCatalogo ? " hidden" : ""}`}>
+
             {listaFiltrada.map((p) => {
               const acts = filtroCalendarioActivo ? actividadesEnRango(p, mesDesde, mesHasta, filasCalendarioBd.length ? filasCalendarioBd : undefined) : [];
               return (
@@ -356,7 +365,11 @@ function ProductosPage() {
       {tab === "tierras" && (
         <>
           <Section eyebrow="Suliflor España" title="Tierras y sustratos" intro="Distribuidor oficial Suliflor. Disponibles en tienda física en Fraga y venta al por mayor.">
+            {cargandoMateriales && sustratosSuliflor.length === 0 && (
+              <GridSkeleton items={6} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" aspect="aspect-[4/3]" />
+            )}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
               {sustratosSuliflor.map((p) => (
                 <article key={p.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
@@ -400,6 +413,8 @@ function ProductosPage() {
               </div>
 
               <div className="max-w-3xl">
+                {cargandoMateriales && composts.length === 0 && <CargandoLinea texto="Cargando compost…" />}
+
                 {composts.map((c) => (
                   <article key={c.id} className="group rounded-2xl border border-border overflow-hidden bg-card hover-lift flex flex-col md:flex-row">
                     <div className="relative md:w-2/5 aspect-[4/3] md:aspect-auto overflow-hidden bg-secondary">
@@ -429,7 +444,11 @@ function ProductosPage() {
       {tab === "material" && (
         <>
           <Section eyebrow="Piedras y áridos decorativos" title="Piedras para jardín" intro="Piedras marmolinas, canto rodado, volcánica y corteza — en saco o a granel.">
+            {cargandoMateriales && piedras.length === 0 && (
+              <GridSkeleton items={4} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" aspect="aspect-[4/3]" />
+            )}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
               {piedras.map((c) => (
                 <article key={c.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
@@ -455,7 +474,11 @@ function ProductosPage() {
           </Section>
 
           <Section eyebrow="Macetas y jardineras" title="Todo tipo de macetas" intro="Terracota, cerámica esmaltada, plástico técnico, madera y grandes formatos corporativos.">
+            {cargandoMateriales && macetas.length === 0 && (
+              <GridSkeleton items={3} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" aspect="aspect-[4/3]" />
+            )}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
               {macetas.map((c) => (
                 <article key={c.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
@@ -559,6 +582,8 @@ function ProductosPage() {
 function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const filasCalendario = useFilasCalendario(planta);
+  const cargandoFicha = useCargandoCms("plantas", "calendario");
+
   const guiaVinculada = planta.guiaId ? guias.find((g) => g.id === planta.guiaId) : undefined;
   const [guiaOpen, setGuiaOpen] = useState<(typeof guias)[number] | null>(null);
   // Plagas del catálogo global; si la planta aún no tiene ninguna asociada se
@@ -598,7 +623,12 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           </div>
 
           <div className="mt-6 grid gap-6">
-            <CalendarioCultivo planta={planta} mostrarExportar={false} />
+            {cargandoFicha && filasCalendario.length === 0 ? (
+              <CargandoLinea texto="Cargando calendario de cultivo…" />
+            ) : (
+              <CalendarioCultivo planta={planta} mostrarExportar={false} />
+            )}
+
 
             <SeccionPlagas plagas={plagasFicha} onZoom={setZoom} />
 

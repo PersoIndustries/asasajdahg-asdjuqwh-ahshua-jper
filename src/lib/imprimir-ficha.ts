@@ -21,6 +21,16 @@ export const DISCLAIMER_FICHA =
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/** Las imágenes empaquetadas llegan como rutas relativas: en la ventana de
+ *  impresión (about:blank) hay que convertirlas en URL absolutas. */
+const urlAbsoluta = (src: string) => {
+  try {
+    return new URL(src, window.location.href).href;
+  } catch {
+    return src;
+  }
+};
+
 const slug = (s: string) =>
   s
     .normalize("NFD")
@@ -28,6 +38,7 @@ const slug = (s: string) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+
 
 export function imprimirFichaPlanta(
   planta: Plant,
@@ -76,25 +87,37 @@ export function imprimirFichaPlanta(
        </section>`
     : "";
 
+  // Rejilla de 3 plagas por fila (tabla: es lo que respeta mejor el paginado
+  // del navegador al imprimir).
+  const filasPlagas: PlagaFicha[][] = [];
+  for (let i = 0; i < plagas.length; i += 3) filasPlagas.push(plagas.slice(i, i + 3));
+
+  const tarjetaPlaga = (p?: PlagaFicha) => {
+    if (!p) return `<td class="vacia"></td>`;
+    return `<td class="plaga">
+      ${p.imagen ? `<img src="${esc(urlAbsoluta(p.imagen))}" alt="">` : `<div class="sinimg"></div>`}
+      <h3>${esc(p.nombre)}</h3>
+      ${p.descripcion ? `<p>${esc(p.descripcion)}</p>` : ""}
+      ${p.prevencion ? `<p><b>Prevención:</b> ${esc(p.prevencion)}</p>` : ""}
+      ${p.combate ? `<p><b>Cómo combatirla:</b> ${esc(p.combate)}</p>` : ""}
+      ${p.otrosDatos ? `<p><b>Otros datos:</b> ${esc(p.otrosDatos)}</p>` : ""}
+    </td>`;
+  };
+
   const bloquePlagas = plagas.length
     ? `<section class="bloque">
          <h2>Plagas, enfermedades y cómo combatirlas</h2>
-         ${plagas
-           .map(
-             (p) => `<div class="plaga">
-               ${p.imagen ? `<img src="${esc(p.imagen)}" alt="">` : `<div class="sinimg"></div>`}
-               <div class="txt">
-                 <h3>${esc(p.nombre)}</h3>
-                 ${p.descripcion ? `<p>${esc(p.descripcion)}</p>` : ""}
-                 ${p.prevencion ? `<p><b>Prevención:</b> ${esc(p.prevencion)}</p>` : ""}
-                 ${p.combate ? `<p><b>Cómo combatirla:</b> ${esc(p.combate)}</p>` : ""}
-                 ${p.otrosDatos ? `<p><b>Otros datos:</b> ${esc(p.otrosDatos)}</p>` : ""}
-               </div>
-             </div>`,
-           )
-           .join("")}
+         <table class="plagas">
+           ${filasPlagas
+             .map(
+               (fila) =>
+                 `<tr>${[fila[0], fila[1], fila[2]].map(tarjetaPlaga).join("")}</tr>`,
+             )
+             .join("")}
+         </table>
        </section>`
     : "";
+
 
   const titulo = `jardiper-ficha-${slug(planta.nombre)}`;
 
@@ -125,9 +148,24 @@ export function imprimirFichaPlanta(
   .chips { font-family: Arial, sans-serif; font-size: 8.5px; color: #3f5a49; margin: 0 0 8px; }
   .chips span { display: inline-block; border: 1px solid #cfe3cb; background: #f3f8f2; border-radius: 999px; padding: 2px 8px; margin-right: 5px; text-transform: capitalize; }
 
-  .plaga { break-inside: avoid; display: flex; gap: 9px; border: 1px solid #e2e6df; border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; background: #fcfdfb; }
-  .plaga img, .plaga .sinimg { width: 74px; height: 74px; object-fit: cover; border-radius: 5px; border: 1px solid #e2e6df; flex: 0 0 74px; background: #eef1ea; }
-  .plaga .txt { flex: 1; min-width: 0; }
+  /* Rejilla de plagas: 3 por fila */
+  table.plagas { width: 100%; border-collapse: separate; border-spacing: 6px 6px; table-layout: fixed; }
+  table.plagas tr { break-inside: avoid; }
+  td.plaga { width: 33.33%; vertical-align: top; break-inside: avoid;
+    border: 1px solid #e2e6df; border-radius: 6px; padding: 7px 8px; background: #fcfdfb; }
+  td.vacia { border: 0; background: none; }
+  td.plaga img, td.plaga .sinimg { display: block; width: 100%; aspect-ratio: 1 / 1; height: auto;
+    object-fit: cover; border-radius: 5px; border: 1px solid #e2e6df; background: #eef1ea; margin-bottom: 5px; }
+  td.plaga h3 { font-size: 9.5px; }
+  td.plaga p { font-size: 7.8px; line-height: 1.4; margin: 0 0 3px; }
+
+  /* Portada: imagen principal del producto junto a la descripción */
+  .intro { display: flex; gap: 12px; align-items: flex-start; break-inside: avoid; }
+  .intro .foto { flex: 0 0 46mm; }
+  .intro .foto img { width: 46mm; height: 36mm; object-fit: cover; border-radius: 6px; border: 1px solid #e2e6df; }
+  .intro .txt { flex: 1; min-width: 0; }
+  .intro h2 { margin-top: 0; }
+
 
   table.cal { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; table-layout: fixed; }
   table.cal th, table.cal td { border: 1px solid #d8d8d8; text-align: center; font-size: 6.5px; height: 15px; }
@@ -161,7 +199,14 @@ export function imprimirFichaPlanta(
   </td></tr></tfoot>
   <tbody><tr><td>
     <p class="chips"><span>${esc(planta.categoria)}</span>${planta.temporada ? `<span>${esc(planta.temporada)}</span>` : ""}</p>
-    ${planta.descripcion ? `<section class="bloque"><h2>Descripción</h2><p>${esc(planta.descripcion)}</p></section>` : ""}
+    <section class="bloque intro">
+      ${planta.imagen ? `<div class="foto"><img src="${esc(urlAbsoluta(planta.imagen))}" alt="${esc(planta.nombre)}"></div>` : ""}
+      <div class="txt">
+        <h2>Descripción</h2>
+        <p>${esc(planta.descripcion || "Consulta con nosotros los detalles de esta variedad.")}</p>
+      </div>
+    </section>
+
     ${bloqueCalendario}
     ${planta.comoSeCome ? `<section class="bloque"><h2>Cómo se come</h2><p>${esc(planta.comoSeCome)}</p></section>` : ""}
     ${planta.curiosidades ? `<section class="bloque"><h2>Curiosidades</h2><p>${esc(planta.curiosidades)}</p></section>` : ""}

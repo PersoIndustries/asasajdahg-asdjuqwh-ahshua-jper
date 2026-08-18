@@ -9,7 +9,9 @@ import {
   formatearFecha,
   type CategoriaNoticia,
 } from "@/lib/noticias";
-import { useNoticias } from "@/lib/cms";
+import { useNoticias, useCargandoCms } from "@/lib/cms";
+import { GridSkeleton } from "@/components/site/Cargando";
+
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -65,6 +67,8 @@ function BlogPage() {
   const [categoria, setCategoria] = useState<CategoriaNoticia | "Todas">("Todas");
 
   const todas = useNoticias();
+  const cargandoNoticias = useCargandoCms("noticias");
+
   const filtradas = useMemo(() => {
     const q = busqueda.toLowerCase().trim();
     return todas.filter((n) => {
@@ -116,9 +120,14 @@ function BlogPage() {
           </div>
         </div>
 
-        {filtradas.length === 0 && (
+        {cargandoNoticias && todas.length === 0 && (
+          <GridSkeleton items={6} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" aspect="aspect-[16/10]" />
+        )}
+
+        {!cargandoNoticias && filtradas.length === 0 && (
           <p className="py-16 text-center text-muted-foreground">{t("blog.noResults")}</p>
         )}
+
 
         {destacada && (
           <article className="group grid md:grid-cols-2 gap-8 items-center mb-16 pb-16 border-b border-border/60">
