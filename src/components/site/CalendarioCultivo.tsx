@@ -101,6 +101,15 @@ export function LeyendaCalendario({ filas }: { filas?: FilaCal[] }) {
   );
 }
 
+/** Filas de calendario de una planta: manda la base de datos; si aún no hay
+ *  datos cargados, se usa el calendario estático como respaldo. */
+export function useFilasCalendario(planta: Plant): FilaCal[] {
+  const filasBd = useCalendario();
+  const deBd = filasCalendarioPara(planta, filasBd) as FilaCal[];
+  if (deBd.length) return deBd;
+  return filasBd.length ? [] : (getCalendariosPlanta(planta) as FilaCal[]);
+}
+
 /** Calendario completo de una planta del catálogo (datos de la base de datos). */
 export function CalendarioCultivo({ planta, mostrarExportar = true }: { planta: Plant; mostrarExportar?: boolean }) {
   const filas = useFilasCalendario(planta) as FilaCal[];
