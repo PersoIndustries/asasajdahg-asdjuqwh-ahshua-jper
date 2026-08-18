@@ -444,7 +444,11 @@ function ProductosPage() {
       {tab === "material" && (
         <>
           <Section eyebrow="Piedras y áridos decorativos" title="Piedras para jardín" intro="Piedras marmolinas, canto rodado, volcánica y corteza — en saco o a granel.">
+            {cargandoMateriales && piedras.length === 0 && (
+              <GridSkeleton items={4} className="grid md:grid-cols-2 lg:grid-cols-4 gap-6" aspect="aspect-[4/3]" />
+            )}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+
               {piedras.map((c) => (
                 <article key={c.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
