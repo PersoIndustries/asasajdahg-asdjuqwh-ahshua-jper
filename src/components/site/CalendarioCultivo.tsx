@@ -1,9 +1,10 @@
 import { Printer } from "lucide-react";
 import {
   meses, leyendaCalendario, parseCelda, laboresEnQuincena, quincenaLabel,
-  getCalendariosPlanta, actividadesLabel,
+  getCalendariosPlanta, filasCalendarioPara, actividadesLabel,
   type Actividad, type Plant,
 } from "@/lib/mock-data";
+import { useCalendario } from "@/lib/cms";
 
 export type FilaCal = { planta: string; ciclo?: string; meses: (string | undefined)[] };
 
