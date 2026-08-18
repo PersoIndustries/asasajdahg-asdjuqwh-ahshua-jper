@@ -101,9 +101,9 @@ export function LeyendaCalendario({ filas }: { filas?: FilaCal[] }) {
   );
 }
 
-/** Calendario completo de una planta del catálogo. */
+/** Calendario completo de una planta del catálogo (datos de la base de datos). */
 export function CalendarioCultivo({ planta, mostrarExportar = true }: { planta: Plant; mostrarExportar?: boolean }) {
-  const filas = getCalendariosPlanta(planta) as FilaCal[];
+  const filas = useFilasCalendario(planta) as FilaCal[];
   if (!filas.length) return null;
 
   return (
