@@ -136,8 +136,12 @@ function AuthPage() {
                     className="mt-0.5 h-4 w-4 rounded border-border accent-[var(--color-primary,currentColor)]"
                   />
                   <span>
-                    Acepto los <strong className="text-foreground">términos y condiciones</strong> y
-                    la política de privacidad de Jardiper SC. Tratamos tu email para crear y
+                    Acepto el{" "}
+                    <Link to="/aviso-legal" className="text-primary hover:underline font-medium">aviso legal</Link>, la{" "}
+                    <Link to="/privacidad" className="text-primary hover:underline font-medium">política de privacidad</Link>{" "}
+                    y la{" "}
+                    <Link to="/cookies" className="text-primary hover:underline font-medium">política de cookies</Link>{" "}
+                    de Jardiper SC. Tratamos tu email para crear y
                     gestionar tu cuenta, y registramos datos básicos de tráfico y de uso de la web
                     (páginas visitadas, dispositivo y estadísticas agregadas) para mantener el
                     servicio y mejorarlo. No vendemos tus datos a terceros y puedes solicitar su

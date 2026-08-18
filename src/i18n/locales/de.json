@@ -17,13 +17,17 @@
     "schedule": "Mo–Fr · 8:00–13:00 und 16:00–19:00",
     "saturday": "Samstags · 9:00–13:00",
     "closed": "Sonn- und Feiertags geschlossen",
-    "rights": "Alle Rechte vorbehalten"
+    "rights": "Alle Rechte vorbehalten",
+    "legalNotice": "Impressum",
+    "privacy": "Datenschutz",
+    "cookiesPolicy": "Cookies"
   },
   "cookies": {
     "title": "Wir verwenden Cookies",
     "text": "Wir verwenden Cookies, um dein Erlebnis zu verbessern und den Verkehr zu analysieren. Du kannst nicht essentielle Cookies akzeptieren oder ablehnen.",
     "accept": "Akzeptieren",
-    "reject": "Ablehnen"
+    "reject": "Ablehnen",
+    "more": "Mehr erfahren"
   },
   "home": {
     "eyebrow": "Fraga · Bajo Cinca · seit 1974",
