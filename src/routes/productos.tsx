@@ -11,9 +11,9 @@ import {
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas, useMateriales, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { usePlantas, useMateriales, useCalendario, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
 
-import { CalendarioCultivo, estadoEstilos } from "@/components/site/CalendarioCultivo";
+import { CalendarioCultivo, estadoEstilos, useFilasCalendario } from "@/components/site/CalendarioCultivo";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 import { imprimirFichaPlanta, DISCLAIMER_FICHA } from "@/lib/imprimir-ficha";
 
@@ -71,6 +71,7 @@ function ProductosPage() {
 
   // Catálogo: contenido estático + lo publicado desde el gestor de la web.
   const todasLasPlantas = usePlantas();
+  const filasCalendarioBd = useCalendario();
   const listaBase = useMemo(() => {
     if (tab === "hortícolas") return todasLasPlantas.filter((p) => p.categoria === "hortícola");
     if (tab === "ornamentales")
@@ -96,11 +97,11 @@ function ProductosPage() {
         (p.nombreCientifico ?? "").toLowerCase().includes(q);
       if (!matchCat || !matchQ) return false;
       if (!filtroCalendarioActivo) return true;
-      const acts = actividadesEnRango(p, mesDesde, mesHasta);
+      const acts = actividadesEnRango(p, mesDesde, mesHasta, filasCalendarioBd.length ? filasCalendarioBd : undefined);
       if (acts.length === 0) return false;
       return actividades.length === 0 || acts.some((a) => actividades.includes(a));
     });
-  }, [listaBase, catFiltro, busqueda, filtroCalendarioActivo, mesDesde, mesHasta, actividades]);
+  }, [listaBase, catFiltro, busqueda, filtroCalendarioActivo, mesDesde, mesHasta, actividades, filasCalendarioBd]);
 
   const toggleActividad = (a: Actividad) =>
     setActividades((prev) => (prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]));
@@ -327,7 +328,7 @@ function ProductosPage() {
 
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {listaFiltrada.map((p) => {
-              const acts = filtroCalendarioActivo ? actividadesEnRango(p, mesDesde, mesHasta) : [];
+              const acts = filtroCalendarioActivo ? actividadesEnRango(p, mesDesde, mesHasta, filasCalendarioBd.length ? filasCalendarioBd : undefined) : [];
               return (
                 <button key={p.id} onClick={() => setFicha(p)} className="text-left group">
                   <div className="aspect-square overflow-hidden rounded-2xl bg-muted mb-3">
@@ -557,6 +558,7 @@ function ProductosPage() {
 
 function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
+  const filasCalendario = useFilasCalendario(planta);
   const guiaVinculada = planta.guiaId ? guias.find((g) => g.id === planta.guiaId) : undefined;
   const [guiaOpen, setGuiaOpen] = useState<(typeof guias)[number] | null>(null);
   // Plagas del catálogo global; si la planta aún no tiene ninguna asociada se
@@ -583,7 +585,7 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
             </div>
             <button
               type="button"
-              onClick={() => imprimirFichaPlanta(planta, plagasFicha)}
+              onClick={() => imprimirFichaPlanta(planta, plagasFicha, filasCalendario)}
               className="shrink-0 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3.5 py-1.5 text-xs font-medium hover:bg-secondary transition-colors"
             >
               <Printer className="h-3.5 w-3.5" /> Exportar ficha en PDF

@@ -1423,10 +1423,10 @@ const normalizar = (s: string) =>
 
 export type FilaCalendario = { planta: string; ciclo?: string; meses: MesEstado[] };
 
-/** Todas las filas (ciclos) del calendario que corresponden a una planta. */
-export function getCalendariosPlanta(planta: Plant): FilaCalendario[] {
+/** Filas de un calendario dado (BD o estático) que corresponden a una planta. */
+export function filasCalendarioPara(planta: Plant, fuente: FilaCalendario[]): FilaCalendario[] {
   const clave = normalizar(planta.calendarioKey ?? planta.nombre);
-  const filas = calendario.map((f) => ({ fila: f, key: normalizar(f.planta) }));
+  const filas = fuente.map((f) => ({ fila: f, key: normalizar(f.planta) }));
 
   const exactas = filas.filter((f) => f.key === clave);
   if (exactas.length) return exactas.map((f) => f.fila);
@@ -1435,6 +1435,11 @@ export function getCalendariosPlanta(planta: Plant): FilaCalendario[] {
   if (prefijo.length) return prefijo.map((f) => f.fila);
 
   return filas.filter((f) => clave.includes(f.key)).map((f) => f.fila);
+}
+
+/** Todas las filas (ciclos) del calendario estático que corresponden a una planta. */
+export function getCalendariosPlanta(planta: Plant): FilaCalendario[] {
+  return filasCalendarioPara(planta, calendario);
 }
 
 /** Primera fila del calendario de una planta (compatibilidad). */
@@ -1499,8 +1504,13 @@ export function mesesEnRango(desde: number, hasta: number): number[] {
 }
 
 /** Actividades de cultivo de una planta dentro de un rango de meses. */
-export function actividadesEnRango(planta: Plant, desde: number, hasta: number): Actividad[] {
-  const filas = getCalendariosPlanta(planta);
+export function actividadesEnRango(
+  planta: Plant,
+  desde: number,
+  hasta: number,
+  fuente?: FilaCalendario[],
+): Actividad[] {
+  const filas = fuente ? filasCalendarioPara(planta, fuente) : getCalendariosPlanta(planta);
   if (!filas.length) return [];
   const set = new Set<Actividad>();
   for (const fila of filas) {

@@ -21,8 +21,12 @@ export const DISCLAIMER_FICHA =
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-export function imprimirFichaPlanta(planta: Plant, plagas: PlagaFicha[]) {
-  const filas = getCalendariosPlanta(planta);
+export function imprimirFichaPlanta(
+  planta: Plant,
+  plagas: PlagaFicha[],
+  filasCalendario?: { planta: string; ciclo?: string; meses: (string | undefined)[] }[],
+) {
+  const filas = filasCalendario ?? getCalendariosPlanta(planta);
 
   const cabeceraMeses = meses.map((m) => `<th colspan="2">${m}</th>`).join("");
 
