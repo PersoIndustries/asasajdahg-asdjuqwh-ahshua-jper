@@ -331,3 +331,16 @@ export function useMateriales(): Record<SeccionMaterial, Material[]> {
   };
 }
 
+
+/* ─────────── Estado de carga ─────────── */
+
+/** `true` mientras alguna de las consultas indicadas sigue trayendo datos de
+ *  Supabase. Sirve para mostrar loaders en lugar de listas vacías. */
+export function useCargandoCms(...claves: string[]): boolean {
+  const plantas = useIsFetching({ queryKey: ["cms", "plantas"] });
+  const calendario = useIsFetching({ queryKey: ["cms", "calendario"] });
+  const materiales = useIsFetching({ queryKey: ["cms", "materiales"] });
+  const noticias = useIsFetching({ queryKey: ["cms", "noticias"] });
+  const mapa: Record<string, number> = { plantas, calendario, materiales, noticias };
+  return claves.some((c) => (mapa[c] ?? 0) > 0);
+}
