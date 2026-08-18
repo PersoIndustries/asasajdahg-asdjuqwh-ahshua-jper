@@ -21,6 +21,16 @@ export const DISCLAIMER_FICHA =
 const esc = (s: string) =>
   s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
+/** Las imágenes empaquetadas llegan como rutas relativas: en la ventana de
+ *  impresión (about:blank) hay que convertirlas en URL absolutas. */
+const urlAbsoluta = (src: string) => {
+  try {
+    return new URL(src, window.location.href).href;
+  } catch {
+    return src;
+  }
+};
+
 const slug = (s: string) =>
   s
     .normalize("NFD")
@@ -28,6 +38,7 @@ const slug = (s: string) =>
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
+
 
 export function imprimirFichaPlanta(
   planta: Plant,
