@@ -101,7 +101,7 @@ export function LeyendaCalendario({ filas }: { filas?: FilaCal[] }) {
 }
 
 /** Calendario completo de una planta del catálogo. */
-export function CalendarioCultivo({ planta }: { planta: Plant }) {
+export function CalendarioCultivo({ planta, mostrarExportar = true }: { planta: Plant; mostrarExportar?: boolean }) {
   const filas = getCalendariosPlanta(planta) as FilaCal[];
   if (!filas.length) return null;
 
@@ -109,8 +109,11 @@ export function CalendarioCultivo({ planta }: { planta: Plant }) {
     <div>
       <div className="flex items-center justify-between gap-3 mb-2">
         <h4 className="font-serif text-lg">Calendario de cultivo</h4>
-        <BotonImprimirCalendario titulo={`Calendario de cultivo · ${planta.nombre}`} filas={filas} />
+        {mostrarExportar && (
+          <BotonImprimirCalendario titulo={`Calendario de cultivo · ${planta.nombre}`} filas={filas} />
+        )}
       </div>
+
       <div className="space-y-3">
         {filas.map((fila, fi) => (
           <BloqueCalendario key={`${fila.planta}-${fila.ciclo ?? fi}`} fila={fila} />
