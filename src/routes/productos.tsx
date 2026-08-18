@@ -413,6 +413,8 @@ function ProductosPage() {
               </div>
 
               <div className="max-w-3xl">
+                {cargandoMateriales && composts.length === 0 && <CargandoLinea texto="Cargando compost…" />}
+
                 {composts.map((c) => (
                   <article key={c.id} className="group rounded-2xl border border-border overflow-hidden bg-card hover-lift flex flex-col md:flex-row">
                     <div className="relative md:w-2/5 aspect-[4/3] md:aspect-auto overflow-hidden bg-secondary">
