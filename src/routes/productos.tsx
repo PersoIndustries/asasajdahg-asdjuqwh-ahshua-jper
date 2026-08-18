@@ -365,7 +365,11 @@ function ProductosPage() {
       {tab === "tierras" && (
         <>
           <Section eyebrow="Suliflor España" title="Tierras y sustratos" intro="Distribuidor oficial Suliflor. Disponibles en tienda física en Fraga y venta al por mayor.">
+            {cargandoMateriales && sustratosSuliflor.length === 0 && (
+              <GridSkeleton items={6} className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" aspect="aspect-[4/3]" />
+            )}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
               {sustratosSuliflor.map((p) => (
                 <article key={p.id} className="group rounded-2xl border border-border overflow-hidden hover-lift bg-card flex flex-col">
                   <div className="relative aspect-[4/3] overflow-hidden bg-secondary">
