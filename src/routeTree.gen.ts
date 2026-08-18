@@ -12,9 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TuHuertoRouteImport } from './routes/tu-huerto'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ProductosRouteImport } from './routes/productos'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as HistoriaRouteImport } from './routes/historia'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as ContactoRouteImport } from './routes/contacto'
 import { Route as BlogRouteImport } from './routes/blog'
+import { Route as AvisoLegalRouteImport } from './routes/aviso-legal'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
@@ -38,9 +41,19 @@ const ProductosRoute = ProductosRouteImport.update({
   path: '/productos',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HistoriaRoute = HistoriaRouteImport.update({
   id: '/historia',
   path: '/historia',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactoRoute = ContactoRouteImport.update({
@@ -51,6 +64,11 @@ const ContactoRoute = ContactoRouteImport.update({
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AvisoLegalRoute = AvisoLegalRouteImport.update({
+  id: '/aviso-legal',
+  path: '/aviso-legal',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -91,9 +109,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
   '/blog': typeof BlogRouteWithChildren
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/historia': typeof HistoriaRoute
+  '/privacidad': typeof PrivacidadRoute
   '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
@@ -105,8 +126,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/historia': typeof HistoriaRoute
+  '/privacidad': typeof PrivacidadRoute
   '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
@@ -120,9 +144,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/aviso-legal': typeof AvisoLegalRoute
   '/blog': typeof BlogRouteWithChildren
   '/contacto': typeof ContactoRoute
+  '/cookies': typeof CookiesRoute
   '/historia': typeof HistoriaRoute
+  '/privacidad': typeof PrivacidadRoute
   '/productos': typeof ProductosRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/tu-huerto': typeof TuHuertoRoute
@@ -136,9 +163,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/aviso-legal'
     | '/blog'
     | '/contacto'
+    | '/cookies'
     | '/historia'
+    | '/privacidad'
     | '/productos'
     | '/sitemap.xml'
     | '/tu-huerto'
@@ -150,8 +180,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/aviso-legal'
     | '/contacto'
+    | '/cookies'
     | '/historia'
+    | '/privacidad'
     | '/productos'
     | '/sitemap.xml'
     | '/tu-huerto'
@@ -164,9 +197,12 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/aviso-legal'
     | '/blog'
     | '/contacto'
+    | '/cookies'
     | '/historia'
+    | '/privacidad'
     | '/productos'
     | '/sitemap.xml'
     | '/tu-huerto'
@@ -180,9 +216,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
+  AvisoLegalRoute: typeof AvisoLegalRoute
   BlogRoute: typeof BlogRouteWithChildren
   ContactoRoute: typeof ContactoRoute
+  CookiesRoute: typeof CookiesRoute
   HistoriaRoute: typeof HistoriaRoute
+  PrivacidadRoute: typeof PrivacidadRoute
   ProductosRoute: typeof ProductosRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TuHuertoRoute: typeof TuHuertoRoute
@@ -211,11 +250,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductosRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/historia': {
       id: '/historia'
       path: '/historia'
       fullPath: '/historia'
       preLoaderRoute: typeof HistoriaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contacto': {
@@ -230,6 +283,13 @@ declare module '@tanstack/react-router' {
       path: '/blog'
       fullPath: '/blog'
       preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aviso-legal': {
+      id: '/aviso-legal'
+      path: '/aviso-legal'
+      fullPath: '/aviso-legal'
+      preLoaderRoute: typeof AvisoLegalRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -313,9 +373,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
+  AvisoLegalRoute: AvisoLegalRoute,
   BlogRoute: BlogRouteWithChildren,
   ContactoRoute: ContactoRoute,
+  CookiesRoute: CookiesRoute,
   HistoriaRoute: HistoriaRoute,
+  PrivacidadRoute: PrivacidadRoute,
   ProductosRoute: ProductosRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TuHuertoRoute: TuHuertoRoute,

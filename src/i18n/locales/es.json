@@ -17,13 +17,17 @@
     "schedule": "L–V · 8:00–13:00 y 16:00–19:00",
     "saturday": "Sábados · 9:00–13:00",
     "closed": "Domingos y festivos cerrado",
-    "rights": "Todos los derechos reservados"
+    "rights": "Todos los derechos reservados",
+    "legalNotice": "Aviso legal",
+    "privacy": "Privacidad",
+    "cookiesPolicy": "Cookies"
   },
   "cookies": {
     "title": "Usamos cookies",
     "text": "Utilizamos cookies para mejorar tu experiencia y analizar el tráfico. Puedes aceptarlas o rechazar las no esenciales.",
     "accept": "Aceptar",
-    "reject": "Rechazar"
+    "reject": "Rechazar",
+    "more": "Más información"
   },
   "home": {
     "eyebrow": "Fraga · Bajo Cinca · desde 1974",
