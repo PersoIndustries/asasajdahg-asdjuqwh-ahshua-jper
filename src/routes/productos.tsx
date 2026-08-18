@@ -633,7 +633,15 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
             </div>
           </div>
 
+          <p className="mt-8 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">
+            {DISCLAIMER_FICHA}{" "}
+            <Link to="/contacto" className="underline hover:text-primary">
+              Contacta con nosotros
+            </Link>
+            .
+          </p>
         </div>
+
       </div>
       {zoom && (
         <div
