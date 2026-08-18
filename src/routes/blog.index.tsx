@@ -116,9 +116,14 @@ function BlogPage() {
           </div>
         </div>
 
-        {filtradas.length === 0 && (
+        {cargandoNoticias && todas.length === 0 && (
+          <GridSkeleton items={6} className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" aspect="aspect-[16/10]" />
+        )}
+
+        {!cargandoNoticias && filtradas.length === 0 && (
           <p className="py-16 text-center text-muted-foreground">{t("blog.noResults")}</p>
         )}
+
 
         {destacada && (
           <article className="group grid md:grid-cols-2 gap-8 items-center mb-16 pb-16 border-b border-border/60">
