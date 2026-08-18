@@ -199,7 +199,14 @@ export function imprimirFichaPlanta(
   </td></tr></tfoot>
   <tbody><tr><td>
     <p class="chips"><span>${esc(planta.categoria)}</span>${planta.temporada ? `<span>${esc(planta.temporada)}</span>` : ""}</p>
-    ${planta.descripcion ? `<section class="bloque"><h2>Descripción</h2><p>${esc(planta.descripcion)}</p></section>` : ""}
+    <section class="bloque intro">
+      ${planta.imagen ? `<div class="foto"><img src="${esc(urlAbsoluta(planta.imagen))}" alt="${esc(planta.nombre)}"></div>` : ""}
+      <div class="txt">
+        <h2>Descripción</h2>
+        <p>${esc(planta.descripcion || "Consulta con nosotros los detalles de esta variedad.")}</p>
+      </div>
+    </section>
+
     ${bloqueCalendario}
     ${planta.comoSeCome ? `<section class="bloque"><h2>Cómo se come</h2><p>${esc(planta.comoSeCome)}</p></section>` : ""}
     ${planta.curiosidades ? `<section class="bloque"><h2>Curiosidades</h2><p>${esc(planta.curiosidades)}</p></section>` : ""}
