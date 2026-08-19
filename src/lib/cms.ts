@@ -53,7 +53,7 @@ export type PlantaRow = {
   planta_plagas?: { orden: number; plagas: PlagaRow | null }[];
 };
 
-const imagenEstatica = (slug: string) => plantasDestacadas.find((p) => p.id === slug)?.imagen;
+
 
 export const normalizarTag = (t: string) =>
   t
