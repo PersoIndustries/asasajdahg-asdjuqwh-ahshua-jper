@@ -8,7 +8,7 @@
 import { useQuery, useIsFetching } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  plantasDestacadas,
+  
   type Plant,
   type PlagaFicha,
   type FilaCalendario,
