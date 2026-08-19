@@ -100,7 +100,8 @@ export function rowToPlant(row: PlantaRow): Plant {
     nombre: row.nombre,
     nombreCientifico: row.nombre_cientifico ?? undefined,
     categoria: (row.categoria as Plant["categoria"]) ?? "hortícola",
-    imagen: row.imagen_url || imagenEstatica(row.slug) || placeholder,
+    // Todas las fichas del catálogo muestran el placeholder «web en construcción».
+    imagen: placeholder,
     descripcion: row.descripcion ?? "",
     curiosidades: row.curiosidades ?? "",
     comoSeCome: row.como_se_come ?? undefined,
