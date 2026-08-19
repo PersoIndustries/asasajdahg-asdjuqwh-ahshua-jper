@@ -8,7 +8,7 @@
 import { useQuery, useIsFetching } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  plantasDestacadas,
+  
   type Plant,
   type PlagaFicha,
   type FilaCalendario,
@@ -53,7 +53,7 @@ export type PlantaRow = {
   planta_plagas?: { orden: number; plagas: PlagaRow | null }[];
 };
 
-const imagenEstatica = (slug: string) => plantasDestacadas.find((p) => p.id === slug)?.imagen;
+
 
 export const normalizarTag = (t: string) =>
   t
@@ -100,7 +100,8 @@ export function rowToPlant(row: PlantaRow): Plant {
     nombre: row.nombre,
     nombreCientifico: row.nombre_cientifico ?? undefined,
     categoria: (row.categoria as Plant["categoria"]) ?? "hortícola",
-    imagen: row.imagen_url || imagenEstatica(row.slug) || placeholder,
+    // Todas las fichas del catálogo muestran el placeholder «web en construcción».
+    imagen: placeholder,
     descripcion: row.descripcion ?? "",
     curiosidades: row.curiosidades ?? "",
     comoSeCome: row.como_se_come ?? undefined,
