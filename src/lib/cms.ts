@@ -104,9 +104,11 @@ export function rowToPlant(row: PlantaRow): Plant {
     id: row.slug,
     nombre: row.nombre,
     nombreCientifico: row.nombre_cientifico ?? undefined,
+    categoria: (row.categoria as Plant["categoria"]) ?? "hortícola",
     // Solo la URL guardada en la base de datos; si está vacía, placeholder
     // «web en construcción».
     imagen: row.imagen_url?.trim() || placeholder,
+
 
     descripcion: row.descripcion ?? "",
     curiosidades: row.curiosidades ?? "",
