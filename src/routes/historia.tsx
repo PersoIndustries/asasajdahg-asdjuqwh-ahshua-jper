@@ -49,11 +49,7 @@ export const Route = createFileRoute("/historia")({
 });
 
 const hitos = [
-  { año: "1974", titulo: "Nace Horticultura Peralta", texto: "Antonio Peralta funda la explotación hortícola familiar en Fraga.", img: img1974, alt: "Invernadero familiar de los años 70 en Fraga" },
-  { año: "1989", titulo: "Primer garden center", texto: "Ampliamos con venta al público y ornamentales.", img: img1989, alt: "Fachada del primer garden center de Jardiper" },
-  { año: "2003", titulo: "Distribuidor Suliflor", texto: "Comenzamos a trabajar los sustratos profesionales Suliflor España.", img: img2003, alt: "Sacas de sustrato profesional Suliflor" },
-  { año: "2015", titulo: "Nueva sede A-131", texto: "Instalaciones actuales con más de 5.000 m² de vivero.", img: img2015, alt: "Vista aérea de las instalaciones de Jardiper junto a la A-131" },
-  { año: "2024", titulo: "Jardiper digital", texto: "Lanzamos guías online y el proyecto Libro de Campo.", img: img2024, alt: "Tablet con la app Libro de Campo sobre mesa de jardinería" },
+  { año: "1974", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: img1974, alt: "Invernadero familiar de los años 70 en Fraga" },
 ];
 
 function HistoriaPage() {
