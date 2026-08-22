@@ -1530,26 +1530,158 @@ function PanelBlog() {
 
 /* ───────────────────────── UI compartida ───────────────────────── */
 
-/** Bloque de documentación desplegable que explica cómo se usa cada panel. */
-function Ayuda({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+/** Botón (i) con explicación emergente al pasar por encima o al enfocar. */
+function InfoTip({ texto }: { texto: React.ReactNode }) {
   return (
-    <details className="rounded-2xl border border-border bg-secondary/30 p-5 text-sm" open>
-      <summary className="cursor-pointer font-medium">{titulo}</summary>
-      <ul className="mt-3 space-y-2 list-disc pl-5 text-muted-foreground leading-relaxed [&_code]:rounded [&_code]:bg-background [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-xs [&_b]:text-foreground">
-        {children}
-      </ul>
-    </details>
+    <span className="relative inline-flex group align-middle">
+      <button
+        type="button"
+        aria-label="Más información"
+        onClick={(e) => e.preventDefault()}
+        className="h-4 w-4 inline-flex items-center justify-center rounded-full border border-border text-[10px] font-semibold leading-none text-muted-foreground hover:text-primary hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+      >
+        i
+      </button>
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute left-1/2 bottom-full z-50 mb-2 w-72 -translate-x-1/2 rounded-xl border border-border bg-card p-3 text-left text-xs font-normal leading-relaxed text-muted-foreground shadow-xl opacity-0 invisible transition-opacity group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible [&_b]:text-foreground [&_code]:rounded [&_code]:bg-secondary [&_code]:px-1"
+      >
+        {texto}
+      </span>
+    </span>
   );
 }
 
-function Barra({ titulo, descripcion, acciones, aviso }: {
-  titulo: string; descripcion: string; acciones: React.ReactNode; aviso: string | null;
+/** Campo de imagen con miniatura de vista previa y botón para vaciarlo. */
+function CampoImagen({ label, valor, onChange, info, ancho, slug }: {
+  label: string;
+  valor: string;
+  onChange: (v: string) => void;
+  info?: React.ReactNode;
+  ancho?: boolean;
+  slug?: string;
+}) {
+  return (
+    <Campo label={label} info={info} ancho={ancho}>
+      <div className="flex items-center gap-3">
+        <Miniatura key={valor} src={valor} slug={slug} alt="Vista previa de la imagen" />
+        <input
+          className={input}
+          value={valor}
+          placeholder="https://…  (si lo dejas vacío se usa el placeholder)"
+          onChange={(e) => onChange(e.target.value)}
+        />
+        {valor && (
+          <button type="button" onClick={() => onChange("")} aria-label="Quitar imagen"
+            className="p-2 text-muted-foreground hover:text-destructive shrink-0">
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+        )}
+      </div>
+    </Campo>
+  );
+}
+
+/** Selector múltiple con buscador, etiquetas de lo elegido y lista desplegable. */
+function SelectorMultiple({ titulo, info, opciones, valor, onChange, vacio, placeholder }: {
+  titulo: string;
+  info?: React.ReactNode;
+  opciones: { id: string; nombre: string; imagen?: string | null; extra?: string }[];
+  valor: string[];
+  onChange: (v: string[]) => void;
+  vacio: string;
+  placeholder?: string;
+}) {
+  const [q, setQ] = useState("");
+  const [abierto, setAbierto] = useState(false);
+  const elegidas = valor
+    .map((id) => opciones.find((o) => o.id === id))
+    .filter(Boolean) as typeof opciones;
+  const busqueda = q.trim().toLowerCase();
+  const lista = opciones.filter((o) =>
+    busqueda ? `${o.nombre} ${o.extra ?? ""}`.toLowerCase().includes(busqueda) : true,
+  );
+  const alternar = (id: string) =>
+    onChange(valor.includes(id) ? valor.filter((x) => x !== id) : [...valor, id]);
+
+  return (
+    <div className="md:col-span-2 rounded-2xl border border-border p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium flex items-center gap-2">
+          {titulo} {info && <InfoTip texto={info} />}
+          <span className="text-xs font-normal text-muted-foreground">({valor.length} seleccionadas)</span>
+        </p>
+        <div className="flex items-center gap-2">
+          {valor.length > 0 && (
+            <button type="button" className="text-xs text-muted-foreground hover:text-destructive" onClick={() => onChange([])}>
+              Quitar todas
+            </button>
+          )}
+          <button type="button" className="text-xs text-primary hover:underline" onClick={() => setAbierto(!abierto)}>
+            {abierto ? "Cerrar lista" : "Añadir / editar"}
+          </button>
+        </div>
+      </div>
+
+      {elegidas.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {elegidas.map((o) => (
+            <span key={o.id} className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 pl-1 pr-2 py-1 text-xs">
+              <img
+                src={o.imagen || IMAGEN_PLAGA_POR_DEFECTO}
+                alt=""
+                className="h-5 w-5 rounded-full object-cover"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = IMAGEN_PLAGA_POR_DEFECTO; }}
+              />
+              <span className="max-w-[14rem] truncate">{o.nombre}</span>
+              <button type="button" aria-label={`Quitar ${o.nombre}`} onClick={() => alternar(o.id)} className="text-muted-foreground hover:text-destructive">
+                <X className="h-3 w-3" aria-hidden />
+              </button>
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-2 text-xs text-muted-foreground">{vacio}</p>
+      )}
+
+      {abierto && (
+        <div className="mt-3 space-y-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden />
+            <input type="search" className={`${input} pl-9`} placeholder={placeholder ?? "Buscar…"} value={q} onChange={(e) => setQ(e.target.value)} />
+          </div>
+          <div className="max-h-64 overflow-y-auto rounded-xl border border-border divide-y divide-border">
+            {lista.length === 0 && <p className="p-3 text-xs text-muted-foreground">Sin resultados.</p>}
+            {lista.map((o) => {
+              const marcada = valor.includes(o.id);
+              return (
+                <label key={o.id} className={`flex items-center gap-3 p-2 text-sm cursor-pointer ${marcada ? "bg-secondary/50" : "hover:bg-secondary/30"}`}>
+                  <input type="checkbox" checked={marcada} onChange={() => alternar(o.id)} />
+                  <Miniatura src={o.imagen} alt={o.nombre} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate">{o.nombre}</span>
+                    {o.extra && <span className="block text-xs text-muted-foreground truncate">{o.extra}</span>}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Barra({ titulo, descripcion, acciones, aviso, info }: {
+  titulo: string; descripcion: string; acciones: React.ReactNode; aviso: string | null; info?: React.ReactNode;
 }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-xl">
-          <h2 className="font-serif text-2xl font-medium">{titulo}</h2>
+          <h2 className="font-serif text-2xl font-medium flex items-center gap-2">
+            {titulo} {info && <InfoTip texto={info} />}
+          </h2>
           <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{descripcion}</p>
         </div>
         <div className="flex flex-wrap gap-2">{acciones}</div>
@@ -1559,10 +1691,12 @@ function Barra({ titulo, descripcion, acciones, aviso }: {
   );
 }
 
-function Campo({ label, children, ancho }: { label: string; children: React.ReactNode; ancho?: boolean }) {
+function Campo({ label, children, ancho, info }: { label: string; children: React.ReactNode; ancho?: boolean; info?: React.ReactNode }) {
   return (
     <label className={`block text-sm ${ancho ? "md:col-span-2" : ""}`}>
-      <span className="block mb-1.5 text-muted-foreground">{label}</span>
+      <span className="mb-1.5 flex items-center gap-2 text-muted-foreground">
+        {label} {info && <InfoTip texto={info} />}
+      </span>
       {children}
     </label>
   );
