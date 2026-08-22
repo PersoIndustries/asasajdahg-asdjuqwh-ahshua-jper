@@ -128,25 +128,7 @@ function HistoriaPage() {
         title="Nuestras instalaciones"
         intro="Más de 5.000 m² de vivero junto a la A-131: invernaderos, zona exterior de árboles y arbustos, tienda y patio de sustratos."
       >
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[
-            { src: gal0.url, alt: "Vista aérea de los invernaderos de Jardiper al atardecer" },
-            { src: gal1.url, alt: "Interior del invernadero de plantel hortícola de Jardiper" },
-            { src: gal2.url, alt: "Invernaderos y zona de cultivo exterior del vivero" },
-            { src: gal3.url, alt: "Nave de venta con planta de temporada y ornamentales" },
-          ].map((g) => (
-            <figure key={g.alt} className="overflow-hidden rounded-2xl shadow-lg">
-              <img
-                src={g.src}
-                alt={g.alt}
-                width={1280}
-                height={960}
-                loading="lazy"
-                className="w-full h-full object-cover aspect-[4/3] transition-transform duration-500 hover:scale-105"
-              />
-            </figure>
-          ))}
-        </div>
+        <CarruselInstalaciones />
       </Section>
 
 
