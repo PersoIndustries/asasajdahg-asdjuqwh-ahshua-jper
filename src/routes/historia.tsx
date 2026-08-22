@@ -124,10 +124,10 @@ function HistoriaPage() {
       >
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { src: galInvernadero, alt: "Interior del invernadero de Jardiper con plantas ornamentales" },
-            { src: galExterior, alt: "Zona exterior del vivero con árboles y arbustos en contenedor" },
-            { src: galTienda, alt: "Tienda de Jardiper con macetas, herramientas y semillas" },
-            { src: galSustratos, alt: "Patio de sustratos y compost en sacas y palés" },
+            { src: gal0.url, alt: "Vista aérea de los invernaderos de Jardiper al atardecer" },
+            { src: gal1.url, alt: "Interior del invernadero de plantel hortícola de Jardiper" },
+            { src: gal2.url, alt: "Invernaderos y zona de cultivo exterior del vivero" },
+            { src: gal3.url, alt: "Nave de venta con planta de temporada y ornamentales" },
           ].map((g) => (
             <figure key={g.alt} className="overflow-hidden rounded-2xl shadow-lg">
               <img
