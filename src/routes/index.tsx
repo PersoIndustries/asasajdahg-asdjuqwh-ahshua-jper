@@ -171,7 +171,7 @@ function Temporada() {
             className="relative aspect-square overflow-hidden rounded-2xl group hover-lift"
             style={{ animationDelay: `${i * 60}ms` }}
           >
-            <img src={p.imagen} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <img src={placeholderImg} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-ink/20 to-transparent" />
             <div className="absolute bottom-0 inset-x-0 p-5 text-white">
               <p className="text-xs opacity-80">{p.temporada}</p>
