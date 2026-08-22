@@ -21,11 +21,11 @@ const instalaciones = [
 function CarruselInstalaciones() {
   return (
     <div className="marquee-wrap relative overflow-hidden rounded-2xl">
-      <div className="marquee-track gap-4">
+      <div className="marquee-track">
         {[...instalaciones, ...instalaciones].map((g, i) => (
           <figure
             key={`${g.alt}-${i}`}
-            className="w-[280px] sm:w-[360px] lg:w-[420px] shrink-0 overflow-hidden rounded-2xl shadow-lg"
+            className="w-[280px] sm:w-[360px] lg:w-[420px] shrink-0 mr-4 overflow-hidden rounded-2xl shadow-lg"
           >
             <img
               src={g.src}
