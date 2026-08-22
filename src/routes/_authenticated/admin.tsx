@@ -1563,6 +1563,50 @@ function PanelBlog() {
 
 /* ───────────────────────── UI compartida ───────────────────────── */
 
+/** Ventana modal de edición: se abre sobre la lista y se cierra con la X,
+ *  con «Cancelar», con la tecla Esc o pulsando fuera. Así se puede pasar de
+ *  editar un elemento a otro sin quedarse bloqueado. */
+function ModalEdicion({ titulo, descripcion, onClose, children }: {
+  titulo: string;
+  descripcion?: React.ReactNode;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    const alPulsar = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", alPulsar);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", alPulsar);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] overflow-y-auto bg-foreground/50 backdrop-blur-sm p-4 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label={titulo}
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="mx-auto w-full max-w-4xl rounded-3xl border border-border bg-card shadow-2xl">
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 rounded-t-3xl border-b border-border bg-card px-6 py-4">
+          <div className="min-w-0">
+            <h3 className="font-serif text-xl">{titulo}</h3>
+            {descripcion && <p className="text-xs text-muted-foreground mt-1">{descripcion}</p>}
+          </div>
+          <button type="button" onClick={onClose} aria-label="Cerrar"
+            className="p-2 rounded-full border border-border text-muted-foreground hover:text-primary shrink-0">
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
+  );
+}
+
 /** Botón (i) con explicación emergente al pasar por encima o al enfocar. */
 function InfoTip({ texto }: { texto: React.ReactNode }) {
   return (
