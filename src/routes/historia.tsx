@@ -100,6 +100,10 @@ function HistoriaPage() {
             );
           })}
         </ol>
+        <p className="mt-10 rounded-2xl border border-dashed border-primary/30 bg-secondary/40 p-5 text-sm text-muted-foreground leading-relaxed">
+          Esta web todavía está en desarrollo: próximamente ampliaremos este apartado con
+          más hitos, fotografías y recuerdos de nuestros más de 50 años de historia.
+        </p>
       </Section>
 
       <Section eyebrow="La familia" title="Tres generaciones detrás del mostrador">
