@@ -117,65 +117,98 @@ function TuHuertoPage() {
 
       {tab === "calendario" && (
         <Section eyebrow="Cuándo sembrar" title="Calendario Horticola" intro="Datos orientativos">
-          <div className="mb-6 flex flex-col lg:flex-row lg:items-end gap-4 lg:justify-between">
-            <div className="min-w-0">
-              <label className="flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground mb-2">
-                <MapPin className="h-3.5 w-3.5" /> Zona de cultivo
-              </label>
-              <select value={zona} onChange={(e) => setZona(e.target.value)} className="w-full lg:w-auto rounded-full border border-input bg-background px-5 py-2.5 text-sm lg:min-w-[280px]">
-                {zonas.map((z) => <option key={z.id} value={z.id}>{z.nombre}</option>)}
-              </select>
-            </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-              <a
-                href={pdfFechas.url}
-                download
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
-              >
-                <Download className="h-4 w-4" /> Fechas aconsejables
-              </a>
-              <button
-                type="button"
-                onClick={() => setModoMes("ahora")}
-                aria-pressed={modoMes === "ahora"}
-                className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
-                  modoMes === "ahora"
-                    ? "bg-primary text-primary-foreground"
-                    : "border border-input bg-background text-foreground/80 hover:bg-secondary/60"
-                }`}
-              >
-                <Sprout className="h-4 w-4 shrink-0" />
-                <span className="truncate">Ahora</span>
-              </button>
-              <div className="flex items-center rounded-full border border-input bg-background overflow-hidden">
-                <Select
-                  value={modoMes === "ahora" ? "" : String(modoMes)}
-                  onValueChange={(v) => setModoMes(v ? Number(v) : "ahora")}
+          <div className="mb-6 rounded-3xl border border-border bg-card overflow-hidden">
+            {/* Búsqueda y zona */}
+            <div className="p-4 md:p-6 border-b border-border/70 grid gap-4 md:grid-cols-2">
+              <div className="min-w-0">
+                <label className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">
+                  <MapPin className="h-3.5 w-3.5" /> Zona de cultivo
+                </label>
+                <select
+                  value={zona}
+                  onChange={(e) => setZona(e.target.value)}
+                  className="w-full h-11 rounded-full border border-input bg-background px-5 text-sm"
                 >
-                  <SelectTrigger className="border-0 rounded-none h-full px-5 py-2.5 text-sm font-medium hover:bg-secondary/60 focus:ring-0 focus:ring-offset-0 gap-2">
-                    <span className="inline-flex items-center gap-2">
-                      <Calendar className="h-4 w-4 shrink-0" />
-                      {modoMes === "ahora" ? "¿Qué planto en…?" : meses[modoMes]}
-                    </span>
-                  </SelectTrigger>
-                  <SelectContent className="rounded-2xl">
-                    {meses.map((m, i) => (
-                      <SelectItem key={m} value={String(i)} className="rounded-full text-sm">{m}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {modoMes !== "ahora" && (
-                  <button
-                    type="button"
-                    onClick={() => setModoMes("ahora")}
-                    aria-label="Volver a filtro actual"
-                    className="px-3 py-2.5 border-l border-input hover:bg-secondary/60 transition-colors"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                )}
+                  {zonas.map((z) => <option key={z.id} value={z.id}>{z.nombre}</option>)}
+                </select>
               </div>
-              <input placeholder="Filtrar planta…" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-full sm:w-56 rounded-full border border-input bg-background px-5 py-2.5 text-sm" />
+              <div className="min-w-0">
+                <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Buscar variedad</label>
+                <div className="relative">
+                  <input
+                    placeholder="Filtrar planta…"
+                    value={filtro}
+                    onChange={(e) => setFiltro(e.target.value)}
+                    className="w-full h-11 rounded-full border border-input bg-background px-5 pr-10 text-sm outline-none focus:border-primary transition-colors"
+                  />
+                  {filtro && (
+                    <button
+                      type="button"
+                      onClick={() => setFiltro("")}
+                      aria-label="Borrar búsqueda"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:bg-secondary"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Periodo y descarga */}
+            <div className="p-4 md:p-6 grid gap-x-5 gap-y-4 md:grid-cols-[7rem_1fr] md:items-center">
+              <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Periodo</span>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setModoMes("ahora")}
+                  aria-pressed={modoMes === "ahora"}
+                  className={`inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-medium transition-colors border ${
+                    modoMes === "ahora"
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "border-border bg-background text-foreground/80 hover:bg-secondary/70"
+                  }`}
+                >
+                  <Sprout className="h-4 w-4 shrink-0" />
+                  Ahora
+                </button>
+                <div className="flex items-center rounded-full border border-input bg-background overflow-hidden h-10">
+                  <Select
+                    value={modoMes === "ahora" ? "" : String(modoMes)}
+                    onValueChange={(v) => setModoMes(v ? Number(v) : "ahora")}
+                  >
+                    <SelectTrigger className="border-0 rounded-none h-10 px-4 text-sm font-medium hover:bg-secondary/60 focus:ring-0 focus:ring-offset-0 gap-2">
+                      <span className="inline-flex items-center gap-2">
+                        <Calendar className="h-4 w-4 shrink-0" />
+                        {modoMes === "ahora" ? "¿Qué planto en…?" : meses[modoMes]}
+                      </span>
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl">
+                      {meses.map((m, i) => (
+                        <SelectItem key={m} value={String(i)} className="rounded-full text-sm">{m}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {modoMes !== "ahora" && (
+                    <button
+                      type="button"
+                      onClick={() => setModoMes("ahora")}
+                      aria-label="Volver a filtro actual"
+                      className="h-10 px-3 border-l border-input hover:bg-secondary/60 transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <span className="hidden md:block h-6 w-px bg-border mx-1" />
+                <a
+                  href={pdfFechas.url}
+                  download
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-4 text-sm font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
+                >
+                  <Download className="h-4 w-4" /> Fechas aconsejables
+                </a>
+              </div>
             </div>
           </div>
           <div className="mb-4">

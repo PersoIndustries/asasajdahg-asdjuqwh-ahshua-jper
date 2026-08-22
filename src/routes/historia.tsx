@@ -3,14 +3,10 @@ import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { familia } from "@/lib/mock-data";
 import historiaImg from "@/assets/historia/portada.jpg";
 import img1974 from "@/assets/historia/1974.jpg";
-import img1989 from "@/assets/historia/1989.jpg";
-import img2003 from "@/assets/historia/2003.jpg";
-import img2015 from "@/assets/historia/2015.jpg";
-import img2024 from "@/assets/historia/2024.jpg";
-import galInvernadero from "@/assets/instalaciones/invernadero.jpg";
-import galExterior from "@/assets/instalaciones/vivero-exterior.jpg";
-import galTienda from "@/assets/instalaciones/tienda.jpg";
-import galSustratos from "@/assets/instalaciones/sustratos.jpg";
+import gal0 from "@/assets/instalaciones/instalaciones-0.jpg.asset.json";
+import gal1 from "@/assets/instalaciones/instalaciones-1.jpg.asset.json";
+import gal2 from "@/assets/instalaciones/instalaciones-2.jpg.asset.json";
+import gal3 from "@/assets/instalaciones/instalaciones-3.jpg.asset.json";
 
 
 export const Route = createFileRoute("/historia")({
@@ -53,11 +49,7 @@ export const Route = createFileRoute("/historia")({
 });
 
 const hitos = [
-  { año: "1974", titulo: "Nace Horticultura Peralta", texto: "Antonio Peralta funda la explotación hortícola familiar en Fraga.", img: img1974, alt: "Invernadero familiar de los años 70 en Fraga" },
-  { año: "1989", titulo: "Primer garden center", texto: "Ampliamos con venta al público y ornamentales.", img: img1989, alt: "Fachada del primer garden center de Jardiper" },
-  { año: "2003", titulo: "Distribuidor Suliflor", texto: "Comenzamos a trabajar los sustratos profesionales Suliflor España.", img: img2003, alt: "Sacas de sustrato profesional Suliflor" },
-  { año: "2015", titulo: "Nueva sede A-131", texto: "Instalaciones actuales con más de 5.000 m² de vivero.", img: img2015, alt: "Vista aérea de las instalaciones de Jardiper junto a la A-131" },
-  { año: "2024", titulo: "Jardiper digital", texto: "Lanzamos guías online y el proyecto Libro de Campo.", img: img2024, alt: "Tablet con la app Libro de Campo sobre mesa de jardinería" },
+  { año: "1974", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: img1974, alt: "Invernadero familiar de los años 70 en Fraga" },
 ];
 
 function HistoriaPage() {
@@ -108,6 +100,10 @@ function HistoriaPage() {
             );
           })}
         </ol>
+        <p className="mt-10 rounded-2xl border border-dashed border-primary/30 bg-secondary/40 p-5 text-sm text-muted-foreground leading-relaxed">
+          Esta web todavía está en desarrollo: próximamente ampliaremos este apartado con
+          más hitos, fotografías y recuerdos de nuestros más de 50 años de historia.
+        </p>
       </Section>
 
       <Section eyebrow="La familia" title="Tres generaciones detrás del mostrador">
@@ -132,10 +128,10 @@ function HistoriaPage() {
       >
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
-            { src: galInvernadero, alt: "Interior del invernadero de Jardiper con plantas ornamentales" },
-            { src: galExterior, alt: "Zona exterior del vivero con árboles y arbustos en contenedor" },
-            { src: galTienda, alt: "Tienda de Jardiper con macetas, herramientas y semillas" },
-            { src: galSustratos, alt: "Patio de sustratos y compost en sacas y palés" },
+            { src: gal0.url, alt: "Vista aérea de los invernaderos de Jardiper al atardecer" },
+            { src: gal1.url, alt: "Interior del invernadero de plantel hortícola de Jardiper" },
+            { src: gal2.url, alt: "Invernaderos y zona de cultivo exterior del vivero" },
+            { src: gal3.url, alt: "Nave de venta con planta de temporada y ornamentales" },
           ].map((g) => (
             <figure key={g.alt} className="overflow-hidden rounded-2xl shadow-lg">
               <img
