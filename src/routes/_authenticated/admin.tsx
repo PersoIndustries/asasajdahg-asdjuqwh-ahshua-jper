@@ -981,6 +981,13 @@ function PanelPlagas() {
         titulo="Plagas y enfermedades"
         descripcion="Catálogo global de plagas. Cada plaga se crea una sola vez y luego se asocia a las plantas que quieras desde la pestaña «Catálogo y temporada»."
         aviso={aviso}
+        info={
+          <>
+            Creas la plaga una vez (por ejemplo «Pulgón») y la reutilizas en todas las plantas que la sufran.
+            Para asociarla, edita la planta en «Catálogo y temporada». Si una planta no tiene plagas asociadas,
+            esa sección no aparece en su ficha.
+          </>
+        }
         acciones={
           <>
             <button type="button" onClick={() => void recargar()} disabled={refrescando}
@@ -997,25 +1004,22 @@ function PanelPlagas() {
         }
       />
 
-      <Ayuda titulo="Cómo funcionan las plagas">
-        <li><b>Catálogo global</b>: creas la plaga una vez (por ejemplo «Pulgón») y la reutilizas en todas las plantas que la sufran.</li>
-        <li><b>Asociar a una planta</b>: en «Catálogo y temporada», edita la planta y marca las plagas que le afectan.</li>
-        <li><b>Descripción, Prevención, Cómo combatirla y Otros datos</b>: si dejas un campo vacío, no se muestra en la ficha del producto. En la web, prevención, combate y otros datos aparecen dentro de un desplegable.</li>
-        <li><b>Imágenes con etiqueta</b>: puedes subir varias fotos por plaga y ponerles una etiqueta (ej. «tomate», «berenjena»). En la ficha de esa planta se muestra la foto cuya etiqueta coincide.</li>
-        <li><b>Imagen por defecto</b>: si la plaga no tiene foto para esa planta se usa su imagen principal y, si tampoco existe, el placeholder «web en construcción».</li>
-        <li>Si una planta no tiene ninguna plaga asociada, la sección de enfermedades no aparece en su ficha.</li>
-      </Ayuda>
-
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
           <Campo label="Nombre de la plaga o enfermedad"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
-          <Campo label="Identificador (slug, se genera solo si lo dejas vacío)"><input className={input} value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
-          <Campo label="Descripción (opcional)" ancho><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
-          <Campo label="Prevención (opcional)" ancho><textarea className={input} rows={2} value={edit.prevencion} onChange={(e) => setEdit({ ...edit, prevencion: e.target.value })} /></Campo>
-          <Campo label="Cómo combatirla (opcional)" ancho><textarea className={input} rows={2} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
-          <Campo label="Otros datos (opcional)" ancho><textarea className={input} rows={2} value={edit.otros_datos} onChange={(e) => setEdit({ ...edit, otros_datos: e.target.value })} /></Campo>
-          <Campo label="URL de imagen principal (opcional)" ancho><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
+          <Campo label="Identificador (slug)" info={<>Nombre corto en minúsculas y con guiones. Si lo dejas vacío se genera solo a partir del nombre.</>}><input className={input} value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
+          <Campo label="Descripción" ancho info={<>Si dejas el campo vacío, no se muestra en la ficha del producto.</>}><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
+          <Campo label="Prevención" ancho info={<>Aparece dentro del desplegable de la plaga en la ficha pública.</>}><textarea className={input} rows={2} value={edit.prevencion} onChange={(e) => setEdit({ ...edit, prevencion: e.target.value })} /></Campo>
+          <Campo label="Cómo combatirla" ancho info={<>Tratamientos y dosis (ml o g por litro). Aparece en el desplegable de la ficha.</>}><textarea className={input} rows={2} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
+          <Campo label="Otros datos" ancho><textarea className={input} rows={2} value={edit.otros_datos} onChange={(e) => setEdit({ ...edit, otros_datos: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen principal"
+            ancho
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Foto general de la plaga. Puedes añadir además fotos por planta con etiqueta desde el botón «Imágenes». Si no hay ninguna se usa el placeholder.</>}
+          />
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
