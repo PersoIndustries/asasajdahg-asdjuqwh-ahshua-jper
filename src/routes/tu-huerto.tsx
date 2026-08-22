@@ -50,14 +50,12 @@ function TuHuertoPage() {
   const [zona, setZona] = useState(zonas[0].id);
   const [tagGuia, setTagGuia] = useState<string>("todas");
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
-  const [modoMes, setModoMes] = useState<"ahora" | number>("ahora");
+  const [modoMes, setModoMes] = useState<"todos" | "ahora" | number>("todos");
 
   // Mes y quincena actuales, para resaltar la columna y el filtro "Ahora".
   const hoy = new Date();
   const mesActual = hoy.getMonth();
   const quincenaActual: 1 | 2 = hoy.getDate() <= 15 ? 1 : 2;
-  const mesFiltro = modoMes === "ahora" ? mesActual : modoMes;
-  const quincenaFiltro = modoMes === "ahora" ? quincenaActual : 0; // 0 = toda la quincena (ambas)
 
   const calendario = useCalendario();
   const cargandoCalendario = useCargandoCms("calendario");
@@ -66,6 +64,7 @@ function TuHuertoPage() {
     const q = filtro.toLowerCase().trim();
     return calendario.filter((r) => {
       if (!r.planta.toLowerCase().includes(q)) return false;
+      if (modoMes === "todos") return true;
       const mesIdx = modoMes === "ahora" ? mesActual : modoMes;
       const laboresQ1 = laboresEnQuincena(r.meses[mesIdx] ?? "", 1);
       const laboresQ2 = laboresEnQuincena(r.meses[mesIdx] ?? "", 2);
@@ -75,6 +74,7 @@ function TuHuertoPage() {
       return [...laboresQ1, ...laboresQ2].some((l) => l.actividad === "S" || l.actividad === "T");
     });
   }, [filtro, calendario, modoMes, mesActual, quincenaActual]);
+
 
   const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);
   const guiasFiltradas = useMemo(
@@ -117,104 +117,102 @@ function TuHuertoPage() {
 
       {tab === "calendario" && (
         <Section eyebrow="Cuándo sembrar" title="Calendario Horticola" intro="Datos orientativos">
-          <div className="mb-6 rounded-3xl border border-border bg-card overflow-hidden">
-            {/* Búsqueda y zona */}
-            <div className="p-4 md:p-6 border-b border-border/70 grid gap-4 md:grid-cols-2">
-              <div className="min-w-0">
-                <label className="flex items-center gap-2 text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">
-                  <MapPin className="h-3.5 w-3.5" /> Zona de cultivo
-                </label>
+          <div className="mb-6 rounded-3xl border border-border bg-card p-3 md:p-4">
+            <div className="flex flex-wrap items-center gap-2">
+              {/* Zona */}
+              <div className="relative min-w-0 flex-1 basis-56">
+                <MapPin className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <select
+                  aria-label="Zona de cultivo"
                   value={zona}
                   onChange={(e) => setZona(e.target.value)}
-                  className="w-full h-11 rounded-full border border-input bg-background px-5 text-sm"
+                  className="w-full h-10 rounded-full border border-input bg-background pl-10 pr-4 text-sm"
                 >
                   {zonas.map((z) => <option key={z.id} value={z.id}>{z.nombre}</option>)}
                 </select>
               </div>
-              <div className="min-w-0">
-                <label className="block text-xs uppercase tracking-[0.18em] text-muted-foreground mb-2">Buscar variedad</label>
-                <div className="relative">
-                  <input
-                    placeholder="Filtrar planta…"
-                    value={filtro}
-                    onChange={(e) => setFiltro(e.target.value)}
-                    className="w-full h-11 rounded-full border border-input bg-background px-5 pr-10 text-sm outline-none focus:border-primary transition-colors"
-                  />
-                  {filtro && (
-                    <button
-                      type="button"
-                      onClick={() => setFiltro("")}
-                      aria-label="Borrar búsqueda"
-                      className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:bg-secondary"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
 
-            {/* Periodo y descarga */}
-            <div className="p-4 md:p-6 grid gap-x-5 gap-y-4 md:grid-cols-[7rem_1fr] md:items-center">
-              <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Periodo</span>
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setModoMes("ahora")}
-                  aria-pressed={modoMes === "ahora"}
-                  className={`inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-medium transition-colors border ${
-                    modoMes === "ahora"
-                      ? "bg-primary text-primary-foreground border-primary"
-                      : "border-border bg-background text-foreground/80 hover:bg-secondary/70"
-                  }`}
-                >
-                  <Sprout className="h-4 w-4 shrink-0" />
-                  Ahora
-                </button>
-                <div className="flex items-center rounded-full border border-input bg-background overflow-hidden h-10">
-                  <Select
-                    value={modoMes === "ahora" ? "" : String(modoMes)}
-                    onValueChange={(v) => setModoMes(v ? Number(v) : "ahora")}
+              {/* Buscador */}
+              <div className="relative min-w-0 flex-1 basis-44">
+                <input
+                  aria-label="Buscar variedad"
+                  placeholder="Buscar variedad…"
+                  value={filtro}
+                  onChange={(e) => setFiltro(e.target.value)}
+                  className="w-full h-10 rounded-full border border-input bg-background px-5 pr-9 text-sm outline-none focus:border-primary transition-colors"
+                />
+                {filtro && (
+                  <button
+                    type="button"
+                    onClick={() => setFiltro("")}
+                    aria-label="Borrar búsqueda"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full text-muted-foreground hover:bg-secondary"
                   >
-                    <SelectTrigger className="border-0 rounded-none h-10 px-4 text-sm font-medium hover:bg-secondary/60 focus:ring-0 focus:ring-offset-0 gap-2">
-                      <span className="inline-flex items-center gap-2">
-                        <Calendar className="h-4 w-4 shrink-0" />
-                        {modoMes === "ahora" ? "¿Qué planto en…?" : meses[modoMes]}
-                      </span>
-                    </SelectTrigger>
-                    <SelectContent className="rounded-2xl">
-                      {meses.map((m, i) => (
-                        <SelectItem key={m} value={String(i)} className="rounded-full text-sm">{m}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {modoMes !== "ahora" && (
-                    <button
-                      type="button"
-                      onClick={() => setModoMes("ahora")}
-                      aria-label="Volver a filtro actual"
-                      className="h-10 px-3 border-l border-input hover:bg-secondary/60 transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-                <span className="hidden md:block h-6 w-px bg-border mx-1" />
-                <a
-                  href={pdfFechas.url}
-                  download
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-4 text-sm font-medium hover:bg-primary/90 transition-colors w-full sm:w-auto"
-                >
-                  <Download className="h-4 w-4" /> Fechas aconsejables
-                </a>
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                )}
               </div>
+
+              {/* Periodo */}
+              <button
+                type="button"
+                onClick={() => setModoMes(modoMes === "ahora" ? "todos" : "ahora")}
+                aria-pressed={modoMes === "ahora"}
+                title="Qué sembrar o trasplantar ahora"
+                className={`inline-flex h-10 items-center justify-center gap-2 rounded-full px-4 text-sm font-medium transition-colors border ${
+                  modoMes === "ahora"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border bg-background text-foreground/80 hover:bg-secondary/70"
+                }`}
+              >
+                <Sprout className="h-4 w-4 shrink-0" />
+                Ahora
+              </button>
+
+              <div className="flex items-center rounded-full border border-input bg-background overflow-hidden h-10">
+                <Select
+                  value={typeof modoMes === "number" ? String(modoMes) : ""}
+                  onValueChange={(v) => setModoMes(v ? Number(v) : "todos")}
+                >
+                  <SelectTrigger className="border-0 rounded-none h-10 px-4 text-sm font-medium hover:bg-secondary/60 focus:ring-0 focus:ring-offset-0 gap-2">
+                    <span className="inline-flex items-center gap-2">
+                      <Calendar className="h-4 w-4 shrink-0" />
+                      {typeof modoMes === "number" ? meses[modoMes] : "Mes"}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl">
+                    {meses.map((m, i) => (
+                      <SelectItem key={m} value={String(i)} className="rounded-full text-sm">{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {typeof modoMes === "number" && (
+                  <button
+                    type="button"
+                    onClick={() => setModoMes("todos")}
+                    aria-label="Quitar filtro de mes"
+                    className="h-10 px-3 border-l border-input hover:bg-secondary/60 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+
+              <a
+                href={pdfFechas.url}
+                download
+                title="Descargar fechas aconsejables de trasplante"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-4 text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                <Download className="h-4 w-4" />
+                <span className="hidden sm:inline">Fechas aconsejables</span>
+              </a>
             </div>
           </div>
           <div className="mb-4">
             <LeyendaCalendario />
           </div>
-          {modoMes !== "ahora" && (
+          {typeof modoMes === "number" && (
             <p className="mb-4 text-sm text-muted-foreground">
               Mostrando solo variedades con siembra o trasplante en {meses[modoMes]}.
               {filas.length === 0 && " No hay labores registradas en este periodo."}
@@ -226,6 +224,7 @@ function TuHuertoPage() {
               {filas.length === 0 && " No hay labores registradas en este periodo."}
             </p>
           )}
+
           {cargandoCalendario && calendario.length === 0 && (
             <CargandoLinea texto="Cargando calendario de cultivo…" />
           )}

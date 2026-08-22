@@ -33,10 +33,13 @@ function AuthPage() {
 
 
   useEffect(() => {
-    if (!loading && user) {
-      navigate({ to: isAdmin ? "/admin" : "/cuenta", replace: true });
+    if (!loading && user && !isAdmin) {
+      navigate({ to: "/cuenta", replace: true });
     }
   }, [loading, user, isAdmin, navigate]);
+
+  const elegirDestino = !loading && !!user && isAdmin;
+
 
   const entrarConGoogle = async () => {
     setError(null);
@@ -67,8 +70,45 @@ function AuthPage() {
     setEnviando(false);
   };
 
+  if (elegirDestino) {
+    return (
+      <SiteLayout>
+        <section className="py-20 md:py-28">
+          <div className="container-page max-w-lg">
+            <div className="rounded-3xl border border-border bg-card p-8 shadow-sm text-center">
+              <ShieldCheck className="h-8 w-8 text-primary mx-auto mb-4" aria-hidden />
+              <h1 className="font-serif text-3xl font-medium mb-2">¿Dónde quieres entrar?</h1>
+              <p className="text-muted-foreground text-sm mb-8">
+                Tienes permisos de administrador. Elige a qué área quieres acceder.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-4 text-left">
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/cuenta", replace: true })}
+                  className="rounded-2xl border border-border p-5 hover:border-primary/60 hover:bg-secondary/40 transition-colors"
+                >
+                  <p className="font-medium mb-1">Aplicación Tu huerto</p>
+                  <p className="text-sm text-muted-foreground">Tu gestor de huerto personal.</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate({ to: "/admin", replace: true })}
+                  className="rounded-2xl border border-border p-5 hover:border-primary/60 hover:bg-secondary/40 transition-colors"
+                >
+                  <p className="font-medium mb-1">Gestor de la web</p>
+                  <p className="text-sm text-muted-foreground">Catálogo, calendario, blog y materiales.</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      </SiteLayout>
+    );
+  }
+
   return (
     <SiteLayout>
+
       <section className="py-20 md:py-28">
         <div className="container-page max-w-md">
           <div className="rounded-3xl border border-border bg-card p-8 shadow-sm">
