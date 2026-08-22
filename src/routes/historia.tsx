@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { familia } from "@/lib/mock-data";
 import historiaImg from "@/assets/historia/portada.jpg";
-import img1974 from "@/assets/historia/1974.jpg";
+import img1974 from "@/assets/historia/historia-1974.jpg.asset.json";
+import img2026 from "@/assets/historia/historia-2026.jpg.asset.json";
 import gal0 from "@/assets/instalaciones/instalaciones-0.jpg.asset.json";
 import gal1 from "@/assets/instalaciones/instalaciones-1.jpg.asset.json";
 import gal2 from "@/assets/instalaciones/instalaciones-2.jpg.asset.json";
@@ -49,7 +50,8 @@ export const Route = createFileRoute("/historia")({
 });
 
 const hitos = [
-  { año: "1974", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: img1974, alt: "Invernadero familiar de los años 70 en Fraga" },
+  { año: "1974", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: img1974.url, alt: "Invernadero familiar de los años 70 en Fraga" },
+  { año: "2026", titulo: "Actualidad", texto: "Seguimos cuidando cada planta con la misma dedicación de siempre y trabajando en esta web para acercarte Jardiper a casa, mes a mes.", img: img2026.url, alt: "Instalaciones actuales de Jardiper en Fraga" },
 ];
 
 function HistoriaPage() {
