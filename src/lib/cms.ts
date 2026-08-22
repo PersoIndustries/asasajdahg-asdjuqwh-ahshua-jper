@@ -104,10 +104,10 @@ export function rowToPlant(row: PlantaRow): Plant {
     id: row.slug,
     nombre: row.nombre,
     nombreCientifico: row.nombre_cientifico ?? undefined,
-    categoria: (row.categoria as Plant["categoria"]) ?? "hortícola",
-    // 1) foto de la base de datos, 2) foto empaquetada con ese slug (la misma que
-    // se ve en el gestor) y 3) placeholder «web en construcción».
-    imagen: row.imagen_url || imagenEstatica(row.slug) || placeholder,
+    // Solo la URL guardada en la base de datos; si está vacía, placeholder
+    // «web en construcción».
+    imagen: row.imagen_url?.trim() || placeholder,
+
     descripcion: row.descripcion ?? "",
     curiosidades: row.curiosidades ?? "",
     comoSeCome: row.como_se_come ?? undefined,
