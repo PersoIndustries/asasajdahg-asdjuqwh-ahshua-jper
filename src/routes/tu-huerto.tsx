@@ -181,7 +181,13 @@ function TuHuertoPage() {
           <div className="mb-4">
             <LeyendaCalendario />
           </div>
-          {soloAhora && (
+          {modoMes !== "ahora" && (
+            <p className="mb-4 text-sm text-muted-foreground">
+              Mostrando solo variedades con siembra o trasplante en {meses[modoMes]}.
+              {filas.length === 0 && " No hay labores registradas en este periodo."}
+            </p>
+          )}
+          {modoMes === "ahora" && (
             <p className="mb-4 text-sm text-muted-foreground">
               Mostrando solo variedades con siembra o trasplante en {meses[mesActual]} ({quincenaLabel[quincenaActual]}).
               {filas.length === 0 && " No hay labores registradas en este periodo."}
