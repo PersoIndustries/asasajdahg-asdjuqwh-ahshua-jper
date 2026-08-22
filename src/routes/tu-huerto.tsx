@@ -120,7 +120,15 @@ function TuHuertoPage() {
               </select>
             </div>
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+              <a
+                href={pdfFechas.url}
+                download
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-5 py-2.5 text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                <Download className="h-4 w-4" /> Fechas aconsejables
+              </a>
               <button
+
                 type="button"
                 onClick={() => setSoloAhora((v) => !v)}
                 aria-pressed={soloAhora}
