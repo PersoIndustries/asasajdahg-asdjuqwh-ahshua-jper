@@ -8,6 +8,41 @@ import gal0 from "@/assets/instalaciones/instalaciones-0.jpg.asset.json";
 import gal1 from "@/assets/instalaciones/instalaciones-1.jpg.asset.json";
 import gal2 from "@/assets/instalaciones/instalaciones-2.jpg.asset.json";
 import gal3 from "@/assets/instalaciones/instalaciones-3.jpg.asset.json";
+import gal4 from "@/assets/instalaciones/instalaciones-4.jpg.asset.json";
+
+const instalaciones = [
+  { src: gal0.url, alt: "Vista aérea de los invernaderos de Jardiper al atardecer" },
+  { src: gal1.url, alt: "Interior del invernadero de plantel hortícola de Jardiper" },
+  { src: gal2.url, alt: "Invernaderos y zona de cultivo exterior del vivero" },
+  { src: gal3.url, alt: "Nave de venta con planta de temporada y ornamentales" },
+  { src: gal4.url, alt: "Invernadero de plantel con bandejas de hortícolas y riego aéreo" },
+];
+
+function CarruselInstalaciones() {
+  return (
+    <div className="marquee-wrap relative overflow-hidden rounded-2xl">
+      <div className="marquee-track gap-4">
+        {[...instalaciones, ...instalaciones].map((g, i) => (
+          <figure
+            key={`${g.alt}-${i}`}
+            className="w-[280px] sm:w-[360px] lg:w-[420px] shrink-0 overflow-hidden rounded-2xl shadow-lg"
+          >
+            <img
+              src={g.src}
+              alt={g.alt}
+              width={1280}
+              height={960}
+              loading="lazy"
+              className="w-full h-full object-cover aspect-[4/3]"
+            />
+          </figure>
+        ))}
+      </div>
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-background to-transparent" />
+    </div>
+  );
+}
 
 
 export const Route = createFileRoute("/historia")({
