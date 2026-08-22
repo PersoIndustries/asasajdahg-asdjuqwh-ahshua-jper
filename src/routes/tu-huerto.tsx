@@ -152,7 +152,7 @@ function TuHuertoPage() {
                   value={modoMes === "ahora" ? "" : String(modoMes)}
                   onValueChange={(v) => setModoMes(v ? Number(v) : "ahora")}
                 >
-                  <SelectTrigger className="border-0 rounded-none h-full px-5 py-2.5 text-sm font-medium hover:bg-secondary/60 focus:ring-0 focus:ring-offset-0 [&>svg]:hidden">
+                  <SelectTrigger className="border-0 rounded-none h-full px-5 py-2.5 text-sm font-medium hover:bg-secondary/60 focus:ring-0 focus:ring-offset-0 gap-2">
                     <span className="inline-flex items-center gap-2">
                       <Calendar className="h-4 w-4 shrink-0" />
                       {modoMes === "ahora" ? "¿Qué planto en…?" : meses[modoMes]}
