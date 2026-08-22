@@ -584,7 +584,10 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
   const filasCalendario = useFilasCalendario(planta);
   const cargandoFicha = useCargandoCms("plantas", "calendario");
 
-  const guiaVinculada = planta.guiaId ? guias.find((g) => g.id === planta.guiaId) : undefined;
+  const idsGuias = planta.guiaIds?.length ? planta.guiaIds : planta.guiaId ? [planta.guiaId] : [];
+  const guiasVinculadas = idsGuias
+    .map((id) => guias.find((g) => g.id === id))
+    .filter(Boolean) as (typeof guias)[number][];
   const [guiaOpen, setGuiaOpen] = useState<(typeof guias)[number] | null>(null);
   // Plagas del catálogo global; si la planta aún no tiene ninguna asociada se
   // usan sus enfermedades de la ficha estática.
@@ -640,22 +643,29 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
               </div>
             )}
 
-            {guiaVinculada && (
+            {guiasVinculadas.length > 0 && (
               <div>
-                <h4 className="font-serif text-lg mb-2">Guía de cultivo</h4>
-                <button
-                  type="button"
-                  onClick={() => setGuiaOpen(guiaVinculada)}
-                  className="w-full flex items-center gap-4 p-3 rounded-xl border border-border hover:bg-secondary/40 transition text-left"
-                >
-                  <img src={guiaVinculada.imagen} alt={guiaVinculada.titulo} className="h-16 w-24 object-cover rounded-lg shrink-0" loading="lazy" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] uppercase tracking-widest text-accent">{guiaVinculada.categoria}</p>
-                    <p className="font-serif text-base truncate">{guiaVinculada.titulo}</p>
-                    <p className="text-xs text-muted-foreground line-clamp-1">{guiaVinculada.resumen}</p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-primary shrink-0" />
-                </button>
+                <h4 className="font-serif text-lg mb-2">
+                  {guiasVinculadas.length === 1 ? "Guía de cultivo" : "Guías de cultivo"}
+                </h4>
+                <div className="grid gap-2">
+                  {guiasVinculadas.map((g) => (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => setGuiaOpen(g)}
+                      className="w-full flex items-center gap-4 p-3 rounded-xl border border-border hover:bg-secondary/40 transition text-left"
+                    >
+                      <img src={g.imagen} alt={g.titulo} className="h-16 w-24 object-cover rounded-lg shrink-0" loading="lazy" />
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] uppercase tracking-widest text-accent">{g.categoria}</p>
+                        <p className="font-serif text-base truncate">{g.titulo}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">{g.resumen}</p>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-primary shrink-0" />
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
 
