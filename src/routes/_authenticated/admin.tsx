@@ -441,7 +441,10 @@ function PanelPlantas() {
           onSubmit={(e) => { e.preventDefault(); guardar.mutate({ f: edit, seleccion: plagasSel }); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4"
         >
-          <Campo label="Identificador (slug)"><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
+          <Campo
+            label="Identificador (slug)"
+            info={<>Nombre corto en minúsculas y con guiones. Identifica la planta dentro de la web (ej. <code>calcots</code>).</>}
+          ><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
           <Campo label="Nombre"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
           <Campo label="Nombre científico"><input className={input} value={edit.nombre_cientifico} onChange={(e) => setEdit({ ...edit, nombre_cientifico: e.target.value })} /></Campo>
           <Campo label="Categoría">
@@ -449,44 +452,46 @@ function PanelPlantas() {
               {["hortícola", "ornamental", "árbol", "arbusto", "flor", "aromática", "frutal"].map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </Campo>
-          <Campo label="URL de imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen de la planta"
+            slug={edit.slug}
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Pega la dirección (URL) de la foto de la planta. Si la dejas vacía se muestra el placeholder «web en construcción» en la ficha del catálogo.</>}
+          />
           <Campo label="Temporada (texto)"><input className={input} value={edit.temporada} onChange={(e) => setEdit({ ...edit, temporada: e.target.value })} /></Campo>
           <Campo label="Descripción" ancho><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
           <Campo label="Cómo se come" ancho><textarea className={input} rows={2} value={edit.como_se_come} onChange={(e) => setEdit({ ...edit, como_se_come: e.target.value })} /></Campo>
           <Campo label="Curiosidades" ancho><textarea className={input} rows={2} value={edit.curiosidades} onChange={(e) => setEdit({ ...edit, curiosidades: e.target.value })} /></Campo>
-          <Campo label="Guía asociada (id)"><input className={input} value={edit.guia_id} onChange={(e) => setEdit({ ...edit, guia_id: e.target.value })} /></Campo>
-          <Campo label="Clave de calendario"><input className={input} value={edit.calendario_key} onChange={(e) => setEdit({ ...edit, calendario_key: e.target.value })} /></Campo>
-          <Campo label="Orden"><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
+          <Campo
+            label="Clave de calendario"
+            info={<>Nombre con el que se busca su calendario en la pestaña «Calendario de cultivo». Vacío = se usa el nombre de la planta.</>}
+          ><input className={input} value={edit.calendario_key} onChange={(e) => setEdit({ ...edit, calendario_key: e.target.value })} /></Campo>
+          <Campo label="Orden" info={<>Número menor = aparece antes en el catálogo.</>}><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
           <div className="flex items-end gap-6">
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.es_temporada} onChange={(e) => setEdit({ ...edit, es_temporada: e.target.checked })} /> Producto de temporada</label>
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.publicado} onChange={(e) => setEdit({ ...edit, publicado: e.target.checked })} /> Publicada</label>
           </div>
-          <div className="md:col-span-2">
-            <p className="text-sm font-medium mb-1">Plagas y enfermedades asociadas</p>
-            <p className="text-xs text-muted-foreground mb-2">
-              Marca las plagas del catálogo global que afectan a esta planta. Se crean y editan en la pestaña
-              «Plagas y enfermedades». Si no marcas ninguna, la ficha del producto no mostrará esa sección.
-            </p>
-            {(plagas ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">Aún no hay plagas creadas.</p>
-            ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {(plagas ?? []).map((pl) => (
-                  <label key={pl.id} className="flex items-center gap-2 text-sm rounded-lg border border-border p-2">
-                    <input
-                      type="checkbox"
-                      checked={plagasSel.includes(pl.id)}
-                      onChange={(e) =>
-                        setPlagasSel(e.target.checked ? [...plagasSel, pl.id] : plagasSel.filter((x) => x !== pl.id))
-                      }
-                    />
-                    <Miniatura src={pl.imagen_url} alt={pl.nombre} />
-                    <span className="truncate">{pl.nombre}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
+
+          <SelectorMultiple
+            titulo="Guías de cultivo asociadas"
+            placeholder="Buscar guía por título o etiqueta…"
+            vacio="Sin guías asociadas: la ficha no mostrará el bloque de guías."
+            info={<>Guías de cultivo de «Tu Huerto» que se enlazan desde la ficha de esta planta. Puedes elegir varias. No tiene relación con el slug del blog.</>}
+            opciones={guias.map((g) => ({ id: g.id, nombre: g.titulo, imagen: g.imagen, extra: g.tags.join(" · ") }))}
+            valor={listaIds(edit.guia_id)}
+            onChange={(v) => setEdit({ ...edit, guia_id: v.join(",") })}
+          />
+
+          <SelectorMultiple
+            titulo="Plagas y enfermedades asociadas"
+            placeholder="Buscar plaga o enfermedad…"
+            vacio="Sin plagas asociadas: la ficha del producto no mostrará esa sección."
+            info={<>Plagas del catálogo global que afectan a esta planta. Se crean y editan en la pestaña «Plagas y enfermedades».</>}
+            opciones={(plagas ?? []).map((pl) => ({ id: pl.id, nombre: pl.nombre, imagen: pl.imagen_url }))}
+            valor={plagasSel}
+            onChange={setPlagasSel}
+          />
 
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
