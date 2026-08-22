@@ -617,14 +617,18 @@ function PanelCalendario() {
     onError: (e: Error) => setAviso(e.message),
   });
 
+  /** Crea una fila por cada planta elegida (una o varias a la vez). */
   const crear = useMutation({
-    mutationFn: async (f: { planta: string; ciclo: string }) => {
-      const { error } = await supabase.from("planta_calendario").insert({
-        planta_nombre: f.planta,
-        ciclo: f.ciclo || null,
-        meses: Array.from({ length: 12 }, () => ""),
-        orden: (data?.length ?? 0) + 1,
-      });
+    mutationFn: async (f: { plantas: string[]; ciclo: string }) => {
+      const base = data?.length ?? 0;
+      const { error } = await supabase.from("planta_calendario").insert(
+        f.plantas.map((nombre, i) => ({
+          planta_nombre: nombre,
+          ciclo: f.ciclo || null,
+          meses: Array.from({ length: 12 }, () => ""),
+          orden: base + i + 1,
+        })),
+      );
       if (error) throw error;
     },
     onSuccess: () => { setNuevo(null); refrescar(); },
