@@ -806,11 +806,20 @@ function PanelCalendario() {
             </Campo>
             <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
               <span>{filas.length} de {(data ?? []).length} filas</span>
-              {(busqueda || cicloF !== "todos" || laboresF !== "todas") && (
-                <button type="button" onClick={() => { setBusqueda(""); setCicloF("todos"); setLaboresF("todas"); }}
+              {(busqueda || cicloF !== "todos" || laboresF !== "todas" || filasSel.length > 0) && (
+                <button type="button" onClick={() => { setBusqueda(""); setCicloF("todos"); setLaboresF("todas"); setFilasSel([]); }}
                   className="underline hover:text-primary">Limpiar</button>
               )}
             </div>
+            <SelectorMultiple
+              titulo="Filas concretas"
+              info={<>Elige filas por nombre y ciclo para trabajar solo con ellas. Sin selección se muestran todas.</>}
+              opciones={opcionesFilas}
+              valor={filasSel}
+              onChange={setFilasSel}
+              vacio="Sin selección: se muestran todas las filas."
+              placeholder="Buscar por planta o ciclo…"
+            />
           </div>
 
           {filas.length === 0 ? (
