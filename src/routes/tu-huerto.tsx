@@ -66,12 +66,13 @@ function TuHuertoPage() {
     const q = filtro.toLowerCase().trim();
     return calendario.filter((r) => {
       if (!r.planta.toLowerCase().includes(q)) return false;
+      const mesIdx = modoMes === "ahora" ? mesActual : modoMes;
+      const laboresQ1 = laboresEnQuincena(r.meses[mesIdx] ?? "", 1);
+      const laboresQ2 = laboresEnQuincena(r.meses[mesIdx] ?? "", 2);
       if (modoMes === "ahora") {
-        const labores = laboresEnQuincena(r.meses[mesActual] ?? "", quincenaActual);
-        return labores.some((l) => l.actividad === "S" || l.actividad === "T");
+        return (quincenaActual === 1 ? laboresQ1 : laboresQ2).some((l) => l.actividad === "S" || l.actividad === "T");
       }
-      const labores = laboresEnQuincena(r.meses[modoMes] ?? "", 0); // 0 = toda la quincena
-      return labores.some((l) => l.actividad === "S" || l.actividad === "T");
+      return [...laboresQ1, ...laboresQ2].some((l) => l.actividad === "S" || l.actividad === "T");
     });
   }, [filtro, calendario, modoMes, mesActual, quincenaActual]);
 
