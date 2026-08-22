@@ -1430,6 +1430,13 @@ function PanelBlog() {
         titulo="Noticias y curiosidades"
         descripcion="La base de datos manda: el blog muestra exactamente estas noticias. Si borras una aquí, desaparece de la web. En el cuerpo, una línea que empiece por ## crea un subtítulo."
         aviso={aviso}
+        info={
+          <>
+            Esta pestaña gestiona el <b>blog</b> (<code>/blog</code>): novedades del vivero, ferias y curiosidades.
+            Las <b>guías de cultivo</b> son otra cosa y viven en «Tu Huerto». <b>Destacada</b> resalta el artículo
+            en la portada del blog; <b>Publicada</b> lo hace visible al público.
+          </>
+        }
         acciones={
           <>
             <button
