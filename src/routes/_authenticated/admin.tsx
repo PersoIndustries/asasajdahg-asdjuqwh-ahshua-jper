@@ -670,6 +670,13 @@ function PanelCalendario() {
         titulo="Calendario de cultivo"
         descripcion="Cada fila es un ciclo de una planta (una misma planta puede tener varias filas: por ejemplo «ciclo de primavera» y «ciclo de otoño»). Puedes editar el nombre, el ciclo, el orden y los meses directamente en la tabla."
         aviso={aviso}
+        info={
+          <>
+            En cada casilla de mes escribe las labores: <b>S</b> siembra, <b>T</b> trasplante, <b>C</b> cosecha.
+            Añade <b>1</b> (primera quincena) o <b>2</b> (segunda) detrás de la letra: <code>T1</code>,
+            <code>C</code>, <code>S1C2</code>. El <b>orden</b> controla la posición de la fila en «Tu Huerto».
+          </>
+        }
         acciones={
           <>
             <button
@@ -690,19 +697,17 @@ function PanelCalendario() {
         }
       />
 
-      <Ayuda titulo="Cómo se rellena el calendario">
-        <li><b>Nombre de planta</b>: es la clave de enlace. La ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario» (campo <i>calendario_key</i> en la pestaña Catálogo). Ej.: fila «Tomate» → se muestra en «Tomate cherry», «Tomate rosa», etc.</li>
-        <li><b>Ciclo</b>: texto libre que aparece como subtítulo del bloque en la web («Ciclo de primavera», «Siembra temprana»…). Déjalo vacío si la planta solo tiene un ciclo.</li>
-        <li><b>Meses</b>: en cada casilla escribe las labores. <b>S</b> = siembra, <b>T</b> = trasplante, <b>C</b> = cosecha. Añade <b>1</b> (primera quincena) o <b>2</b> (segunda quincena) detrás de la letra.</li>
-        <li>Ejemplos: <code>T1</code> = trasplante a inicios de mes · <code>C</code> = cosecha todo el mes · <code>S1C2</code> = siembra la primera quincena y cosecha la segunda.</li>
-        <li><b>Orden</b>: controla la posición de la fila en la tabla de «Tu Huerto». Números más bajos aparecen antes.</li>
-      </Ayuda>
-
       {nuevo && (
         <form onSubmit={(e) => { e.preventDefault(); crear.mutate(nuevo); }}
           className="rounded-2xl border border-border bg-card p-6 flex flex-wrap gap-4 items-end">
-          <Campo label="Planta"><input className={input} required value={nuevo.planta} onChange={(e) => setNuevo({ ...nuevo, planta: e.target.value })} /></Campo>
-          <Campo label="Ciclo (opcional)"><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
+          <Campo
+            label="Planta"
+            info={<>Es la clave de enlace: la ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario».</>}
+          ><input className={input} required value={nuevo.planta} onChange={(e) => setNuevo({ ...nuevo, planta: e.target.value })} /></Campo>
+          <Campo
+            label="Ciclo (opcional)"
+            info={<>Texto libre que aparece como subtítulo en la web («Ciclo de primavera», «Siembra temprana»…). Vacío si la planta solo tiene un ciclo.</>}
+          ><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
           <button type="submit" className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}><Save className="h-4 w-4" aria-hidden /> Crear</button>
           <button type="button" onClick={() => setNuevo(null)} className={`${btn} border border-border`}>Cancelar</button>
         </form>
