@@ -1474,10 +1474,16 @@ function PanelBlog() {
           <Campo label="Fecha"><input type="date" className={input} value={edit.fecha} onChange={(e) => setEdit({ ...edit, fecha: e.target.value })} /></Campo>
           <Campo label="Autor"><input className={input} value={edit.autor} onChange={(e) => setEdit({ ...edit, autor: e.target.value })} /></Campo>
           <Campo label="Minutos de lectura"><input type="number" className={input} value={edit.minutos} onChange={(e) => setEdit({ ...edit, minutos: Number(e.target.value) })} /></Campo>
-          <Campo label="URL de imagen (opcional)" ancho><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
-          <Campo label="Resumen" ancho><textarea className={input} rows={2} value={edit.resumen} onChange={(e) => setEdit({ ...edit, resumen: e.target.value })} /></Campo>
-          <Campo label="Entradilla" ancho><textarea className={input} rows={2} value={edit.entradilla} onChange={(e) => setEdit({ ...edit, entradilla: e.target.value })} /></Campo>
-          <Campo label="Cuerpo" ancho><textarea className={input} rows={10} value={edit.cuerpo} onChange={(e) => setEdit({ ...edit, cuerpo: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen del artículo"
+            ancho
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Pega la dirección (URL) de la foto de portada del artículo. Si la dejas vacía se usa el placeholder «web en construcción».</>}
+          />
+          <Campo label="Resumen" ancho info={<>Texto corto que se ve en el listado del blog.</>}><textarea className={input} rows={2} value={edit.resumen} onChange={(e) => setEdit({ ...edit, resumen: e.target.value })} /></Campo>
+          <Campo label="Entradilla" ancho info={<>Primer párrafo destacado dentro del artículo.</>}><textarea className={input} rows={2} value={edit.entradilla} onChange={(e) => setEdit({ ...edit, entradilla: e.target.value })} /></Campo>
+          <Campo label="Cuerpo" ancho info={<>Escribe párrafos normales. Una línea que empiece por <code>##</code> se convierte en subtítulo de sección.</>}><textarea className={input} rows={10} value={edit.cuerpo} onChange={(e) => setEdit({ ...edit, cuerpo: e.target.value })} /></Campo>
           <Campo label="Etiquetas (separadas por comas)" ancho><input className={input} value={edit.tags} onChange={(e) => setEdit({ ...edit, tags: e.target.value })} /></Campo>
           <div className="flex items-end gap-6">
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.destacada} onChange={(e) => setEdit({ ...edit, destacada: e.target.checked })} /> Destacada</label>
