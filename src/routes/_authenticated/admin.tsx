@@ -1238,30 +1238,29 @@ function PanelMateriales() {
         }
       />
 
-      <Ayuda titulo="Cómo se muestran estos productos en la web">
-        <li><b>Sección</b>: decide dónde aparece. «Tierras y sustratos» y «Compost» van en la pestaña <b>Tierras y sustratos</b>; «Piedras y áridos» y «Macetas» en <b>Material para jardinería</b>.</li>
-        <li><b>Formato</b>: se muestra como etiqueta sobre la foto (por ejemplo «70 L», «Big bag 1 m³», «Ø 10–60 cm»).</li>
-        <li><b>Uso</b>: frase corta bajo el nombre. <b>Detalle</b>: línea con el check verde.</li>
-        <li><b>Marca</b>: texto pequeño en mayúsculas (Suliflor España, Liett Ibérica…). Si lo dejas vacío se usa el de por defecto de la sección.</li>
-        <li><b>Imagen</b>: pega una URL. Si la dejas vacía se usa el placeholder «web en construcción».</li>
-        <li><b>Orden</b>: número menor = aparece antes. <b>Publicado</b>: si lo desmarcas, deja de verse en la web.</li>
-      </Ayuda>
-
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
-          <Campo label="Sección">
+          <Campo
+            label="Sección"
+            info={<>«Tierras y sustratos» y «Compost» se muestran en la pestaña <b>Tierras y sustratos</b>; «Piedras y áridos» y «Macetas» en <b>Material para jardinería</b>.</>}
+          >
             <select className={input} value={edit.seccion} onChange={(e) => setEdit({ ...edit, seccion: e.target.value })}>
               {SECCIONES_MATERIAL.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
             </select>
           </Campo>
           <Campo label="Nombre"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
-          <Campo label="Uso (frase corta)"><input className={input} value={edit.uso} onChange={(e) => setEdit({ ...edit, uso: e.target.value })} /></Campo>
-          <Campo label="Formato o medida (etiqueta sobre la foto)"><input className={input} value={edit.formato} onChange={(e) => setEdit({ ...edit, formato: e.target.value })} /></Campo>
-          <Campo label="Marca o proveedor (opcional)"><input className={input} value={edit.marca} onChange={(e) => setEdit({ ...edit, marca: e.target.value })} /></Campo>
-          <Campo label="URL de la imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
-          <Campo label="Detalle" ancho><textarea className={input} rows={2} value={edit.detalle} onChange={(e) => setEdit({ ...edit, detalle: e.target.value })} /></Campo>
-          <Campo label="Orden"><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
+          <Campo label="Uso (frase corta)" info={<>Frase corta que aparece bajo el nombre del producto.</>}><input className={input} value={edit.uso} onChange={(e) => setEdit({ ...edit, uso: e.target.value })} /></Campo>
+          <Campo label="Formato o medida" info={<>Se muestra como etiqueta sobre la foto: «70 L», «Big bag 1 m³», «Ø 10–60 cm»…</>}><input className={input} value={edit.formato} onChange={(e) => setEdit({ ...edit, formato: e.target.value })} /></Campo>
+          <Campo label="Marca o proveedor" info={<>Texto pequeño en mayúsculas (Suliflor España, Liett Ibérica…). Si lo dejas vacío se usa el de por defecto de la sección.</>}><input className={input} value={edit.marca} onChange={(e) => setEdit({ ...edit, marca: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen del producto"
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Pega la dirección (URL) de la foto. Si la dejas vacía se usa el placeholder «web en construcción».</>}
+          />
+          <Campo label="Detalle" ancho info={<>Línea que se muestra con el check verde.</>}><textarea className={input} rows={2} value={edit.detalle} onChange={(e) => setEdit({ ...edit, detalle: e.target.value })} /></Campo>
+          <Campo label="Orden" info={<>Número menor = aparece antes en la web.</>}><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
           <label className="flex items-center gap-2 text-sm mt-6">
             <input type="checkbox" checked={edit.publicado} onChange={(e) => setEdit({ ...edit, publicado: e.target.checked })} />
             Publicado en la web
