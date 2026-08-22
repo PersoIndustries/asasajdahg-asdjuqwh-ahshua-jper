@@ -1052,14 +1052,12 @@ function PanelPlagas() {
             <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
           </div>
         </form>
+        </ModalEdicion>
       )}
 
       {imagenesDe && (
-        <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="font-serif text-lg">Imágenes de «{imagenesDe.nombre}»</h3>
-            <button type="button" onClick={() => setImagenesDe(null)} className={`${btn} border border-border hover:text-primary`}>Cerrar</button>
-          </div>
+        <ModalEdicion titulo={`Imágenes de «${imagenesDe.nombre}»`} onClose={() => setImagenesDe(null)}>
+        <div className="space-y-4">
           <p className="text-xs text-muted-foreground">
             La etiqueta indica en qué planta se usa esa foto (por ejemplo «tomate»). Sin etiqueta, la foto sirve como imagen general.
           </p>
