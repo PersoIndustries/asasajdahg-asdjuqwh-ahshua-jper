@@ -1272,8 +1272,12 @@ function PanelMateriales() {
       />
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.nombre || "material"}»` : "Nuevo material"}
+          onClose={() => setEdit(null)}
+        >
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          className="grid md:grid-cols-2 gap-4">
           <Campo
             label="Sección"
             info={<>«Tierras y sustratos» y «Compost» se muestran en la pestaña <b>Tierras y sustratos</b>; «Piedras y áridos» y «Macetas» en <b>Material para jardinería</b>.</>}
