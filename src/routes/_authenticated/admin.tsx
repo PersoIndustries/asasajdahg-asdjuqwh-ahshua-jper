@@ -7,7 +7,7 @@ import {
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, cerrarSesion } from "@/hooks/use-auth";
-import { plantasDestacadas, meses } from "@/lib/mock-data";
+import { plantasDestacadas, meses, guias } from "@/lib/mock-data";
 import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 import type { PlagaFicha } from "@/lib/mock-data";
@@ -49,6 +49,11 @@ function Miniatura({ src, alt, slug }: { src?: string | null; alt: string; slug?
   );
 }
 
+
+/** Convierte un campo de texto con ids separados por comas en lista. */
+function listaIds(valor: string): string[] {
+  return valor.split(",").map((v) => v.trim()).filter(Boolean);
+}
 
 function AdminPage() {
   const { isAdmin, loading, user } = useAuth();
@@ -367,6 +372,13 @@ function PanelPlantas() {
         titulo="Plantas del catálogo"
         descripcion="La base de datos manda: la web muestra exactamente estas plantas. Si borras una aquí, desaparece del catálogo público."
         aviso={aviso}
+        info={
+          <>
+            <b>Producto de temporada</b>: aparece en el bloque de temporada de la portada.
+            <b> Publicada</b>: visible en el catálogo público. Las plagas y enfermedades se crean en su propia
+            pestaña y aquí solo se asocian a cada planta.
+          </>
+        }
         acciones={
           <>
             <button
@@ -387,13 +399,6 @@ function PanelPlantas() {
         }
       />
 
-      <Ayuda titulo="Guía de campos del catálogo">
-        <li><b>Identificador (slug)</b>: nombre corto en minúsculas y con guiones. Identifica la planta y sustituye a la ficha estática con el mismo identificador.</li>
-        <li><b>Clave de calendario</b>: nombre con el que se busca su calendario en la pestaña «Calendario de cultivo». Déjalo vacío para usar el nombre de la planta (ej.: «Tomate cherry» encuentra la fila «Tomate»).</li>
-        <li><b>Guía asociada (id)</b>: identificador de una guía de cultivo de «Tu Huerto» (ej. <code>cultivar-calçots</code>). No confundir con el slug del blog.</li>
-        <li><b>Producto de temporada</b>: aparece en el bloque de temporada de la portada. <b>Publicada</b>: visible en el catálogo público.</li>
-        <li>Las plagas y enfermedades de cada planta se gestionan en su propia pestaña.</li>
-      </Ayuda>
 
       <div className="rounded-2xl border border-border bg-card p-4 flex flex-col lg:flex-row lg:items-end gap-3">
         <div className="flex-1 min-w-0">
@@ -441,7 +446,10 @@ function PanelPlantas() {
           onSubmit={(e) => { e.preventDefault(); guardar.mutate({ f: edit, seleccion: plagasSel }); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4"
         >
-          <Campo label="Identificador (slug)"><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
+          <Campo
+            label="Identificador (slug)"
+            info={<>Nombre corto en minúsculas y con guiones. Identifica la planta dentro de la web (ej. <code>calcots</code>).</>}
+          ><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
           <Campo label="Nombre"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
           <Campo label="Nombre científico"><input className={input} value={edit.nombre_cientifico} onChange={(e) => setEdit({ ...edit, nombre_cientifico: e.target.value })} /></Campo>
           <Campo label="Categoría">
@@ -449,44 +457,46 @@ function PanelPlantas() {
               {["hortícola", "ornamental", "árbol", "arbusto", "flor", "aromática", "frutal"].map((c) => <option key={c} value={c}>{c}</option>)}
             </select>
           </Campo>
-          <Campo label="URL de imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen de la planta"
+            slug={edit.slug}
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Pega la dirección (URL) de la foto de la planta. Si la dejas vacía se muestra el placeholder «web en construcción» en la ficha del catálogo.</>}
+          />
           <Campo label="Temporada (texto)"><input className={input} value={edit.temporada} onChange={(e) => setEdit({ ...edit, temporada: e.target.value })} /></Campo>
           <Campo label="Descripción" ancho><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
           <Campo label="Cómo se come" ancho><textarea className={input} rows={2} value={edit.como_se_come} onChange={(e) => setEdit({ ...edit, como_se_come: e.target.value })} /></Campo>
           <Campo label="Curiosidades" ancho><textarea className={input} rows={2} value={edit.curiosidades} onChange={(e) => setEdit({ ...edit, curiosidades: e.target.value })} /></Campo>
-          <Campo label="Guía asociada (id)"><input className={input} value={edit.guia_id} onChange={(e) => setEdit({ ...edit, guia_id: e.target.value })} /></Campo>
-          <Campo label="Clave de calendario"><input className={input} value={edit.calendario_key} onChange={(e) => setEdit({ ...edit, calendario_key: e.target.value })} /></Campo>
-          <Campo label="Orden"><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
+          <Campo
+            label="Clave de calendario"
+            info={<>Nombre con el que se busca su calendario en la pestaña «Calendario de cultivo». Vacío = se usa el nombre de la planta.</>}
+          ><input className={input} value={edit.calendario_key} onChange={(e) => setEdit({ ...edit, calendario_key: e.target.value })} /></Campo>
+          <Campo label="Orden" info={<>Número menor = aparece antes en el catálogo.</>}><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
           <div className="flex items-end gap-6">
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.es_temporada} onChange={(e) => setEdit({ ...edit, es_temporada: e.target.checked })} /> Producto de temporada</label>
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.publicado} onChange={(e) => setEdit({ ...edit, publicado: e.target.checked })} /> Publicada</label>
           </div>
-          <div className="md:col-span-2">
-            <p className="text-sm font-medium mb-1">Plagas y enfermedades asociadas</p>
-            <p className="text-xs text-muted-foreground mb-2">
-              Marca las plagas del catálogo global que afectan a esta planta. Se crean y editan en la pestaña
-              «Plagas y enfermedades». Si no marcas ninguna, la ficha del producto no mostrará esa sección.
-            </p>
-            {(plagas ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground">Aún no hay plagas creadas.</p>
-            ) : (
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                {(plagas ?? []).map((pl) => (
-                  <label key={pl.id} className="flex items-center gap-2 text-sm rounded-lg border border-border p-2">
-                    <input
-                      type="checkbox"
-                      checked={plagasSel.includes(pl.id)}
-                      onChange={(e) =>
-                        setPlagasSel(e.target.checked ? [...plagasSel, pl.id] : plagasSel.filter((x) => x !== pl.id))
-                      }
-                    />
-                    <Miniatura src={pl.imagen_url} alt={pl.nombre} />
-                    <span className="truncate">{pl.nombre}</span>
-                  </label>
-                ))}
-              </div>
-            )}
-          </div>
+
+          <SelectorMultiple
+            titulo="Guías de cultivo asociadas"
+            placeholder="Buscar guía por título o etiqueta…"
+            vacio="Sin guías asociadas: la ficha no mostrará el bloque de guías."
+            info={<>Guías de cultivo de «Tu Huerto» que se enlazan desde la ficha de esta planta. Puedes elegir varias. No tiene relación con el slug del blog.</>}
+            opciones={guias.map((g) => ({ id: g.id, nombre: g.titulo, imagen: g.imagen, extra: g.tags.join(" · ") }))}
+            valor={listaIds(edit.guia_id)}
+            onChange={(v) => setEdit({ ...edit, guia_id: v.join(",") })}
+          />
+
+          <SelectorMultiple
+            titulo="Plagas y enfermedades asociadas"
+            placeholder="Buscar plaga o enfermedad…"
+            vacio="Sin plagas asociadas: la ficha del producto no mostrará esa sección."
+            info={<>Plagas del catálogo global que afectan a esta planta. Se crean y editan en la pestaña «Plagas y enfermedades».</>}
+            opciones={(plagas ?? []).map((pl) => ({ id: pl.id, nombre: pl.nombre, imagen: pl.imagen_url }))}
+            valor={plagasSel}
+            onChange={setPlagasSel}
+          />
 
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
@@ -670,6 +680,13 @@ function PanelCalendario() {
         titulo="Calendario de cultivo"
         descripcion="Cada fila es un ciclo de una planta (una misma planta puede tener varias filas: por ejemplo «ciclo de primavera» y «ciclo de otoño»). Puedes editar el nombre, el ciclo, el orden y los meses directamente en la tabla."
         aviso={aviso}
+        info={
+          <>
+            En cada casilla de mes escribe las labores: <b>S</b> siembra, <b>T</b> trasplante, <b>C</b> cosecha.
+            Añade <b>1</b> (primera quincena) o <b>2</b> (segunda) detrás de la letra: <code>T1</code>,
+            <code>C</code>, <code>S1C2</code>. El <b>orden</b> controla la posición de la fila en «Tu Huerto».
+          </>
+        }
         acciones={
           <>
             <button
@@ -690,19 +707,17 @@ function PanelCalendario() {
         }
       />
 
-      <Ayuda titulo="Cómo se rellena el calendario">
-        <li><b>Nombre de planta</b>: es la clave de enlace. La ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario» (campo <i>calendario_key</i> en la pestaña Catálogo). Ej.: fila «Tomate» → se muestra en «Tomate cherry», «Tomate rosa», etc.</li>
-        <li><b>Ciclo</b>: texto libre que aparece como subtítulo del bloque en la web («Ciclo de primavera», «Siembra temprana»…). Déjalo vacío si la planta solo tiene un ciclo.</li>
-        <li><b>Meses</b>: en cada casilla escribe las labores. <b>S</b> = siembra, <b>T</b> = trasplante, <b>C</b> = cosecha. Añade <b>1</b> (primera quincena) o <b>2</b> (segunda quincena) detrás de la letra.</li>
-        <li>Ejemplos: <code>T1</code> = trasplante a inicios de mes · <code>C</code> = cosecha todo el mes · <code>S1C2</code> = siembra la primera quincena y cosecha la segunda.</li>
-        <li><b>Orden</b>: controla la posición de la fila en la tabla de «Tu Huerto». Números más bajos aparecen antes.</li>
-      </Ayuda>
-
       {nuevo && (
         <form onSubmit={(e) => { e.preventDefault(); crear.mutate(nuevo); }}
           className="rounded-2xl border border-border bg-card p-6 flex flex-wrap gap-4 items-end">
-          <Campo label="Planta"><input className={input} required value={nuevo.planta} onChange={(e) => setNuevo({ ...nuevo, planta: e.target.value })} /></Campo>
-          <Campo label="Ciclo (opcional)"><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
+          <Campo
+            label="Planta"
+            info={<>Es la clave de enlace: la ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario».</>}
+          ><input className={input} required value={nuevo.planta} onChange={(e) => setNuevo({ ...nuevo, planta: e.target.value })} /></Campo>
+          <Campo
+            label="Ciclo (opcional)"
+            info={<>Texto libre que aparece como subtítulo en la web («Ciclo de primavera», «Siembra temprana»…). Vacío si la planta solo tiene un ciclo.</>}
+          ><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
           <button type="submit" className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}><Save className="h-4 w-4" aria-hidden /> Crear</button>
           <button type="button" onClick={() => setNuevo(null)} className={`${btn} border border-border`}>Cancelar</button>
         </form>
@@ -981,6 +996,13 @@ function PanelPlagas() {
         titulo="Plagas y enfermedades"
         descripcion="Catálogo global de plagas. Cada plaga se crea una sola vez y luego se asocia a las plantas que quieras desde la pestaña «Catálogo y temporada»."
         aviso={aviso}
+        info={
+          <>
+            Creas la plaga una vez (por ejemplo «Pulgón») y la reutilizas en todas las plantas que la sufran.
+            Para asociarla, edita la planta en «Catálogo y temporada». Si una planta no tiene plagas asociadas,
+            esa sección no aparece en su ficha.
+          </>
+        }
         acciones={
           <>
             <button type="button" onClick={() => void recargar()} disabled={refrescando}
@@ -997,25 +1019,22 @@ function PanelPlagas() {
         }
       />
 
-      <Ayuda titulo="Cómo funcionan las plagas">
-        <li><b>Catálogo global</b>: creas la plaga una vez (por ejemplo «Pulgón») y la reutilizas en todas las plantas que la sufran.</li>
-        <li><b>Asociar a una planta</b>: en «Catálogo y temporada», edita la planta y marca las plagas que le afectan.</li>
-        <li><b>Descripción, Prevención, Cómo combatirla y Otros datos</b>: si dejas un campo vacío, no se muestra en la ficha del producto. En la web, prevención, combate y otros datos aparecen dentro de un desplegable.</li>
-        <li><b>Imágenes con etiqueta</b>: puedes subir varias fotos por plaga y ponerles una etiqueta (ej. «tomate», «berenjena»). En la ficha de esa planta se muestra la foto cuya etiqueta coincide.</li>
-        <li><b>Imagen por defecto</b>: si la plaga no tiene foto para esa planta se usa su imagen principal y, si tampoco existe, el placeholder «web en construcción».</li>
-        <li>Si una planta no tiene ninguna plaga asociada, la sección de enfermedades no aparece en su ficha.</li>
-      </Ayuda>
-
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
           <Campo label="Nombre de la plaga o enfermedad"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
-          <Campo label="Identificador (slug, se genera solo si lo dejas vacío)"><input className={input} value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
-          <Campo label="Descripción (opcional)" ancho><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
-          <Campo label="Prevención (opcional)" ancho><textarea className={input} rows={2} value={edit.prevencion} onChange={(e) => setEdit({ ...edit, prevencion: e.target.value })} /></Campo>
-          <Campo label="Cómo combatirla (opcional)" ancho><textarea className={input} rows={2} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
-          <Campo label="Otros datos (opcional)" ancho><textarea className={input} rows={2} value={edit.otros_datos} onChange={(e) => setEdit({ ...edit, otros_datos: e.target.value })} /></Campo>
-          <Campo label="URL de imagen principal (opcional)" ancho><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
+          <Campo label="Identificador (slug)" info={<>Nombre corto en minúsculas y con guiones. Si lo dejas vacío se genera solo a partir del nombre.</>}><input className={input} value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
+          <Campo label="Descripción" ancho info={<>Si dejas el campo vacío, no se muestra en la ficha del producto.</>}><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
+          <Campo label="Prevención" ancho info={<>Aparece dentro del desplegable de la plaga en la ficha pública.</>}><textarea className={input} rows={2} value={edit.prevencion} onChange={(e) => setEdit({ ...edit, prevencion: e.target.value })} /></Campo>
+          <Campo label="Cómo combatirla" ancho info={<>Tratamientos y dosis (ml o g por litro). Aparece en el desplegable de la ficha.</>}><textarea className={input} rows={2} value={edit.combate} onChange={(e) => setEdit({ ...edit, combate: e.target.value })} /></Campo>
+          <Campo label="Otros datos" ancho><textarea className={input} rows={2} value={edit.otros_datos} onChange={(e) => setEdit({ ...edit, otros_datos: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen principal"
+            ancho
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Foto general de la plaga. Puedes añadir además fotos por planta con etiqueta desde el botón «Imágenes». Si no hay ninguna se usa el placeholder.</>}
+          />
           <div className="md:col-span-2 flex gap-3">
             <button type="submit" disabled={guardar.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               {guardar.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />} Guardar
@@ -1058,7 +1077,12 @@ function PanelPlagas() {
               anadirImagen.mutate({ plagaId: imagenesDe.id, ...nuevaImagen });
             }}
           >
-            <Campo label="URL de la imagen"><input className={input} value={nuevaImagen.imagen_url} onChange={(e) => setNuevaImagen({ ...nuevaImagen, imagen_url: e.target.value })} /></Campo>
+            <CampoImagen
+              label="URL de la imagen"
+              valor={nuevaImagen.imagen_url}
+              onChange={(v) => setNuevaImagen({ ...nuevaImagen, imagen_url: v })}
+              info={<>Foto de esta plaga en una planta concreta. La etiqueta sirve para mostrarla en la ficha de esa planta.</>}
+            />
             <Campo label="Etiqueta (planta)"><input className={input} placeholder="tomate" value={nuevaImagen.tag} onChange={(e) => setNuevaImagen({ ...nuevaImagen, tag: e.target.value })} /></Campo>
             <button type="submit" disabled={anadirImagen.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Añadir
@@ -1238,30 +1262,29 @@ function PanelMateriales() {
         }
       />
 
-      <Ayuda titulo="Cómo se muestran estos productos en la web">
-        <li><b>Sección</b>: decide dónde aparece. «Tierras y sustratos» y «Compost» van en la pestaña <b>Tierras y sustratos</b>; «Piedras y áridos» y «Macetas» en <b>Material para jardinería</b>.</li>
-        <li><b>Formato</b>: se muestra como etiqueta sobre la foto (por ejemplo «70 L», «Big bag 1 m³», «Ø 10–60 cm»).</li>
-        <li><b>Uso</b>: frase corta bajo el nombre. <b>Detalle</b>: línea con el check verde.</li>
-        <li><b>Marca</b>: texto pequeño en mayúsculas (Suliflor España, Liett Ibérica…). Si lo dejas vacío se usa el de por defecto de la sección.</li>
-        <li><b>Imagen</b>: pega una URL. Si la dejas vacía se usa el placeholder «web en construcción».</li>
-        <li><b>Orden</b>: número menor = aparece antes. <b>Publicado</b>: si lo desmarcas, deja de verse en la web.</li>
-      </Ayuda>
-
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
-          <Campo label="Sección">
+          <Campo
+            label="Sección"
+            info={<>«Tierras y sustratos» y «Compost» se muestran en la pestaña <b>Tierras y sustratos</b>; «Piedras y áridos» y «Macetas» en <b>Material para jardinería</b>.</>}
+          >
             <select className={input} value={edit.seccion} onChange={(e) => setEdit({ ...edit, seccion: e.target.value })}>
               {SECCIONES_MATERIAL.map(([k, l]) => <option key={k} value={k}>{l}</option>)}
             </select>
           </Campo>
           <Campo label="Nombre"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
-          <Campo label="Uso (frase corta)"><input className={input} value={edit.uso} onChange={(e) => setEdit({ ...edit, uso: e.target.value })} /></Campo>
-          <Campo label="Formato o medida (etiqueta sobre la foto)"><input className={input} value={edit.formato} onChange={(e) => setEdit({ ...edit, formato: e.target.value })} /></Campo>
-          <Campo label="Marca o proveedor (opcional)"><input className={input} value={edit.marca} onChange={(e) => setEdit({ ...edit, marca: e.target.value })} /></Campo>
-          <Campo label="URL de la imagen (opcional)"><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
-          <Campo label="Detalle" ancho><textarea className={input} rows={2} value={edit.detalle} onChange={(e) => setEdit({ ...edit, detalle: e.target.value })} /></Campo>
-          <Campo label="Orden"><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
+          <Campo label="Uso (frase corta)" info={<>Frase corta que aparece bajo el nombre del producto.</>}><input className={input} value={edit.uso} onChange={(e) => setEdit({ ...edit, uso: e.target.value })} /></Campo>
+          <Campo label="Formato o medida" info={<>Se muestra como etiqueta sobre la foto: «70 L», «Big bag 1 m³», «Ø 10–60 cm»…</>}><input className={input} value={edit.formato} onChange={(e) => setEdit({ ...edit, formato: e.target.value })} /></Campo>
+          <Campo label="Marca o proveedor" info={<>Texto pequeño en mayúsculas (Suliflor España, Liett Ibérica…). Si lo dejas vacío se usa el de por defecto de la sección.</>}><input className={input} value={edit.marca} onChange={(e) => setEdit({ ...edit, marca: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen del producto"
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Pega la dirección (URL) de la foto. Si la dejas vacía se usa el placeholder «web en construcción».</>}
+          />
+          <Campo label="Detalle" ancho info={<>Línea que se muestra con el check verde.</>}><textarea className={input} rows={2} value={edit.detalle} onChange={(e) => setEdit({ ...edit, detalle: e.target.value })} /></Campo>
+          <Campo label="Orden" info={<>Número menor = aparece antes en la web.</>}><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
           <label className="flex items-center gap-2 text-sm mt-6">
             <input type="checkbox" checked={edit.publicado} onChange={(e) => setEdit({ ...edit, publicado: e.target.checked })} />
             Publicado en la web
@@ -1430,6 +1453,13 @@ function PanelBlog() {
         titulo="Noticias y curiosidades"
         descripcion="La base de datos manda: el blog muestra exactamente estas noticias. Si borras una aquí, desaparece de la web. En el cuerpo, una línea que empiece por ## crea un subtítulo."
         aviso={aviso}
+        info={
+          <>
+            Esta pestaña gestiona el <b>blog</b> (<code>/blog</code>): novedades del vivero, ferias y curiosidades.
+            Las <b>guías de cultivo</b> son otra cosa y viven en «Tu Huerto». <b>Destacada</b> resalta el artículo
+            en la portada del blog; <b>Publicada</b> lo hace visible al público.
+          </>
+        }
         acciones={
           <>
             <button
@@ -1450,21 +1480,18 @@ function PanelBlog() {
         }
       />
 
-      <Ayuda titulo="El blog NO son las guías de cultivo">
-        <li>Esta pestaña gestiona el <b>blog de noticias y curiosidades</b> (<code>/blog</code>): novedades del vivero, ferias, curiosidades del mundo vegetal. Las <b>guías de cultivo</b> son otra cosa y viven en la página «Tu Huerto» (PDFs y fichas), no se editan aquí.</li>
-        <li><b>Identificador (slug)</b>: es únicamente la dirección web del artículo (<code>/blog/mi-slug</code>). <b>No</b> tiene relación con la guía de una planta. Usa minúsculas y guiones, y no lo cambies una vez publicado (rompería los enlaces).</li>
-        <li>El campo «Guía asociada» de una planta (pestaña Catálogo) sí enlaza con una guía de «Tu Huerto», pero es un campo distinto de este slug.</li>
-        <li><b>Resumen</b>: texto que se ve en el listado. <b>Entradilla</b>: primer párrafo destacado dentro del artículo.</li>
-        <li><b>Cuerpo</b>: escribe párrafos normales; una línea que empiece por <code>##</code> se convierte en subtítulo de sección.</li>
-        <li><b>Destacada</b> resalta el artículo en la portada del blog; <b>Publicada</b> lo hace visible al público.</li>
-      </Ayuda>
+
+
 
 
 
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
-          <Campo label="Identificador (slug)"><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
+          <Campo
+            label="Identificador (slug)"
+            info={<>Dirección web del artículo (<code>/blog/mi-slug</code>). Minúsculas y guiones. No lo cambies una vez publicado: romperías los enlaces. No tiene relación con las guías de cultivo de «Tu Huerto».</>}
+          ><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
           <Campo label="Título"><input className={input} required value={edit.titulo} onChange={(e) => setEdit({ ...edit, titulo: e.target.value })} /></Campo>
           <Campo label="Categoría">
             <select className={input} value={edit.categoria} onChange={(e) => setEdit({ ...edit, categoria: e.target.value })}>
@@ -1474,10 +1501,16 @@ function PanelBlog() {
           <Campo label="Fecha"><input type="date" className={input} value={edit.fecha} onChange={(e) => setEdit({ ...edit, fecha: e.target.value })} /></Campo>
           <Campo label="Autor"><input className={input} value={edit.autor} onChange={(e) => setEdit({ ...edit, autor: e.target.value })} /></Campo>
           <Campo label="Minutos de lectura"><input type="number" className={input} value={edit.minutos} onChange={(e) => setEdit({ ...edit, minutos: Number(e.target.value) })} /></Campo>
-          <Campo label="URL de imagen (opcional)" ancho><input className={input} value={edit.imagen_url} onChange={(e) => setEdit({ ...edit, imagen_url: e.target.value })} /></Campo>
-          <Campo label="Resumen" ancho><textarea className={input} rows={2} value={edit.resumen} onChange={(e) => setEdit({ ...edit, resumen: e.target.value })} /></Campo>
-          <Campo label="Entradilla" ancho><textarea className={input} rows={2} value={edit.entradilla} onChange={(e) => setEdit({ ...edit, entradilla: e.target.value })} /></Campo>
-          <Campo label="Cuerpo" ancho><textarea className={input} rows={10} value={edit.cuerpo} onChange={(e) => setEdit({ ...edit, cuerpo: e.target.value })} /></Campo>
+          <CampoImagen
+            label="Imagen del artículo"
+            ancho
+            valor={edit.imagen_url}
+            onChange={(v) => setEdit({ ...edit, imagen_url: v })}
+            info={<>Pega la dirección (URL) de la foto de portada del artículo. Si la dejas vacía se usa el placeholder «web en construcción».</>}
+          />
+          <Campo label="Resumen" ancho info={<>Texto corto que se ve en el listado del blog.</>}><textarea className={input} rows={2} value={edit.resumen} onChange={(e) => setEdit({ ...edit, resumen: e.target.value })} /></Campo>
+          <Campo label="Entradilla" ancho info={<>Primer párrafo destacado dentro del artículo.</>}><textarea className={input} rows={2} value={edit.entradilla} onChange={(e) => setEdit({ ...edit, entradilla: e.target.value })} /></Campo>
+          <Campo label="Cuerpo" ancho info={<>Escribe párrafos normales. Una línea que empiece por <code>##</code> se convierte en subtítulo de sección.</>}><textarea className={input} rows={10} value={edit.cuerpo} onChange={(e) => setEdit({ ...edit, cuerpo: e.target.value })} /></Campo>
           <Campo label="Etiquetas (separadas por comas)" ancho><input className={input} value={edit.tags} onChange={(e) => setEdit({ ...edit, tags: e.target.value })} /></Campo>
           <div className="flex items-end gap-6">
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.destacada} onChange={(e) => setEdit({ ...edit, destacada: e.target.checked })} /> Destacada</label>
@@ -1530,26 +1563,158 @@ function PanelBlog() {
 
 /* ───────────────────────── UI compartida ───────────────────────── */
 
-/** Bloque de documentación desplegable que explica cómo se usa cada panel. */
-function Ayuda({ titulo, children }: { titulo: string; children: React.ReactNode }) {
+/** Botón (i) con explicación emergente al pasar por encima o al enfocar. */
+function InfoTip({ texto }: { texto: React.ReactNode }) {
   return (
-    <details className="rounded-2xl border border-border bg-secondary/30 p-5 text-sm" open>
-      <summary className="cursor-pointer font-medium">{titulo}</summary>
-      <ul className="mt-3 space-y-2 list-disc pl-5 text-muted-foreground leading-relaxed [&_code]:rounded [&_code]:bg-background [&_code]:px-1 [&_code]:py-0.5 [&_code]:text-xs [&_b]:text-foreground">
-        {children}
-      </ul>
-    </details>
+    <span className="relative inline-flex group align-middle">
+      <button
+        type="button"
+        aria-label="Más información"
+        onClick={(e) => e.preventDefault()}
+        className="h-4 w-4 inline-flex items-center justify-center rounded-full border border-border text-[10px] font-semibold leading-none text-muted-foreground hover:text-primary hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+      >
+        i
+      </button>
+      <span
+        role="tooltip"
+        className="pointer-events-none absolute left-1/2 bottom-full z-50 mb-2 w-72 -translate-x-1/2 rounded-xl border border-border bg-card p-3 text-left text-xs font-normal leading-relaxed text-muted-foreground shadow-xl opacity-0 invisible transition-opacity group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible [&_b]:text-foreground [&_code]:rounded [&_code]:bg-secondary [&_code]:px-1"
+      >
+        {texto}
+      </span>
+    </span>
   );
 }
 
-function Barra({ titulo, descripcion, acciones, aviso }: {
-  titulo: string; descripcion: string; acciones: React.ReactNode; aviso: string | null;
+/** Campo de imagen con miniatura de vista previa y botón para vaciarlo. */
+function CampoImagen({ label, valor, onChange, info, ancho, slug }: {
+  label: string;
+  valor: string;
+  onChange: (v: string) => void;
+  info?: React.ReactNode;
+  ancho?: boolean;
+  slug?: string;
+}) {
+  return (
+    <Campo label={label} info={info} ancho={ancho}>
+      <div className="flex items-center gap-3">
+        <Miniatura key={valor} src={valor} slug={slug} alt="Vista previa de la imagen" />
+        <input
+          className={input}
+          value={valor}
+          placeholder="https://…  (si lo dejas vacío se usa el placeholder)"
+          onChange={(e) => onChange(e.target.value)}
+        />
+        {valor && (
+          <button type="button" onClick={() => onChange("")} aria-label="Quitar imagen"
+            className="p-2 text-muted-foreground hover:text-destructive shrink-0">
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+        )}
+      </div>
+    </Campo>
+  );
+}
+
+/** Selector múltiple con buscador, etiquetas de lo elegido y lista desplegable. */
+function SelectorMultiple({ titulo, info, opciones, valor, onChange, vacio, placeholder }: {
+  titulo: string;
+  info?: React.ReactNode;
+  opciones: { id: string; nombre: string; imagen?: string | null; extra?: string }[];
+  valor: string[];
+  onChange: (v: string[]) => void;
+  vacio: string;
+  placeholder?: string;
+}) {
+  const [q, setQ] = useState("");
+  const [abierto, setAbierto] = useState(false);
+  const elegidas = valor
+    .map((id) => opciones.find((o) => o.id === id))
+    .filter(Boolean) as typeof opciones;
+  const busqueda = q.trim().toLowerCase();
+  const lista = opciones.filter((o) =>
+    busqueda ? `${o.nombre} ${o.extra ?? ""}`.toLowerCase().includes(busqueda) : true,
+  );
+  const alternar = (id: string) =>
+    onChange(valor.includes(id) ? valor.filter((x) => x !== id) : [...valor, id]);
+
+  return (
+    <div className="md:col-span-2 rounded-2xl border border-border p-4">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium flex items-center gap-2">
+          {titulo} {info && <InfoTip texto={info} />}
+          <span className="text-xs font-normal text-muted-foreground">({valor.length} seleccionadas)</span>
+        </p>
+        <div className="flex items-center gap-2">
+          {valor.length > 0 && (
+            <button type="button" className="text-xs text-muted-foreground hover:text-destructive" onClick={() => onChange([])}>
+              Quitar todas
+            </button>
+          )}
+          <button type="button" className="text-xs text-primary hover:underline" onClick={() => setAbierto(!abierto)}>
+            {abierto ? "Cerrar lista" : "Añadir / editar"}
+          </button>
+        </div>
+      </div>
+
+      {elegidas.length > 0 ? (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {elegidas.map((o) => (
+            <span key={o.id} className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 pl-1 pr-2 py-1 text-xs">
+              <img
+                src={o.imagen || IMAGEN_PLAGA_POR_DEFECTO}
+                alt=""
+                className="h-5 w-5 rounded-full object-cover"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = IMAGEN_PLAGA_POR_DEFECTO; }}
+              />
+              <span className="max-w-[14rem] truncate">{o.nombre}</span>
+              <button type="button" aria-label={`Quitar ${o.nombre}`} onClick={() => alternar(o.id)} className="text-muted-foreground hover:text-destructive">
+                <X className="h-3 w-3" aria-hidden />
+              </button>
+            </span>
+          ))}
+        </div>
+      ) : (
+        <p className="mt-2 text-xs text-muted-foreground">{vacio}</p>
+      )}
+
+      {abierto && (
+        <div className="mt-3 space-y-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden />
+            <input type="search" className={`${input} pl-9`} placeholder={placeholder ?? "Buscar…"} value={q} onChange={(e) => setQ(e.target.value)} />
+          </div>
+          <div className="max-h-64 overflow-y-auto rounded-xl border border-border divide-y divide-border">
+            {lista.length === 0 && <p className="p-3 text-xs text-muted-foreground">Sin resultados.</p>}
+            {lista.map((o) => {
+              const marcada = valor.includes(o.id);
+              return (
+                <label key={o.id} className={`flex items-center gap-3 p-2 text-sm cursor-pointer ${marcada ? "bg-secondary/50" : "hover:bg-secondary/30"}`}>
+                  <input type="checkbox" checked={marcada} onChange={() => alternar(o.id)} />
+                  <Miniatura src={o.imagen} alt={o.nombre} />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate">{o.nombre}</span>
+                    {o.extra && <span className="block text-xs text-muted-foreground truncate">{o.extra}</span>}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Barra({ titulo, descripcion, acciones, aviso, info }: {
+  titulo: string; descripcion: string; acciones: React.ReactNode; aviso: string | null; info?: React.ReactNode;
 }) {
   return (
     <div className="rounded-2xl border border-border bg-card p-6">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-xl">
-          <h2 className="font-serif text-2xl font-medium">{titulo}</h2>
+          <h2 className="font-serif text-2xl font-medium flex items-center gap-2">
+            {titulo} {info && <InfoTip texto={info} />}
+          </h2>
           <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{descripcion}</p>
         </div>
         <div className="flex flex-wrap gap-2">{acciones}</div>
@@ -1559,10 +1724,12 @@ function Barra({ titulo, descripcion, acciones, aviso }: {
   );
 }
 
-function Campo({ label, children, ancho }: { label: string; children: React.ReactNode; ancho?: boolean }) {
+function Campo({ label, children, ancho, info }: { label: string; children: React.ReactNode; ancho?: boolean; info?: React.ReactNode }) {
   return (
     <label className={`block text-sm ${ancho ? "md:col-span-2" : ""}`}>
-      <span className="block mb-1.5 text-muted-foreground">{label}</span>
+      <span className="mb-1.5 flex items-center gap-2 text-muted-foreground">
+        {label} {info && <InfoTip texto={info} />}
+      </span>
       {children}
     </label>
   );

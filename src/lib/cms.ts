@@ -100,8 +100,8 @@ export function rowToPlant(row: PlantaRow): Plant {
     nombre: row.nombre,
     nombreCientifico: row.nombre_cientifico ?? undefined,
     categoria: (row.categoria as Plant["categoria"]) ?? "hortícola",
-    // Todas las fichas del catálogo muestran el placeholder «web en construcción».
-    imagen: placeholder,
+    // Si la ficha tiene foto propia se usa; si no, el placeholder «web en construcción».
+    imagen: row.imagen_url || placeholder,
     descripcion: row.descripcion ?? "",
     curiosidades: row.curiosidades ?? "",
     comoSeCome: row.como_se_come ?? undefined,
@@ -111,7 +111,8 @@ export function rowToPlant(row: PlantaRow): Plant {
       .map((e) => ({ nombre: e.nombre, combate: e.combate, imagen: e.imagen_url ?? undefined })),
     plagas,
     temporada: row.temporada ?? "",
-    guiaId: row.guia_id ?? undefined,
+    guiaId: row.guia_id?.split(",")[0]?.trim() || undefined,
+    guiaIds: (row.guia_id ?? "").split(",").map((g) => g.trim()).filter(Boolean),
     calendarioKey: row.calendario_key ?? undefined,
   };
 }
@@ -128,7 +129,7 @@ export function plantToRow(p: Plant, extra?: { orden?: number; esTemporada?: boo
     curiosidades: p.curiosidades ?? null,
     como_se_come: p.comoSeCome ?? null,
     temporada: p.temporada ?? null,
-    guia_id: p.guiaId ?? null,
+    guia_id: (p.guiaIds?.length ? p.guiaIds.join(",") : p.guiaId) ?? null,
     calendario_key: p.calendarioKey ?? null,
     es_temporada: extra?.esTemporada ?? false,
     orden: extra?.orden ?? 0,

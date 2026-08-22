@@ -43,6 +43,8 @@ export type Plant = {
   plagas?: PlagaFicha[];
   temporada: string;
   guiaId?: string;
+  /** Varias guías de cultivo asociadas (ids). */
+  guiaIds?: string[];
   /** Clave opcional para enlazar con una fila del calendario de cultivo.
    *  Si se omite, se intenta emparejar automáticamente por nombre. */
   calendarioKey?: string;
