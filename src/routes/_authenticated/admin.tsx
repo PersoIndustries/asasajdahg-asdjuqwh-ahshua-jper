@@ -7,7 +7,7 @@ import {
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, cerrarSesion } from "@/hooks/use-auth";
-import { plantasDestacadas, meses } from "@/lib/mock-data";
+import { plantasDestacadas, meses, guias } from "@/lib/mock-data";
 import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 import type { PlagaFicha } from "@/lib/mock-data";
@@ -49,6 +49,11 @@ function Miniatura({ src, alt, slug }: { src?: string | null; alt: string; slug?
   );
 }
 
+
+/** Convierte un campo de texto con ids separados por comas en lista. */
+function listaIds(valor: string): string[] {
+  return valor.split(",").map((v) => v.trim()).filter(Boolean);
+}
 
 function AdminPage() {
   const { isAdmin, loading, user } = useAuth();
