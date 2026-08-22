@@ -442,9 +442,14 @@ function PanelPlantas() {
       </div>
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.nombre || "planta"}»` : "Nueva planta"}
+          descripcion="Los cambios se publican al guardar."
+          onClose={() => setEdit(null)}
+        >
         <form
           onSubmit={(e) => { e.preventDefault(); guardar.mutate({ f: edit, seleccion: plagasSel }); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4"
+          className="grid md:grid-cols-2 gap-4"
         >
           <Campo
             label="Identificador (slug)"
