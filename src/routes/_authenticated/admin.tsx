@@ -1500,8 +1500,12 @@ function PanelBlog() {
 
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.titulo || "noticia"}»` : "Nueva noticia"}
+          onClose={() => setEdit(null)}
+        >
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          className="grid md:grid-cols-2 gap-4">
           <Campo
             label="Identificador (slug)"
             info={<>Dirección web del artículo (<code>/blog/mi-slug</code>). Minúsculas y guiones. No lo cambies una vez publicado: romperías los enlaces. No tiene relación con las guías de cultivo de «Tu Huerto».</>}
