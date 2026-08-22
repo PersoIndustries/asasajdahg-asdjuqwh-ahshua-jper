@@ -8,7 +8,7 @@
 import { useQuery, useIsFetching } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  
+  plantasDestacadas,
   type Plant,
   type PlagaFicha,
   type FilaCalendario,
@@ -18,6 +18,11 @@ import placeholder from "@/assets/placeholder/under-construction-wide.jpg";
 
 /** Imagen por defecto de cualquier plaga sin foto propia. */
 export const IMAGEN_PLAGA_POR_DEFECTO = placeholder;
+
+/** Foto empaquetada en la web para ese slug (las que ya se veían en el gestor). */
+export function imagenEstatica(slug: string): string | undefined {
+  return plantasDestacadas.find((p) => p.id === slug)?.imagen;
+}
 
 export type PlagaImagenRow = { imagen_url: string; tag: string; orden: number };
 
