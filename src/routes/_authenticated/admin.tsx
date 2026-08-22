@@ -269,6 +269,32 @@ function PanelPlantas() {
     },
   });
 
+  // Nombres disponibles en el calendario de cultivo (con sus ciclos) para el
+  // selector «Clave de calendario».
+  const { data: clavesCal } = useQuery({
+    queryKey: ["admin", "calendario", "claves"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("planta_calendario")
+        .select("planta_nombre, ciclo, orden")
+        .order("orden");
+      if (error) throw error;
+      const mapa = new Map<string, string[]>();
+      for (const r of data) {
+        const ciclos = mapa.get(r.planta_nombre) ?? [];
+        if (r.ciclo) ciclos.push(r.ciclo);
+        mapa.set(r.planta_nombre, ciclos);
+      }
+      return [...mapa.entries()]
+        .map(([nombre, ciclos]) => ({
+          id: nombre,
+          nombre,
+          extra: ciclos.length ? ciclos.join(" · ") : "Ciclo único",
+        }))
+        .sort((a, b) => a.nombre.localeCompare(b.nombre));
+    },
+  });
+
   const { data: vinculos } = useQuery({
     queryKey: ["admin", "planta_plagas"],
     queryFn: async () => {
