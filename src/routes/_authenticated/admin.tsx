@@ -1464,7 +1464,10 @@ function PanelBlog() {
       {edit && (
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
           className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
-          <Campo label="Identificador (slug)"><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
+          <Campo
+            label="Identificador (slug)"
+            info={<>Dirección web del artículo (<code>/blog/mi-slug</code>). Minúsculas y guiones. No lo cambies una vez publicado: romperías los enlaces. No tiene relación con las guías de cultivo de «Tu Huerto».</>}
+          ><input className={input} required value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
           <Campo label="Título"><input className={input} required value={edit.titulo} onChange={(e) => setEdit({ ...edit, titulo: e.target.value })} /></Campo>
           <Campo label="Categoría">
             <select className={input} value={edit.categoria} onChange={(e) => setEdit({ ...edit, categoria: e.target.value })}>
