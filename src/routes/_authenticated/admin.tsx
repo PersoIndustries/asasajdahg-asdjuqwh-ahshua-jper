@@ -1541,6 +1541,7 @@ function PanelBlog() {
             <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
           </div>
         </form>
+        </ModalEdicion>
       )}
 
       {isLoading ? <Cargando /> : (
