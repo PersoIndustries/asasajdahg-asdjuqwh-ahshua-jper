@@ -585,10 +585,21 @@ function PanelPlantas() {
 function PanelCalendario() {
   const queryClient = useQueryClient();
   const [aviso, setAviso] = useState<string | null>(null);
-  const [nuevo, setNuevo] = useState<{ planta: string; ciclo: string } | null>(null);
+  const [nuevo, setNuevo] = useState<{ plantas: string[]; ciclo: string } | null>(null);
   const [busqueda, setBusqueda] = useState("");
   const [cicloF, setCicloF] = useState<"todos" | "con" | "sin">("todos");
   const [laboresF, setLaboresF] = useState<"todas" | "S" | "T" | "C" | "vacias">("todas");
+  const [filasSel, setFilasSel] = useState<string[]>([]);
+
+  const { data: plantasCatalogo } = useQuery({
+    queryKey: ["admin", "plantas", "lista"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("plantas").select("id, nombre, slug, imagen_url").order("nombre");
+      if (error) throw error;
+      return data;
+    },
+  });
+
 
 
   const { data, isLoading } = useQuery({
