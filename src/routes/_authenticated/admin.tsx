@@ -675,6 +675,7 @@ function PanelCalendario() {
     return (data ?? []).filter((f) => {
       const texto = `${f.planta_nombre} ${f.ciclo ?? ""}`.toLowerCase();
       if (q && !texto.includes(q)) return false;
+      if (filasSel.length && !filasSel.includes(f.id)) return false;
       if (cicloF === "con" && !f.ciclo) return false;
       if (cicloF === "sin" && f.ciclo) return false;
       const celdas = (f.meses ?? []).join("").toUpperCase();
@@ -682,7 +683,18 @@ function PanelCalendario() {
       if (["S", "T", "C"].includes(laboresF) && !celdas.includes(laboresF)) return false;
       return true;
     });
-  }, [data, busqueda, cicloF, laboresF]);
+  }, [data, busqueda, cicloF, laboresF, filasSel]);
+
+  /** Opciones «nombre + ciclo» para el selector múltiple de filas. */
+  const opcionesFilas = useMemo(
+    () => (data ?? []).map((f) => ({
+      id: f.id,
+      nombre: f.planta_nombre,
+      extra: f.ciclo ?? "Ciclo único",
+      imagen: (plantasCatalogo ?? []).find((p) => p.nombre.toLowerCase() === f.planta_nombre.toLowerCase())?.imagen_url,
+    })),
+    [data, plantasCatalogo],
+  );
 
 
   const [refrescando, setRefrescando] = useState(false);
