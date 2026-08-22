@@ -367,6 +367,13 @@ function PanelPlantas() {
         titulo="Plantas del catálogo"
         descripcion="La base de datos manda: la web muestra exactamente estas plantas. Si borras una aquí, desaparece del catálogo público."
         aviso={aviso}
+        info={
+          <>
+            <b>Producto de temporada</b>: aparece en el bloque de temporada de la portada.
+            <b> Publicada</b>: visible en el catálogo público. Las plagas y enfermedades se crean en su propia
+            pestaña y aquí solo se asocian a cada planta.
+          </>
+        }
         acciones={
           <>
             <button
