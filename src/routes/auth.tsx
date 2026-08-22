@@ -33,10 +33,13 @@ function AuthPage() {
 
 
   useEffect(() => {
-    if (!loading && user) {
-      navigate({ to: isAdmin ? "/admin" : "/cuenta", replace: true });
+    if (!loading && user && !isAdmin) {
+      navigate({ to: "/cuenta", replace: true });
     }
   }, [loading, user, isAdmin, navigate]);
+
+  const elegirDestino = !loading && !!user && isAdmin;
+
 
   const entrarConGoogle = async () => {
     setError(null);
