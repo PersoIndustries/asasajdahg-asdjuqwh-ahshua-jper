@@ -1814,13 +1814,18 @@ function SelectorMultiple({ titulo, info, opciones, valor, onChange, vacio, plac
         <div className="mt-3 flex flex-wrap gap-2">
           {elegidas.map((o) => (
             <span key={o.id} className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 pl-1 pr-2 py-1 text-xs">
-              <img
-                src={o.imagen || IMAGEN_PLAGA_POR_DEFECTO}
-                alt=""
-                className="h-5 w-5 rounded-full object-cover"
-                onError={(e) => { (e.currentTarget as HTMLImageElement).src = IMAGEN_PLAGA_POR_DEFECTO; }}
-              />
-              <span className="max-w-[14rem] truncate">{o.nombre}</span>
+              {o.imagen !== undefined && (
+                <img
+                  src={o.imagen || IMAGEN_PLAGA_POR_DEFECTO}
+                  alt=""
+                  className="h-5 w-5 rounded-full object-cover"
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = IMAGEN_PLAGA_POR_DEFECTO; }}
+                />
+              )}
+              <span className="max-w-[14rem] truncate">
+                {o.nombre}
+                {o.extra && <span className="text-muted-foreground"> · {o.extra}</span>}
+              </span>
               <button type="button" aria-label={`Quitar ${o.nombre}`} onClick={() => alternar(o.id)} className="text-muted-foreground hover:text-destructive">
                 <X className="h-3 w-3" aria-hidden />
               </button>
