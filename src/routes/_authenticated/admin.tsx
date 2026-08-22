@@ -1077,7 +1077,12 @@ function PanelPlagas() {
               anadirImagen.mutate({ plagaId: imagenesDe.id, ...nuevaImagen });
             }}
           >
-            <Campo label="URL de la imagen"><input className={input} value={nuevaImagen.imagen_url} onChange={(e) => setNuevaImagen({ ...nuevaImagen, imagen_url: e.target.value })} /></Campo>
+            <CampoImagen
+              label="URL de la imagen"
+              valor={nuevaImagen.imagen_url}
+              onChange={(v) => setNuevaImagen({ ...nuevaImagen, imagen_url: v })}
+              info={<>Foto de esta plaga en una planta concreta. La etiqueta sirve para mostrarla en la ficha de esa planta.</>}
+            />
             <Campo label="Etiqueta (planta)"><input className={input} placeholder="tomate" value={nuevaImagen.tag} onChange={(e) => setNuevaImagen({ ...nuevaImagen, tag: e.target.value })} /></Campo>
             <button type="submit" disabled={anadirImagen.isPending} className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Añadir
