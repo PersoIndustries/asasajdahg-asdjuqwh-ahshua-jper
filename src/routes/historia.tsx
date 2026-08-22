@@ -3,14 +3,10 @@ import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { familia } from "@/lib/mock-data";
 import historiaImg from "@/assets/historia/portada.jpg";
 import img1974 from "@/assets/historia/1974.jpg";
-import img1989 from "@/assets/historia/1989.jpg";
-import img2003 from "@/assets/historia/2003.jpg";
-import img2015 from "@/assets/historia/2015.jpg";
-import img2024 from "@/assets/historia/2024.jpg";
-import galInvernadero from "@/assets/instalaciones/invernadero.jpg";
-import galExterior from "@/assets/instalaciones/vivero-exterior.jpg";
-import galTienda from "@/assets/instalaciones/tienda.jpg";
-import galSustratos from "@/assets/instalaciones/sustratos.jpg";
+import gal0 from "@/assets/instalaciones/instalaciones-0.jpg.asset.json";
+import gal1 from "@/assets/instalaciones/instalaciones-1.jpg.asset.json";
+import gal2 from "@/assets/instalaciones/instalaciones-2.jpg.asset.json";
+import gal3 from "@/assets/instalaciones/instalaciones-3.jpg.asset.json";
 
 
 export const Route = createFileRoute("/historia")({
