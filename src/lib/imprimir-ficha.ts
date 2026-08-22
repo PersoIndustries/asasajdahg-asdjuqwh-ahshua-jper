@@ -164,7 +164,10 @@ export function imprimirFichaPlanta(
   .intro .foto { flex: 0 0 46mm; }
   .intro .foto img { width: 46mm; height: 36mm; object-fit: cover; border-radius: 6px; border: 1px solid #e2e6df; }
   .intro .txt { flex: 1; min-width: 0; }
-  .intro h2 { margin-top: 0; }
+  .intro h2 { margin-top: 8px; }
+  .titulo-planta { font-size: 30px; line-height: 1.05; margin: 0; color: #2e4536; }
+  .sci-intro { font-style: italic; color: #6b7a71; font-size: 10px; margin: 2px 0 0; }
+
 
 
   table.cal { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; table-layout: fixed; }
