@@ -21,9 +21,31 @@ npm i
 npm run dev
 ```
 
+## Deploy to Netlify
+
+This project is configured to deploy to **Netlify Functions** using the Nitro `netlify` preset.
+
+1. Push the repository to GitHub/GitLab/Bitbucket.
+2. In the Netlify dashboard, click **Add new site → Import an existing project** and select the repo.
+3. Netlify will detect the `netlify.toml` file and use:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+4. Add the following environment variables in **Site settings → Environment variables**:
+   - `SUPABASE_URL`
+   - `SUPABASE_PUBLISHABLE_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_PUBLISHABLE_KEY`
+   - `VITE_SUPABASE_PROJECT_ID`
+5. Deploy the site.
+
+> **Note:** The Lovable sandbox builds the app for its own Cloudflare preview, so the Netlify preset is only applied when building outside the sandbox (e.g., in Netlify's CI).
+
 ## Built with
 
 - TanStack Start
 - TypeScript
 - React
 - Tailwind CSS
+- Supabase
+
