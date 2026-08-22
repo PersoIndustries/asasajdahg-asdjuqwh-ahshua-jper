@@ -1026,8 +1026,12 @@ function PanelPlagas() {
       />
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.nombre || "plaga"}»` : "Nueva plaga o enfermedad"}
+          onClose={() => setEdit(null)}
+        >
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          className="grid md:grid-cols-2 gap-4">
           <Campo label="Nombre de la plaga o enfermedad"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
           <Campo label="Identificador (slug)" info={<>Nombre corto en minúsculas y con guiones. Si lo dejas vacío se genera solo a partir del nombre.</>}><input className={input} value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
           <Campo label="Descripción" ancho info={<>Si dejas el campo vacío, no se muestra en la ficha del producto.</>}><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
