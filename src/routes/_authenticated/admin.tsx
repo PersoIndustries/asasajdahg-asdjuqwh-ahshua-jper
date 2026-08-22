@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import {
   Loader2, Plus, Save, Trash2, RefreshCw, Star, StarOff, Eye, EyeOff, LogOut, ShieldAlert, X, Search, Copy,
@@ -442,9 +442,14 @@ function PanelPlantas() {
       </div>
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.nombre || "planta"}»` : "Nueva planta"}
+          descripcion="Los cambios se publican al guardar."
+          onClose={() => setEdit(null)}
+        >
         <form
           onSubmit={(e) => { e.preventDefault(); guardar.mutate({ f: edit, seleccion: plagasSel }); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4"
+          className="grid md:grid-cols-2 gap-4"
         >
           <Campo
             label="Identificador (slug)"
@@ -509,6 +514,7 @@ function PanelPlantas() {
             <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
           </div>
         </form>
+        </ModalEdicion>
       )}
 
       {isLoading ? <Cargando /> : (
@@ -579,10 +585,21 @@ function PanelPlantas() {
 function PanelCalendario() {
   const queryClient = useQueryClient();
   const [aviso, setAviso] = useState<string | null>(null);
-  const [nuevo, setNuevo] = useState<{ planta: string; ciclo: string } | null>(null);
+  const [nuevo, setNuevo] = useState<{ plantas: string[]; ciclo: string } | null>(null);
   const [busqueda, setBusqueda] = useState("");
   const [cicloF, setCicloF] = useState<"todos" | "con" | "sin">("todos");
   const [laboresF, setLaboresF] = useState<"todas" | "S" | "T" | "C" | "vacias">("todas");
+  const [filasSel, setFilasSel] = useState<string[]>([]);
+
+  const { data: plantasCatalogo } = useQuery({
+    queryKey: ["admin", "plantas", "lista"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("plantas").select("id, nombre, slug, imagen_url").order("nombre");
+      if (error) throw error;
+      return data;
+    },
+  });
+
 
 
   const { data, isLoading } = useQuery({
@@ -611,14 +628,18 @@ function PanelCalendario() {
     onError: (e: Error) => setAviso(e.message),
   });
 
+  /** Crea una fila por cada planta elegida (una o varias a la vez). */
   const crear = useMutation({
-    mutationFn: async (f: { planta: string; ciclo: string }) => {
-      const { error } = await supabase.from("planta_calendario").insert({
-        planta_nombre: f.planta,
-        ciclo: f.ciclo || null,
-        meses: Array.from({ length: 12 }, () => ""),
-        orden: (data?.length ?? 0) + 1,
-      });
+    mutationFn: async (f: { plantas: string[]; ciclo: string }) => {
+      const base = data?.length ?? 0;
+      const { error } = await supabase.from("planta_calendario").insert(
+        f.plantas.map((nombre, i) => ({
+          planta_nombre: nombre,
+          ciclo: f.ciclo || null,
+          meses: Array.from({ length: 12 }, () => ""),
+          orden: base + i + 1,
+        })),
+      );
       if (error) throw error;
     },
     onSuccess: () => { setNuevo(null); refrescar(); },
@@ -654,6 +675,7 @@ function PanelCalendario() {
     return (data ?? []).filter((f) => {
       const texto = `${f.planta_nombre} ${f.ciclo ?? ""}`.toLowerCase();
       if (q && !texto.includes(q)) return false;
+      if (filasSel.length && !filasSel.includes(f.id)) return false;
       if (cicloF === "con" && !f.ciclo) return false;
       if (cicloF === "sin" && f.ciclo) return false;
       const celdas = (f.meses ?? []).join("").toUpperCase();
@@ -661,7 +683,18 @@ function PanelCalendario() {
       if (["S", "T", "C"].includes(laboresF) && !celdas.includes(laboresF)) return false;
       return true;
     });
-  }, [data, busqueda, cicloF, laboresF]);
+  }, [data, busqueda, cicloF, laboresF, filasSel]);
+
+  /** Opciones «nombre + ciclo» para el selector múltiple de filas. */
+  const opcionesFilas = useMemo(
+    () => (data ?? []).map((f) => ({
+      id: f.id,
+      nombre: f.planta_nombre,
+      extra: f.ciclo ?? "Ciclo único",
+      imagen: (plantasCatalogo ?? []).find((p) => p.nombre.toLowerCase() === f.planta_nombre.toLowerCase())?.imagen_url,
+    })),
+    [data, plantasCatalogo],
+  );
 
 
   const [refrescando, setRefrescando] = useState(false);
@@ -699,7 +732,7 @@ function PanelCalendario() {
               Refrescar datos
             </button>
 
-            <button type="button" onClick={() => setNuevo({ planta: "", ciclo: "" })}
+            <button type="button" onClick={() => setNuevo({ plantas: [], ciclo: "" })}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva fila
             </button>
@@ -708,19 +741,43 @@ function PanelCalendario() {
       />
 
       {nuevo && (
-        <form onSubmit={(e) => { e.preventDefault(); crear.mutate(nuevo); }}
-          className="rounded-2xl border border-border bg-card p-6 flex flex-wrap gap-4 items-end">
-          <Campo
-            label="Planta"
-            info={<>Es la clave de enlace: la ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario».</>}
-          ><input className={input} required value={nuevo.planta} onChange={(e) => setNuevo({ ...nuevo, planta: e.target.value })} /></Campo>
-          <Campo
-            label="Ciclo (opcional)"
-            info={<>Texto libre que aparece como subtítulo en la web («Ciclo de primavera», «Siembra temprana»…). Vacío si la planta solo tiene un ciclo.</>}
-          ><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
-          <button type="submit" className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}><Save className="h-4 w-4" aria-hidden /> Crear</button>
-          <button type="button" onClick={() => setNuevo(null)} className={`${btn} border border-border`}>Cancelar</button>
-        </form>
+        <ModalEdicion
+          titulo="Nuevas filas de calendario"
+          descripcion="Elige una o varias plantas del catálogo: se crea una fila por cada una con el mismo ciclo."
+          onClose={() => setNuevo(null)}
+        >
+          <form
+            onSubmit={(e) => { e.preventDefault(); if (nuevo.plantas.length) crear.mutate(nuevo); }}
+            className="grid md:grid-cols-2 gap-4"
+          >
+            <SelectorMultiple
+              titulo="Plantas del catálogo"
+              info={<>Es la clave de enlace: la ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario».</>}
+              opciones={(plantasCatalogo ?? []).map((p) => ({
+                id: p.nombre,
+                nombre: p.nombre,
+                imagen: p.imagen_url,
+                extra: (data ?? []).filter((f) => f.planta_nombre === p.nombre).map((f) => f.ciclo || "ciclo único").join(" · ") || "Sin filas todavía",
+              }))}
+              valor={nuevo.plantas}
+              onChange={(v) => setNuevo({ ...nuevo, plantas: v })}
+              vacio="Todavía no has elegido ninguna planta."
+              placeholder="Buscar planta…"
+            />
+            <Campo
+              label="Ciclo (opcional)"
+              info={<>Texto libre que aparece como subtítulo en la web («Ciclo de primavera», «Siembra temprana»…). Vacío si la planta solo tiene un ciclo.</>}
+            ><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
+            <div className="md:col-span-2 flex gap-3">
+              <button type="submit" disabled={!nuevo.plantas.length || crear.isPending}
+                className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50`}>
+                {crear.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />}
+                Crear {nuevo.plantas.length > 1 ? `${nuevo.plantas.length} filas` : "fila"}
+              </button>
+              <button type="button" onClick={() => setNuevo(null)} className={`${btn} border border-border`}>Cancelar</button>
+            </div>
+          </form>
+        </ModalEdicion>
       )}
 
       {isLoading ? <Cargando /> : (data ?? []).length === 0 ? (
@@ -749,11 +806,20 @@ function PanelCalendario() {
             </Campo>
             <div className="ml-auto flex items-center gap-3 text-xs text-muted-foreground">
               <span>{filas.length} de {(data ?? []).length} filas</span>
-              {(busqueda || cicloF !== "todos" || laboresF !== "todas") && (
-                <button type="button" onClick={() => { setBusqueda(""); setCicloF("todos"); setLaboresF("todas"); }}
+              {(busqueda || cicloF !== "todos" || laboresF !== "todas" || filasSel.length > 0) && (
+                <button type="button" onClick={() => { setBusqueda(""); setCicloF("todos"); setLaboresF("todas"); setFilasSel([]); }}
                   className="underline hover:text-primary">Limpiar</button>
               )}
             </div>
+            <SelectorMultiple
+              titulo="Filas concretas"
+              info={<>Elige filas por nombre y ciclo para trabajar solo con ellas. Sin selección se muestran todas.</>}
+              opciones={opcionesFilas}
+              valor={filasSel}
+              onChange={setFilasSel}
+              vacio="Sin selección: se muestran todas las filas."
+              placeholder="Buscar por planta o ciclo…"
+            />
           </div>
 
           {filas.length === 0 ? (
@@ -1020,8 +1086,12 @@ function PanelPlagas() {
       />
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.nombre || "plaga"}»` : "Nueva plaga o enfermedad"}
+          onClose={() => setEdit(null)}
+        >
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          className="grid md:grid-cols-2 gap-4">
           <Campo label="Nombre de la plaga o enfermedad"><input className={input} required value={edit.nombre} onChange={(e) => setEdit({ ...edit, nombre: e.target.value })} /></Campo>
           <Campo label="Identificador (slug)" info={<>Nombre corto en minúsculas y con guiones. Si lo dejas vacío se genera solo a partir del nombre.</>}><input className={input} value={edit.slug} onChange={(e) => setEdit({ ...edit, slug: e.target.value })} /></Campo>
           <Campo label="Descripción" ancho info={<>Si dejas el campo vacío, no se muestra en la ficha del producto.</>}><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
@@ -1042,14 +1112,12 @@ function PanelPlagas() {
             <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
           </div>
         </form>
+        </ModalEdicion>
       )}
 
       {imagenesDe && (
-        <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <h3 className="font-serif text-lg">Imágenes de «{imagenesDe.nombre}»</h3>
-            <button type="button" onClick={() => setImagenesDe(null)} className={`${btn} border border-border hover:text-primary`}>Cerrar</button>
-          </div>
+        <ModalEdicion titulo={`Imágenes de «${imagenesDe.nombre}»`} onClose={() => setImagenesDe(null)}>
+        <div className="space-y-4">
           <p className="text-xs text-muted-foreground">
             La etiqueta indica en qué planta se usa esa foto (por ejemplo «tomate»). Sin etiqueta, la foto sirve como imagen general.
           </p>
@@ -1089,6 +1157,7 @@ function PanelPlagas() {
             </button>
           </form>
         </div>
+        </ModalEdicion>
       )}
 
       <input
@@ -1263,8 +1332,12 @@ function PanelMateriales() {
       />
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.nombre || "material"}»` : "Nuevo material"}
+          onClose={() => setEdit(null)}
+        >
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          className="grid md:grid-cols-2 gap-4">
           <Campo
             label="Sección"
             info={<>«Tierras y sustratos» y «Compost» se muestran en la pestaña <b>Tierras y sustratos</b>; «Piedras y áridos» y «Macetas» en <b>Material para jardinería</b>.</>}
@@ -1296,6 +1369,7 @@ function PanelMateriales() {
             <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
           </div>
         </form>
+        </ModalEdicion>
       )}
 
       <div className="flex flex-wrap gap-2 items-center">
@@ -1486,8 +1560,12 @@ function PanelBlog() {
 
 
       {edit && (
+        <ModalEdicion
+          titulo={edit.id ? `Editar «${edit.titulo || "noticia"}»` : "Nueva noticia"}
+          onClose={() => setEdit(null)}
+        >
         <form onSubmit={(e) => { e.preventDefault(); guardar.mutate(edit); }}
-          className="rounded-2xl border border-border bg-card p-6 grid md:grid-cols-2 gap-4">
+          className="grid md:grid-cols-2 gap-4">
           <Campo
             label="Identificador (slug)"
             info={<>Dirección web del artículo (<code>/blog/mi-slug</code>). Minúsculas y guiones. No lo cambies una vez publicado: romperías los enlaces. No tiene relación con las guías de cultivo de «Tu Huerto».</>}
@@ -1523,6 +1601,7 @@ function PanelBlog() {
             <button type="button" onClick={() => setEdit(null)} className={`${btn} border border-border hover:text-primary`}>Cancelar</button>
           </div>
         </form>
+        </ModalEdicion>
       )}
 
       {isLoading ? <Cargando /> : (
@@ -1562,6 +1641,50 @@ function PanelBlog() {
 }
 
 /* ───────────────────────── UI compartida ───────────────────────── */
+
+/** Ventana modal de edición: se abre sobre la lista y se cierra con la X,
+ *  con «Cancelar», con la tecla Esc o pulsando fuera. Así se puede pasar de
+ *  editar un elemento a otro sin quedarse bloqueado. */
+function ModalEdicion({ titulo, descripcion, onClose, children }: {
+  titulo: string;
+  descripcion?: React.ReactNode;
+  onClose: () => void;
+  children: React.ReactNode;
+}) {
+  useEffect(() => {
+    const alPulsar = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    document.addEventListener("keydown", alPulsar);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", alPulsar);
+      document.body.style.overflow = "";
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] overflow-y-auto bg-foreground/50 backdrop-blur-sm p-4 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-label={titulo}
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="mx-auto w-full max-w-4xl rounded-3xl border border-border bg-card shadow-2xl">
+        <div className="sticky top-0 z-10 flex items-start justify-between gap-4 rounded-t-3xl border-b border-border bg-card px-6 py-4">
+          <div className="min-w-0">
+            <h3 className="font-serif text-xl">{titulo}</h3>
+            {descripcion && <p className="text-xs text-muted-foreground mt-1">{descripcion}</p>}
+          </div>
+          <button type="button" onClick={onClose} aria-label="Cerrar"
+            className="p-2 rounded-full border border-border text-muted-foreground hover:text-primary shrink-0">
+            <X className="h-4 w-4" aria-hidden />
+          </button>
+        </div>
+        <div className="p-6">{children}</div>
+      </div>
+    </div>
+  );
+}
 
 /** Botón (i) con explicación emergente al pasar por encima o al enfocar. */
 function InfoTip({ texto }: { texto: React.ReactNode }) {
