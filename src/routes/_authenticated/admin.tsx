@@ -732,7 +732,7 @@ function PanelCalendario() {
               Refrescar datos
             </button>
 
-            <button type="button" onClick={() => setNuevo({ planta: "", ciclo: "" })}
+            <button type="button" onClick={() => setNuevo({ plantas: [], ciclo: "" })}
               className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}>
               <Plus className="h-4 w-4" aria-hidden /> Nueva fila
             </button>
@@ -741,19 +741,43 @@ function PanelCalendario() {
       />
 
       {nuevo && (
-        <form onSubmit={(e) => { e.preventDefault(); crear.mutate(nuevo); }}
-          className="rounded-2xl border border-border bg-card p-6 flex flex-wrap gap-4 items-end">
-          <Campo
-            label="Planta"
-            info={<>Es la clave de enlace: la ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario».</>}
-          ><input className={input} required value={nuevo.planta} onChange={(e) => setNuevo({ ...nuevo, planta: e.target.value })} /></Campo>
-          <Campo
-            label="Ciclo (opcional)"
-            info={<>Texto libre que aparece como subtítulo en la web («Ciclo de primavera», «Siembra temprana»…). Vacío si la planta solo tiene un ciclo.</>}
-          ><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
-          <button type="submit" className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90`}><Save className="h-4 w-4" aria-hidden /> Crear</button>
-          <button type="button" onClick={() => setNuevo(null)} className={`${btn} border border-border`}>Cancelar</button>
-        </form>
+        <ModalEdicion
+          titulo="Nuevas filas de calendario"
+          descripcion="Elige una o varias plantas del catálogo: se crea una fila por cada una con el mismo ciclo."
+          onClose={() => setNuevo(null)}
+        >
+          <form
+            onSubmit={(e) => { e.preventDefault(); if (nuevo.plantas.length) crear.mutate(nuevo); }}
+            className="grid md:grid-cols-2 gap-4"
+          >
+            <SelectorMultiple
+              titulo="Plantas del catálogo"
+              info={<>Es la clave de enlace: la ficha del catálogo muestra esta fila si el nombre coincide con el de la planta o con su «clave de calendario».</>}
+              opciones={(plantasCatalogo ?? []).map((p) => ({
+                id: p.nombre,
+                nombre: p.nombre,
+                imagen: p.imagen_url,
+                extra: (data ?? []).filter((f) => f.planta_nombre === p.nombre).map((f) => f.ciclo || "ciclo único").join(" · ") || "Sin filas todavía",
+              }))}
+              valor={nuevo.plantas}
+              onChange={(v) => setNuevo({ ...nuevo, plantas: v })}
+              vacio="Todavía no has elegido ninguna planta."
+              placeholder="Buscar planta…"
+            />
+            <Campo
+              label="Ciclo (opcional)"
+              info={<>Texto libre que aparece como subtítulo en la web («Ciclo de primavera», «Siembra temprana»…). Vacío si la planta solo tiene un ciclo.</>}
+            ><input className={input} value={nuevo.ciclo} onChange={(e) => setNuevo({ ...nuevo, ciclo: e.target.value })} /></Campo>
+            <div className="md:col-span-2 flex gap-3">
+              <button type="submit" disabled={!nuevo.plantas.length || crear.isPending}
+                className={`${btn} bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50`}>
+                {crear.isPending ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden /> : <Save className="h-4 w-4" aria-hidden />}
+                Crear {nuevo.plantas.length > 1 ? `${nuevo.plantas.length} filas` : "fila"}
+              </button>
+              <button type="button" onClick={() => setNuevo(null)} className={`${btn} border border-border`}>Cancelar</button>
+            </div>
+          </form>
+        </ModalEdicion>
       )}
 
       {isLoading ? <Cargando /> : (data ?? []).length === 0 ? (
