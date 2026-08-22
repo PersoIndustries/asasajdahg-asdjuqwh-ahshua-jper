@@ -1450,14 +1450,8 @@ function PanelBlog() {
         }
       />
 
-      <Ayuda titulo="El blog NO son las guías de cultivo">
-        <li>Esta pestaña gestiona el <b>blog de noticias y curiosidades</b> (<code>/blog</code>): novedades del vivero, ferias, curiosidades del mundo vegetal. Las <b>guías de cultivo</b> son otra cosa y viven en la página «Tu Huerto» (PDFs y fichas), no se editan aquí.</li>
-        <li><b>Identificador (slug)</b>: es únicamente la dirección web del artículo (<code>/blog/mi-slug</code>). <b>No</b> tiene relación con la guía de una planta. Usa minúsculas y guiones, y no lo cambies una vez publicado (rompería los enlaces).</li>
-        <li>El campo «Guía asociada» de una planta (pestaña Catálogo) sí enlaza con una guía de «Tu Huerto», pero es un campo distinto de este slug.</li>
-        <li><b>Resumen</b>: texto que se ve en el listado. <b>Entradilla</b>: primer párrafo destacado dentro del artículo.</li>
-        <li><b>Cuerpo</b>: escribe párrafos normales; una línea que empiece por <code>##</code> se convierte en subtítulo de sección.</li>
-        <li><b>Destacada</b> resalta el artículo en la portada del blog; <b>Publicada</b> lo hace visible al público.</li>
-      </Ayuda>
+
+
 
 
 
