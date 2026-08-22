@@ -499,10 +499,15 @@ function PanelPlantas() {
           <Campo label="Descripción" ancho><textarea className={input} rows={2} value={edit.descripcion} onChange={(e) => setEdit({ ...edit, descripcion: e.target.value })} /></Campo>
           <Campo label="Cómo se come" ancho><textarea className={input} rows={2} value={edit.como_se_come} onChange={(e) => setEdit({ ...edit, como_se_come: e.target.value })} /></Campo>
           <Campo label="Curiosidades" ancho><textarea className={input} rows={2} value={edit.curiosidades} onChange={(e) => setEdit({ ...edit, curiosidades: e.target.value })} /></Campo>
-          <Campo
-            label="Clave de calendario"
-            info={<>Nombre con el que se busca su calendario en la pestaña «Calendario de cultivo». Vacío = se usa el nombre de la planta.</>}
-          ><input className={input} value={edit.calendario_key} onChange={(e) => setEdit({ ...edit, calendario_key: e.target.value })} /></Campo>
+          <SelectorMultiple
+            titulo="Claves de calendario"
+            placeholder="Buscar por nombre o ciclo…"
+            vacio="Sin claves: se busca el calendario por el nombre de la planta."
+            info={<>Filas del «Calendario de cultivo» que se muestran en la ficha de esta planta. Puedes elegir varias (se ven el nombre y sus ciclos). Vacío = se usa el nombre de la planta.</>}
+            opciones={clavesCal ?? []}
+            valor={listaIds(edit.calendario_key)}
+            onChange={(v) => setEdit({ ...edit, calendario_key: v.join(",") })}
+          />
           <Campo label="Orden" info={<>Número menor = aparece antes en el catálogo.</>}><input type="number" className={input} value={edit.orden} onChange={(e) => setEdit({ ...edit, orden: Number(e.target.value) })} /></Campo>
           <div className="flex items-end gap-6">
             <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={edit.es_temporada} onChange={(e) => setEdit({ ...edit, es_temporada: e.target.checked })} /> Producto de temporada</label>
