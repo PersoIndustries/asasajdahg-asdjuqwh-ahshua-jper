@@ -1425,18 +1425,28 @@ const normalizar = (s: string) =>
 
 export type FilaCalendario = { planta: string; ciclo?: string; meses: MesEstado[] };
 
-/** Filas de un calendario dado (BD o estático) que corresponden a una planta. */
+/** Filas de un calendario dado (BD o estático) que corresponden a una planta.
+ *  `calendarioKey` admite varias claves separadas por comas. */
 export function filasCalendarioPara(planta: Plant, fuente: FilaCalendario[]): FilaCalendario[] {
-  const clave = normalizar(planta.calendarioKey ?? planta.nombre);
+  const claves = (planta.calendarioKey ?? planta.nombre)
+    .split(",")
+    .map((c) => normalizar(c))
+    .filter(Boolean);
   const filas = fuente.map((f) => ({ fila: f, key: normalizar(f.planta) }));
 
-  const exactas = filas.filter((f) => f.key === clave);
-  if (exactas.length) return exactas.map((f) => f.fila);
+  const buscar = (clave: string) => {
+    const exactas = filas.filter((f) => f.key === clave);
+    if (exactas.length) return exactas.map((f) => f.fila);
+    const prefijo = filas.filter((f) => clave.startsWith(f.key) || clave.includes(` ${f.key} `));
+    if (prefijo.length) return prefijo.map((f) => f.fila);
+    return filas.filter((f) => clave.includes(f.key)).map((f) => f.fila);
+  };
 
-  const prefijo = filas.filter((f) => clave.startsWith(f.key) || clave.includes(` ${f.key} `));
-  if (prefijo.length) return prefijo.map((f) => f.fila);
-
-  return filas.filter((f) => clave.includes(f.key)).map((f) => f.fila);
+  const resultado: FilaCalendario[] = [];
+  for (const clave of claves) {
+    for (const fila of buscar(clave)) if (!resultado.includes(fila)) resultado.push(fila);
+  }
+  return resultado;
 }
 
 /** Todas las filas (ciclos) del calendario estático que corresponden a una planta. */
