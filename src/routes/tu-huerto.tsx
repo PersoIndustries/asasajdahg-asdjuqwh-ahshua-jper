@@ -135,19 +135,46 @@ function TuHuertoPage() {
                 <Download className="h-4 w-4" /> Fechas aconsejables
               </a>
               <button
-
                 type="button"
-                onClick={() => setSoloAhora((v) => !v)}
-                aria-pressed={soloAhora}
+                onClick={() => setModoMes("ahora")}
+                aria-pressed={modoMes === "ahora"}
                 className={`inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors ${
-                  soloAhora
+                  modoMes === "ahora"
                     ? "bg-primary text-primary-foreground"
                     : "border border-input bg-background text-foreground/80 hover:bg-secondary/60"
                 }`}
               >
                 <Sprout className="h-4 w-4 shrink-0" />
-                <span className="truncate">¿Qué planto ahora? · {meses[mesActual]}</span>
+                <span className="truncate">Ahora</span>
               </button>
+              <div className="flex items-center rounded-full border border-input bg-background overflow-hidden">
+                <Select
+                  value={modoMes === "ahora" ? "" : String(modoMes)}
+                  onValueChange={(v) => setModoMes(v ? Number(v) : "ahora")}
+                >
+                  <SelectTrigger className="border-0 rounded-none h-full px-5 py-2.5 text-sm font-medium hover:bg-secondary/60 focus:ring-0 focus:ring-offset-0 [&>svg]:hidden">
+                    <span className="inline-flex items-center gap-2">
+                      <Calendar className="h-4 w-4 shrink-0" />
+                      {modoMes === "ahora" ? "¿Qué planto en…?" : meses[modoMes]}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent className="rounded-2xl">
+                    {meses.map((m, i) => (
+                      <SelectItem key={m} value={String(i)} className="rounded-full text-sm">{m}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {modoMes !== "ahora" && (
+                  <button
+                    type="button"
+                    onClick={() => setModoMes("ahora")}
+                    aria-label="Volver a filtro actual"
+                    className="px-3 py-2.5 border-l border-input hover:bg-secondary/60 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
               <input placeholder="Filtrar planta…" value={filtro} onChange={(e) => setFiltro(e.target.value)} className="w-full sm:w-56 rounded-full border border-input bg-background px-5 py-2.5 text-sm" />
             </div>
           </div>
