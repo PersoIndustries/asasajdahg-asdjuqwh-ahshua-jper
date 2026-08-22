@@ -50,14 +50,12 @@ function TuHuertoPage() {
   const [zona, setZona] = useState(zonas[0].id);
   const [tagGuia, setTagGuia] = useState<string>("todas");
   const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
-  const [modoMes, setModoMes] = useState<"ahora" | number>("ahora");
+  const [modoMes, setModoMes] = useState<"todos" | "ahora" | number>("todos");
 
   // Mes y quincena actuales, para resaltar la columna y el filtro "Ahora".
   const hoy = new Date();
   const mesActual = hoy.getMonth();
   const quincenaActual: 1 | 2 = hoy.getDate() <= 15 ? 1 : 2;
-  const mesFiltro = modoMes === "ahora" ? mesActual : modoMes;
-  const quincenaFiltro = modoMes === "ahora" ? quincenaActual : 0; // 0 = toda la quincena (ambas)
 
   const calendario = useCalendario();
   const cargandoCalendario = useCargandoCms("calendario");
@@ -66,6 +64,7 @@ function TuHuertoPage() {
     const q = filtro.toLowerCase().trim();
     return calendario.filter((r) => {
       if (!r.planta.toLowerCase().includes(q)) return false;
+      if (modoMes === "todos") return true;
       const mesIdx = modoMes === "ahora" ? mesActual : modoMes;
       const laboresQ1 = laboresEnQuincena(r.meses[mesIdx] ?? "", 1);
       const laboresQ2 = laboresEnQuincena(r.meses[mesIdx] ?? "", 2);
@@ -75,6 +74,7 @@ function TuHuertoPage() {
       return [...laboresQ1, ...laboresQ2].some((l) => l.actividad === "S" || l.actividad === "T");
     });
   }, [filtro, calendario, modoMes, mesActual, quincenaActual]);
+
 
   const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);
   const guiasFiltradas = useMemo(
