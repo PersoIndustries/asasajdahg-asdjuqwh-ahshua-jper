@@ -1097,6 +1097,7 @@ function PanelPlagas() {
             </button>
           </form>
         </div>
+        </ModalEdicion>
       )}
 
       <input
