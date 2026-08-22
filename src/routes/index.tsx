@@ -5,6 +5,7 @@ import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { temporadaActual } from "@/lib/mock-data";
 import heroAsset from "@/assets/home/hero.jpg.asset.json";
 import vivero from "@/assets/home/vivero.jpg";
+import placeholderImg from "@/assets/placeholder/under-construction-wide.jpg";
 import { localBusinessLd } from "@/lib/business-info";
 
 const heroPlant = heroAsset.url;
