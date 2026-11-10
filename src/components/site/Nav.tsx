@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import logoAsset from "@/assets/brand/logo.png.asset.json";
+const logoAsset = { url: "/jardiper-logo.png" };
 import { LanguageSwitcher } from "@/components/site/LanguageSwitcher";
 import { AuthButton } from "@/components/site/AuthButton";
 
