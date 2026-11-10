@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, MapPin, Phone, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import logoAsset from "@/assets/brand/logo.png.asset.json";
+const logoAsset = { url: "/jardiper-logo.png" };
 
 export function Footer() {
   const { t } = useTranslation();

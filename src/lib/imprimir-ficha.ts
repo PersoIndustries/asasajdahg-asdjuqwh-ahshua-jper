@@ -11,7 +11,7 @@ import {
   type PlagaFicha,
 } from "@/lib/mock-data";
 import { estadoEstilos } from "@/components/site/CalendarioCultivo";
-import logo from "@/assets/brand/logo.png.asset.json";
+const logo = { url: "/jardiper-logo.png" };
 
 export const DISCLAIMER_FICHA =
   "Esta información es orientativa y puede estar desactualizada o contener alguna errata. " +
