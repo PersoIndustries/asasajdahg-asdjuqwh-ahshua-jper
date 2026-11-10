@@ -10,6 +10,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { localBusinessLd } from "../lib/business-info";
+import { activarCachePersistente } from "../lib/cache-persistente";
 import { PaginaNoEncontrada, PaginaError } from "../components/site/ErrorPages";
 import "../i18n";
 
@@ -93,6 +94,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => activarCachePersistente(queryClient), [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
