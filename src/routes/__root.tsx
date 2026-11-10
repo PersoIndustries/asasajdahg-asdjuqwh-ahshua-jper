@@ -4,12 +4,14 @@ import {
   createRootRouteWithContext,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { localBusinessLd } from "../lib/business-info";
+import { activarCachePersistente } from "../lib/cache-persistente";
 import { PaginaNoEncontrada, PaginaError } from "../components/site/ErrorPages";
 import "../i18n";
 
@@ -17,7 +19,7 @@ function NotFoundComponent() {
   return <PaginaNoEncontrada />;
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
@@ -93,6 +95,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => activarCachePersistente(queryClient), [queryClient]);
 
   return (
     <QueryClientProvider client={queryClient}>
