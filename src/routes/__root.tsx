@@ -33,8 +33,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Jardiper · Vivero y Garden Center en Fraga (Huesca) desde 1974" },
-      { name: "description", content: "Vivero familiar en Fraga (Huesca) desde 1974. Plantas de huerto y jardín, sustratos Suliflor, compost ECO, macetas y consejo experto en el Bajo Cinca y Lleida." },
+      { title: "Jardiper · Vivero y Garden Center en Fraga (Huesca) desde 1964" },
+      { name: "description", content: "Vivero familiar en Fraga (Huesca) desde 1964. Plantas de huerto y jardín, sustratos Suliflor, compost ECO, macetas y consejo experto en el Bajo Cinca y Lleida." },
       { name: "keywords", content: "vivero Fraga, garden center Huesca, plantas Bajo Cinca, sustratos Suliflor, compost ECO, jardinería Lleida, macetas, huerto Fraga, Jardiper" },
       { name: "author", content: "Jardiper" },
       { name: "robots", content: "index, follow, max-image-preview:large" },
@@ -50,11 +50,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale:alternate", content: "fr_FR" },
       { property: "og:locale:alternate", content: "de_DE" },
       { property: "og:title", content: "Jardiper · Vivero y Garden Center en Fraga" },
-      { property: "og:description", content: "Plantas, huerto y jardinería con más de 50 años de historia familiar en el Bajo Cinca." },
+      { property: "og:description", content: "Plantas, huerto y jardinería con más de 60 años de historia familiar en el Bajo Cinca." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Jardiper · Vivero y Garden Center en Fraga" },
-      { name: "twitter:description", content: "Vivero familiar en Fraga (Huesca) desde 1974. Plantas, sustratos y consejo experto." },
+      { name: "twitter:description", content: "Vivero familiar en Fraga (Huesca) desde 1964. Plantas, sustratos y consejo experto." },
     ],
     links: [
       {

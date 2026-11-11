@@ -8,7 +8,7 @@ export const businessInfo = {
   telephone: "+34974472158",
   telephoneSecondary: "+34611321620",
   email: "correo@jardiper.es",
-  foundingDate: "1974",
+  foundingDate: "1964",
   priceRange: "€€",
   currenciesAccepted: "EUR",
   paymentAccepted: "Cash, Credit Card",
@@ -68,7 +68,7 @@ export const localBusinessLd = {
   name: businessInfo.name,
   legalName: businessInfo.legalName,
   description:
-    "Vivero y garden center familiar en Fraga (Huesca) desde 1974. Plantas, sustratos, compost y consejo experto para el Bajo Cinca.",
+    "Vivero y garden center familiar en Fraga (Huesca) desde 1964. Plantas, sustratos, compost y consejo experto para el Bajo Cinca.",
   telephone: businessInfo.telephone,
   email: businessInfo.email,
   url: "/",

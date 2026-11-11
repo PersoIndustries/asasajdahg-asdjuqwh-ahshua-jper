@@ -48,11 +48,11 @@ function CarruselInstalaciones() {
 export const Route = createFileRoute("/historia")({
   head: () => ({
     meta: [
-      { title: "Historia · 50 años del vivero Jardiper en Fraga · Bajo Cinca" },
-      { name: "description", content: "De Horticultura Peralta a Jardiper: más de 50 años de historia familiar cultivando plantas y comunidad en Fraga, el corazón del Bajo Cinca." },
-      { name: "keywords", content: "historia Jardiper, Horticultura Peralta, vivero familiar Fraga, garden center Huesca desde 1974" },
+      { title: "Historia · 60 años del vivero Jardiper en Fraga · Bajo Cinca" },
+      { name: "description", content: "De Horticultura Peralta a Jardiper: más de 60 años de historia familiar cultivando plantas y comunidad en Fraga, el corazón del Bajo Cinca." },
+      { name: "keywords", content: "historia Jardiper, Horticultura Peralta, vivero familiar Fraga, garden center Huesca desde 1964" },
       { property: "og:title", content: "Historia · Jardiper" },
-      { property: "og:description", content: "50 años cultivando plantas y comunidad en el Bajo Cinca." },
+      { property: "og:description", content: "60 años cultivando plantas y comunidad en el Bajo Cinca." },
       { property: "og:url", content: "/historia" },
       { property: "og:type", content: "article" },
     ],
@@ -139,7 +139,7 @@ function HistoriaPage() {
         </ol>
         <p className="mt-10 rounded-2xl border border-dashed border-primary/30 bg-secondary/40 p-5 text-sm text-muted-foreground leading-relaxed">
           Esta web todavía está en desarrollo: próximamente ampliaremos este apartado con
-          más hitos, fotografías y recuerdos de nuestros más de 50 años de historia.
+          más hitos, fotografías y recuerdos de nuestros más de 60 años de historia.
         </p>
       </Section>
 

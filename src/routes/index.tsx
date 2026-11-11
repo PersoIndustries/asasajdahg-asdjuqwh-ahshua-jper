@@ -15,9 +15,9 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Jardiper · Vivero y Garden Center en Fraga (Huesca) · Bajo Cinca" },
-      { name: "description", content: "Vivero familiar en Fraga con más de 50 años. Plantas hortícolas y ornamentales, sustratos Suliflor, compost ECO Liett Ibérica y macetas. Envíos y venta al por mayor en Bajo Cinca y Lleida." },
+      { name: "description", content: "Vivero familiar en Fraga con más de 60 años. Plantas hortícolas y ornamentales, sustratos Suliflor, compost ECO Liett Ibérica y macetas. Envíos y venta al por mayor en Bajo Cinca y Lleida." },
       { property: "og:title", content: "Jardiper · Vivero familiar en Fraga (Huesca)" },
-      { property: "og:description", content: "Plantas, sustratos, compost y consejo experto desde 1974 en el Bajo Cinca." },
+      { property: "og:description", content: "Plantas, sustratos, compost y consejo experto desde 1964 en el Bajo Cinca." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
       { property: "og:image", content: heroAbsoluteUrl },
