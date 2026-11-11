@@ -354,3 +354,42 @@ export function useCargandoCms(...claves: string[]): boolean {
   const mapa: Record<string, number> = { plantas, calendario, materiales, noticias };
   return claves.some((c) => (mapa[c] ?? 0) > 0);
 }
+
+/* ─────────── Guías de cultivo ─────────── */
+
+import { guias as guiasEstaticas, type Guia, type GuiaSection } from "@/lib/mock-data";
+
+export type GuiaRow = {
+  id: string; slug: string; titulo: string; resumen: string; minutos: number; categoria: string;
+  imagen_url: string | null; pdf_url: string | null; contenido: string; secciones: unknown;
+  tags: string[]; fecha_publicacion: string; orden: number; publicado: boolean;
+};
+
+export function rowToGuia(row: GuiaRow): Guia {
+  const est = guiasEstaticas.find((g) => g.slug === row.slug);
+  return {
+    id: row.slug, slug: row.slug, titulo: row.titulo, resumen: row.resumen, minutos: row.minutos,
+    categoria: row.categoria as Guia["categoria"],
+    imagen: row.imagen_url || est?.imagen || placeholder,
+    pdfUrl: row.pdf_url || est?.pdfUrl || "",
+    contenido: row.contenido,
+    secciones: (Array.isArray(row.secciones) ? row.secciones : []) as GuiaSection[],
+    tags: row.tags ?? [], fechaPublicacion: row.fecha_publicacion,
+  };
+}
+
+/** Guías publicadas (la base de datos manda: lo borrado en el gestor desaparece). */
+export function useGuias(): Guia[] {
+  const { data } = useQuery({
+    queryKey: ["cms", "guias"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("guias").select("*").eq("publicado", true).order("orden");
+      if (error) throw error;
+      return (data as GuiaRow[]).map(rowToGuia);
+    },
+    placeholderData: [] as Guia[],
+    staleTime: 60_000,
+    retry: false,
+  });
+  return data ?? [];
+}
