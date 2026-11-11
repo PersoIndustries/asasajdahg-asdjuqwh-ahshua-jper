@@ -85,7 +85,7 @@ export const Route = createFileRoute("/historia")({
 });
 
 const hitos = [
-  { año: "1974", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: img1974.url, alt: "Invernadero familiar de los años 70 en Fraga" },
+  { año: "1964", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: img1974.url, alt: "Invernadero familiar de los años 70 en Fraga" },
   { año: "2026", titulo: "Actualidad", texto: "Seguimos cuidando cada planta con la misma dedicación de siempre y trabajando en esta web para acercarte Jardiper a casa, mes a mes.", img: img2026.url, alt: "Instalaciones actuales de Jardiper en Fraga" },
 ];
 
@@ -97,11 +97,11 @@ function HistoriaPage() {
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">Nuestra historia</p>
             <h1 className="font-serif text-5xl md:text-6xl leading-tight">
-              Cincuenta años<br /><span className="italic text-primary">cultivando raíces.</span>
+              Sesenta años<br /><span className="italic text-primary">cultivando raíces.</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground leading-relaxed">
               De un pequeño invernadero en las afueras de Fraga a un garden center de
-              referencia en el Bajo Cinca. La familia Peralta lleva medio siglo mimando
+              referencia en el Bajo Cinca. La familia Peralta lleva más de sesenta años mimando
               cada planta como si fuera para su propio huerto.
             </p>
           </div>
