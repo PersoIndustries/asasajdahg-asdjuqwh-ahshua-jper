@@ -14,6 +14,63 @@ export type Database = {
   }
   public: {
     Tables: {
+      guias: {
+        Row: {
+          categoria: string
+          contenido: string
+          created_at: string
+          fecha_publicacion: string
+          id: string
+          imagen_url: string | null
+          minutos: number
+          orden: number
+          pdf_url: string | null
+          publicado: boolean
+          resumen: string
+          secciones: Json
+          slug: string
+          tags: string[]
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          categoria?: string
+          contenido?: string
+          created_at?: string
+          fecha_publicacion?: string
+          id?: string
+          imagen_url?: string | null
+          minutos?: number
+          orden?: number
+          pdf_url?: string | null
+          publicado?: boolean
+          resumen?: string
+          secciones?: Json
+          slug: string
+          tags?: string[]
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          categoria?: string
+          contenido?: string
+          created_at?: string
+          fecha_publicacion?: string
+          id?: string
+          imagen_url?: string | null
+          minutos?: number
+          orden?: number
+          pdf_url?: string | null
+          publicado?: boolean
+          resumen?: string
+          secciones?: Json
+          slug?: string
+          tags?: string[]
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       materiales: {
         Row: {
           created_at: string
