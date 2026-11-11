@@ -45,7 +45,7 @@ export const noticias: Noticia[] = [
     slug: "estrenamos-nueva-web",
     titulo: "Estrenamos nueva web: Jardiper, ahora también online",
     resumen:
-      "Después de 50 años atendiendo en Fraga, damos el salto digital con un catálogo consultable, calendario de cultivo y guías descargables.",
+      "Después de 60 años atendiendo en Fraga, damos el salto digital con un catálogo consultable, calendario de cultivo y guías descargables.",
     categoria: "Novedades",
     imagen: imgNuevaWeb,
     autor: "Equipo Jardiper",
@@ -59,7 +59,7 @@ export const noticias: Noticia[] = [
         titulo: "Por qué hemos hecho la web",
         parrafos: [
           "Cada temporada recibimos las mismas preguntas por teléfono: qué plantel hay disponible, cuándo toca trasplantar, qué sustrato es mejor para semillero. La web nace para responder a todo eso las 24 horas, sin que tengáis que esperar a que abramos.",
-          "También queríamos poner en valor lo que hacemos desde 1974: un vivero familiar del Bajo Cinca que conoce el clima, la tierra y las variedades de la zona.",
+          "También queríamos poner en valor lo que hacemos desde 1964: un vivero familiar del Bajo Cinca que conoce el clima, la tierra y las variedades de la zona.",
         ],
       },
       {

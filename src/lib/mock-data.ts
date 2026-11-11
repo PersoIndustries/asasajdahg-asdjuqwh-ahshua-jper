@@ -1404,10 +1404,11 @@ export const guias: Guia[] = [
 
 export const familia = [
   { nombre: "Salvador Peralta Ricart", rol: "Primera generación — el origen", bio: "Quien lo empezó todo: de la horticultura tradicional del Bajo Cinca nacieron los primeros invernaderos familiares en Fraga." },
-  { nombre: "Carmen Siso", rol: "Primera generación", bio: "Mujer de Salvador. Con su trabajo diario ayudó a levantar la explotación desde los cimientos." },
-  { nombre: "Nazario Peralta", rol: "Segunda generación — fundador de Jardiper", bio: "Hijo de Salvador. Fundó Jardiper junto a su mujer y dio el salto del campo al vivero y garden center." },
+  { nombre: "Carmen Sisó Cruellas", rol: "Primera generación", bio: "Mujer de Salvador. Con su trabajo diario ayudó a levantar la explotación desde los cimientos." },
+  { nombre: "Nazario Peralta Sisó", rol: "Segunda generación — fundador de Jardiper", bio: "Hijo de Salvador. Fundó Jardiper junto a su mujer y dio el salto del campo al vivero y garden center." },
   { nombre: "Toni Sorolla Soro", rol: "Segunda generación", bio: "Mujer de Nazario. Junto a él escaló la empresa hasta convertirla en referencia comarcal." },
-  { nombre: "Pablo y Carlos Peralta", rol: "Tercera generación", bio: "La nueva generación, que gestiona Jardiper mano a mano manteniendo el trato cercano y la calidad de siempre." },
+  { nombre: "Pablo Peralta Sorolla", rol: "Tercera generación", bio: "La nueva generación, que gestiona Jardiper mano a mano manteniendo el trato cercano y la calidad de siempre." },
+  { nombre: "Carlos Peralta Sorolla", rol: "Tercera generación", bio: "La nueva generación, que gestiona Jardiper mano a mano manteniendo el trato cercano y la calidad de siempre." },
 ];
 
 // ── Calendario de cultivo por planta ──────────────────────────────────────────

@@ -205,7 +205,7 @@ function TuHuertoPage() {
                 className="inline-flex h-10 items-center justify-center gap-2 rounded-full bg-primary text-primary-foreground px-4 text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 <Download className="h-4 w-4" />
-                <span className="hidden sm:inline">Fechas aconsejables</span>
+                <span>Fechas aconsejables</span>
               </a>
             </div>
           </div>
