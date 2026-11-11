@@ -36,8 +36,7 @@ const btn =
 
 /** Miniatura con respaldo: si no hay imagen (o falla) se muestra el placeholder. */
 function Miniatura({ src, alt, slug }: { src?: string | null; alt: string; slug?: string }) {
-  const estatica = slug ? plantasDestacadas.find((p) => p.id === slug)?.imagen : undefined;
-  const [url, setUrl] = useState(src || estatica || IMAGEN_PLAGA_POR_DEFECTO);
+  const [url, setUrl] = useState(src || IMAGEN_PLAGA_POR_DEFECTO);
   return (
     <img
       src={url}
