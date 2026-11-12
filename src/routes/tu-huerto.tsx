@@ -395,32 +395,3 @@ function TuHuertoPage() {
     </SiteLayout>
   );
 }
-
-function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="bg-background rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col relative shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-start justify-between gap-4 p-6 border-b border-border">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-accent flex items-center gap-3">
-              {guia.categoria}
-              <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal">
-                <Clock className="h-3 w-3" /> {guia.minutos} min
-              </span>
-            </p>
-            <h3 className="font-serif text-2xl md:text-3xl mt-1">{guia.titulo}</h3>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <a href={guia.pdfUrl} download className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors">
-              <Download className="h-4 w-4" /> Descargar PDF
-            </a>
-            <button onClick={onClose} aria-label="Cerrar guía" className="p-2 rounded-full bg-secondary hover:bg-muted"><X className="h-4 w-4" /></button>
-          </div>
-        </div>
-        <div className="flex-1 bg-muted min-h-[60vh]">
-          <iframe title={guia.titulo} src={guia.pdfUrl} className="w-full h-full min-h-[60vh]" />
-        </div>
-      </div>
-    </div>
-  );
-}
