@@ -7,8 +7,10 @@ import {
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, cerrarSesion } from "@/hooks/use-auth";
-import { plantasDestacadas, meses, guias } from "@/lib/mock-data";
-import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, type PlagaRow } from "@/lib/cms";
+import { plantasDestacadas, meses } from "@/lib/mock-data";
+import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, useGuias, type PlagaRow } from "@/lib/cms";
+import { PanelGuias } from "@/components/admin/PanelGuias";
+import { PanelTextosFotos } from "@/components/admin/PanelTextosFotos";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 import type { PlagaFicha } from "@/lib/mock-data";
 
@@ -27,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "plantas" | "calendario" | "enfermedades" | "materiales" | "blog";
+type Tab = "plantas" | "calendario" | "enfermedades" | "materiales" | "blog" | "guias" | "fotos";
 
 const input =
   "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -36,13 +38,15 @@ const btn =
 
 /** Miniatura con respaldo: si no hay imagen (o falla) se muestra el placeholder. */
 function Miniatura({ src, alt, slug }: { src?: string | null; alt: string; slug?: string }) {
-  const [url, setUrl] = useState(src || IMAGEN_PLAGA_POR_DEFECTO);
+  const [fallida, setFallida] = useState<string | null>(null);
+  const actual = src?.trim() || IMAGEN_PLAGA_POR_DEFECTO;
+  const url = fallida === actual ? IMAGEN_PLAGA_POR_DEFECTO : actual;
   return (
     <img
       src={url}
       alt={alt}
       loading="lazy"
-      onError={() => setUrl(IMAGEN_PLAGA_POR_DEFECTO)}
+      onError={() => setFallida(actual)}
       className="h-10 w-10 rounded-lg object-cover border border-border shrink-0"
     />
   );
@@ -125,7 +129,9 @@ function AdminPage() {
                 ["calendario", "Calendario de cultivo"],
                 ["enfermedades", "Plagas y enfermedades"],
                 ["materiales", "Tierras y material"],
+                ["guias", "Guías de cultivo"],
                 ["blog", "Noticias del blog"],
+                ["fotos", "Textos de fotos"],
               ] as [Tab, string][]
             ).map(([k, label]) => (
               <button
@@ -144,6 +150,8 @@ function AdminPage() {
           {tab === "enfermedades" && <PanelPlagas />}
           {tab === "materiales" && <PanelMateriales />}
           {tab === "blog" && <PanelBlog />}
+          {tab === "guias" && <PanelGuias />}
+          {tab === "fotos" && <PanelTextosFotos />}
         </div>
       </section>
     </SiteLayout>
@@ -250,6 +258,7 @@ function PreviaPlagas({
 
 function PanelPlantas() {
   const queryClient = useQueryClient();
+  const guias = useGuias();
   const [edit, setEdit] = useState<PlantaForm | null>(null);
   const [plagasSel, setPlagasSel] = useState<string[]>([]);
   const [previa, setPrevia] = useState<{ nombre: string; slug: string; ids: string[] } | null>(null);

@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock, ChevronDown } from "lucide-react";
-import { useCalendario, useCargandoCms } from "@/lib/cms";
+import { useCalendario, useCargandoCms, useGuias } from "@/lib/cms";
+import { GuiaLectura } from "@/components/site/GuiaLectura";
 import { CargandoLinea } from "@/components/site/Cargando";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
-import { meses, guias, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
+import { meses, type Guia, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
 import { estadoEstilos, LeyendaCalendario, BotonImprimirCalendario } from "@/components/site/CalendarioCultivo";
 
 export const Route = createFileRoute("/tu-huerto")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/tu-huerto")({
       { property: "og:description", content: "Calendario, guías PDF y libro de campo digital para tu huerto." },
       { property: "og:url", content: "/tu-huerto" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/tu-huerto" }],
     scripts: [
@@ -45,11 +47,13 @@ const zonas = [{ id: "bajo-cinca", nombre: "Bajo Cinca, Lleida y alrededores" }]
 type Tab = "calendario" | "guias" | "libro";
 
 function TuHuertoPage() {
+  const guias = useGuias();
+  const cargandoGuias = useCargandoCms("guias");
   const [tab, setTab] = useState<Tab>("calendario");
   const [filtro, setFiltro] = useState("");
   const [zona, setZona] = useState(zonas[0].id);
   const [tagGuia, setTagGuia] = useState<string>("todas");
-  const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
+  const [guia, setGuia] = useState<Guia | null>(null);
   const [modoMes, setModoMes] = useState<"todos" | "ahora" | number>("todos");
 
   // Mes y quincena actuales, para resaltar la columna y el filtro "Ahora".
@@ -76,10 +80,10 @@ function TuHuertoPage() {
   }, [filtro, calendario, modoMes, mesActual, quincenaActual]);
 
 
-  const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);
+  const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), [guias]);
   const guiasFiltradas = useMemo(
     () => (tagGuia === "todas" ? guias : guias.filter((g) => g.tags.includes(tagGuia))),
-    [tagGuia],
+    [tagGuia, guias],
   );
 
 
@@ -319,7 +323,7 @@ function TuHuertoPage() {
               <button key={t} onClick={() => setTagGuia(t)} className={`px-4 py-1.5 rounded-full text-xs transition-all ${tagGuia === t ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground/70 hover:bg-secondary/70"}`}>{t}</button>
             ))}
           </div>
-          {guiasFiltradas.length === 0 && <p className="text-sm text-muted-foreground py-12 text-center">No hay guías con esa etiqueta todavía.</p>}
+          {cargandoGuias && !guias.length ? <CargandoLinea texto="Cargando guías…" /> : guiasFiltradas.length === 0 && <p className="text-sm text-muted-foreground py-12 text-center">No hay guías con esa etiqueta todavía.</p>}
           <div className="grid md:grid-cols-2 gap-8">
             {guiasFiltradas.map((g) => (
               <article key={g.id} className="group cursor-pointer" onClick={() => setGuia(g)}>
@@ -387,36 +391,7 @@ function TuHuertoPage() {
         </>
       )}
 
-      {guia && <GuiaModal guia={guia} onClose={() => setGuia(null)} />}
+      {guia && <GuiaLectura guia={guia} onClose={() => setGuia(null)} />}
     </SiteLayout>
-  );
-}
-
-function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="bg-background rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col relative shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-start justify-between gap-4 p-6 border-b border-border">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-accent flex items-center gap-3">
-              {guia.categoria}
-              <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal">
-                <Clock className="h-3 w-3" /> {guia.minutos} min
-              </span>
-            </p>
-            <h3 className="font-serif text-2xl md:text-3xl mt-1">{guia.titulo}</h3>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <a href={guia.pdfUrl} download className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors">
-              <Download className="h-4 w-4" /> Descargar PDF
-            </a>
-            <button onClick={onClose} aria-label="Cerrar guía" className="p-2 rounded-full bg-secondary hover:bg-muted"><X className="h-4 w-4" /></button>
-          </div>
-        </div>
-        <div className="flex-1 bg-muted min-h-[60vh]">
-          <iframe title={guia.titulo} src={guia.pdfUrl} className="w-full h-full min-h-[60vh]" />
-        </div>
-      </div>
-    </div>
   );
 }

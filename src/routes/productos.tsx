@@ -7,11 +7,12 @@ import {
 } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
-  guias, meses,
+  type Guia, meses,
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas, useMateriales, useCalendario, useCargandoCms, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { usePlantas, useMateriales, useCalendario, useCargandoCms, useGuias, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { GuiaLectura } from "@/components/site/GuiaLectura";
 import { GridSkeleton, CargandoLinea } from "@/components/site/Cargando";
 
 
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/productos")({
       { property: "og:description", content: "Plantas, sustratos Suliflor, compost Liett Ibérica, piedras y macetas en Fraga, Huesca." },
       { property: "og:url", content: "/productos" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/productos" }],
     scripts: [
@@ -580,6 +582,7 @@ function ProductosPage() {
 }
 
 function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
+  const guias = useGuias();
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const filasCalendario = useFilasCalendario(planta);
   const cargandoFicha = useCargandoCms("plantas", "calendario");
@@ -699,38 +702,7 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           </figure>
         </div>
       )}
-      {guiaOpen && <GuiaModal guia={guiaOpen} onClose={() => setGuiaOpen(null)} />}
-    </div>
-  );
-}
-
-function GuiaModal({ guia, onClose }: { guia: (typeof guias)[number]; onClose: () => void }) {
-  return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-ink/60 backdrop-blur-sm p-4" onClick={onClose}>
-      <div className="bg-background rounded-2xl max-w-5xl w-full max-h-[92vh] flex flex-col relative shadow-2xl overflow-hidden" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-start justify-between gap-4 p-6 border-b border-border">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-accent flex items-center gap-3">
-              {guia.categoria}
-              <span className="flex items-center gap-1 text-muted-foreground normal-case tracking-normal">
-                <Clock className="h-3 w-3" /> {guia.minutos} min
-              </span>
-            </p>
-            <h3 className="font-serif text-2xl md:text-3xl mt-1">{guia.titulo}</h3>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <a href={guia.pdfUrl} download className="inline-flex items-center gap-2 rounded-full bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors">
-              <Download className="h-4 w-4" /> Descargar PDF
-            </a>
-            <button onClick={onClose} aria-label="Cerrar" className="p-2 rounded-full bg-secondary hover:bg-muted">
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </div>
-        <div className="flex-1 bg-muted min-h-[60vh]">
-          <iframe title={guia.titulo} src={guia.pdfUrl} className="w-full h-full min-h-[60vh]" />
-        </div>
-      </div>
+      {guiaOpen && <GuiaLectura guia={guiaOpen} onClose={() => setGuiaOpen(null)} />}
     </div>
   );
 }
