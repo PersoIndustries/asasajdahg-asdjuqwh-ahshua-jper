@@ -2,47 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { familia } from "@/lib/mock-data";
 import historiaImg from "@/assets/historia/portada.jpg";
-import img1974 from "@/assets/historia/historia-1974.jpg.asset.json";
-import img2026 from "@/assets/historia/historia-2026.jpg.asset.json";
-import gal0 from "@/assets/instalaciones/instalaciones-0.jpg.asset.json";
-import gal1 from "@/assets/instalaciones/instalaciones-1.jpg.asset.json";
-import gal2 from "@/assets/instalaciones/instalaciones-2.jpg.asset.json";
-import gal3 from "@/assets/instalaciones/instalaciones-3.jpg.asset.json";
-import gal4 from "@/assets/instalaciones/instalaciones-4.jpg.asset.json";
-
-const instalaciones = [
-  { src: gal0.url, alt: "Vista aérea de los invernaderos de Jardiper al atardecer" },
-  { src: gal1.url, alt: "Interior del invernadero de plantel hortícola de Jardiper" },
-  { src: gal2.url, alt: "Invernaderos y zona de cultivo exterior del vivero" },
-  { src: gal3.url, alt: "Nave de venta con planta de temporada y ornamentales" },
-  { src: gal4.url, alt: "Invernadero de plantel con bandejas de hortícolas y riego aéreo" },
-];
-
-function CarruselInstalaciones() {
-  return (
-    <div className="marquee-wrap relative overflow-hidden rounded-2xl">
-      <div className="marquee-track">
-        {[...instalaciones, ...instalaciones].map((g, i) => (
-          <figure
-            key={`${g.alt}-${i}`}
-            className="w-[280px] sm:w-[360px] lg:w-[420px] shrink-0 mr-4 overflow-hidden rounded-2xl shadow-lg"
-          >
-            <img
-              src={g.src}
-              alt={g.alt}
-              width={1280}
-              height={960}
-              loading="lazy"
-              className="w-full h-full object-cover aspect-[4/3]"
-            />
-          </figure>
-        ))}
-      </div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-background to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-background to-transparent" />
-    </div>
-  );
-}
+import { GaleriaFotos } from "@/components/site/GaleriaFotos";
+import { instalaciones, obras } from "@/lib/galerias";
 
 
 export const Route = createFileRoute("/historia")({
@@ -55,6 +16,7 @@ export const Route = createFileRoute("/historia")({
       { property: "og:description", content: "60 años cultivando plantas y comunidad en el Bajo Cinca." },
       { property: "og:url", content: "/historia" },
       { property: "og:type", content: "article" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/historia" }],
     scripts: [
@@ -85,8 +47,8 @@ export const Route = createFileRoute("/historia")({
 });
 
 const hitos = [
-  { año: "1964", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: img1974.url, alt: "Invernadero familiar de los años 70 en Fraga" },
-  { año: "2026", titulo: "Actualidad", texto: "Seguimos cuidando cada planta con la misma dedicación de siempre y trabajando en esta web para acercarte Jardiper a casa, mes a mes.", img: img2026.url, alt: "Instalaciones actuales de Jardiper en Fraga" },
+  { año: "1964", titulo: "Nace Horticultura Peralta", texto: "Salvador Peralta funda la explotación hortícola familiar en Fraga, el origen de todo lo que hoy es Jardiper.", img: "/media/historia/historia-1974.jpg", alt: "Fotografía histórica de la finca familiar en 1989" },
+  { año: "2026", titulo: "Actualidad", texto: "Seguimos cuidando cada planta con la misma dedicación de siempre y trabajando en esta web para acercarte Jardiper a casa, mes a mes.", img: "/media/historia/historia-2026.jpg", alt: "Vista aérea de las instalaciones de Jardiper en 2014" },
 ];
 
 function HistoriaPage() {
@@ -163,9 +125,11 @@ function HistoriaPage() {
         title="Nuestras instalaciones"
         intro="Más de 5.000 m² de vivero junto a la A-131: invernaderos, zona exterior de árboles y arbustos, tienda y patio de sustratos."
       >
-        <CarruselInstalaciones />
+        <GaleriaFotos titulo="Nuestras instalaciones" fotos={instalaciones} />
       </Section>
-
+      <Section eyebrow="Galería" title="Obras ejecutadas" intro="Próximamente compartiremos fotografías de nuestros trabajos.">
+        <GaleriaFotos titulo="Obras ejecutadas" fotos={obras} />
+      </Section>
 
       <section className="bg-secondary/40 py-20">
         <div className="container-page grid md:grid-cols-3 gap-8">

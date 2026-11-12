@@ -4,12 +4,10 @@ import { useTranslation } from "react-i18next";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import { temporadaActual } from "@/lib/mock-data";
 import heroAsset from "@/assets/home/hero.jpg.asset.json";
-import vivero from "@/assets/home/vivero.jpg";
 import placeholderImg from "@/assets/placeholder/under-construction-wide.jpg";
 import { localBusinessLd } from "@/lib/business-info";
 
 const heroPlant = heroAsset.url;
-const heroAbsoluteUrl = `https://project--ef52ea49-28a7-4ca0-b0b9-5e515b1fb1f2.lovable.app${heroAsset.url}`;
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -20,11 +18,7 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Plantas, sustratos, compost y consejo experto desde 1964 en el Bajo Cinca." },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
-      { property: "og:image", content: heroAbsoluteUrl },
-      { property: "og:image:width", content: "1600" },
-      { property: "og:image:height", content: "1200" },
-      { property: "og:image:alt", content: "Vivero Jardiper en Fraga (Huesca)" },
-      { name: "twitter:image", content: heroAbsoluteUrl },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/" }],
     scripts: [
@@ -32,8 +26,8 @@ export const Route = createFileRoute("/")({
         type: "application/ld+json",
         children: JSON.stringify({
           ...localBusinessLd,
-          image: heroAbsoluteUrl,
-          logo: heroAbsoluteUrl,
+          image: "/media/home/hero.jpg",
+          logo: "/media/brand/jardiper-logo.png",
           slogan: "Cultivamos plantas. Cultivamos historia.",
         }),
       },
@@ -191,7 +185,7 @@ function Temporada() {
       </div>
 
       <div className="mt-24 grid md:grid-cols-2 gap-10 items-center">
-        <img src={vivero} alt="Vivero Jardiper" loading="lazy" className="rounded-2xl w-full h-auto" width={1600} height={1000} />
+        <img src="/media/home/vivero-paseo.jpg" alt="Vista aérea del vivero Jardiper" loading="lazy" className="rounded-2xl w-full h-auto" width={1600} height={1000} />
         <div>
           <p className="text-xs uppercase tracking-[0.25em] text-accent mb-4">El vivero</p>
           <h3 className="font-serif text-3xl md:text-4xl leading-tight">Ven a pasear entre plantas.</h3>

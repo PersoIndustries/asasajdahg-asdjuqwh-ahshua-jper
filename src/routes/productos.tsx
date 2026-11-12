@@ -7,11 +7,12 @@ import {
 } from "lucide-react";
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import {
-  guias, meses,
+  type Guia, meses,
   actividadesEnRango, actividadesLabel,
   type Plant, type Actividad, type PlagaFicha,
 } from "@/lib/mock-data";
-import { usePlantas, useMateriales, useCalendario, useCargandoCms, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { usePlantas, useMateriales, useCalendario, useCargandoCms, useGuias, IMAGEN_PLAGA_POR_DEFECTO } from "@/lib/cms";
+import { GuiaLectura } from "@/components/site/GuiaLectura";
 import { GridSkeleton, CargandoLinea } from "@/components/site/Cargando";
 
 
@@ -34,6 +35,7 @@ export const Route = createFileRoute("/productos")({
       { property: "og:description", content: "Plantas, sustratos Suliflor, compost Liett Ibérica, piedras y macetas en Fraga, Huesca." },
       { property: "og:url", content: "/productos" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/productos" }],
     scripts: [
@@ -580,6 +582,7 @@ function ProductosPage() {
 }
 
 function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void }) {
+  const guias = useGuias();
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const filasCalendario = useFilasCalendario(planta);
   const cargandoFicha = useCargandoCms("plantas", "calendario");
@@ -699,7 +702,7 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
           </figure>
         </div>
       )}
-      {guiaOpen && <GuiaModal guia={guiaOpen} onClose={() => setGuiaOpen(null)} />}
+      {guiaOpen && <GuiaLectura guia={guiaOpen} onClose={() => setGuiaOpen(null)} />}
     </div>
   );
 }

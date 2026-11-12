@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { Clock, ChevronRight, X, MapPin, Download, BookOpen, Sprout, Calendar, LineChart, Bell, Lock, ChevronDown } from "lucide-react";
-import { useCalendario, useCargandoCms } from "@/lib/cms";
+import { useCalendario, useCargandoCms, useGuias } from "@/lib/cms";
+import { GuiaLectura } from "@/components/site/GuiaLectura";
 import { CargandoLinea } from "@/components/site/Cargando";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { SiteLayout, Section } from "@/components/site/SiteLayout";
 import pdfFechas from "@/assets/guias/fechas-trasplante.pdf.asset.json";
-import { meses, guias, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
+import { meses, type Guia, laboresEnQuincena, quincenaLabel, actividadesLabel } from "@/lib/mock-data";
 import { estadoEstilos, LeyendaCalendario, BotonImprimirCalendario } from "@/components/site/CalendarioCultivo";
 
 export const Route = createFileRoute("/tu-huerto")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/tu-huerto")({
       { property: "og:description", content: "Calendario, guías PDF y libro de campo digital para tu huerto." },
       { property: "og:url", content: "/tu-huerto" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [{ rel: "canonical", href: "/tu-huerto" }],
     scripts: [
@@ -45,11 +47,13 @@ const zonas = [{ id: "bajo-cinca", nombre: "Bajo Cinca, Lleida y alrededores" }]
 type Tab = "calendario" | "guias" | "libro";
 
 function TuHuertoPage() {
+  const guias = useGuias();
+  const cargandoGuias = useCargandoCms("guias");
   const [tab, setTab] = useState<Tab>("calendario");
   const [filtro, setFiltro] = useState("");
   const [zona, setZona] = useState(zonas[0].id);
   const [tagGuia, setTagGuia] = useState<string>("todas");
-  const [guia, setGuia] = useState<(typeof guias)[number] | null>(null);
+  const [guia, setGuia] = useState<Guia | null>(null);
   const [modoMes, setModoMes] = useState<"todos" | "ahora" | number>("todos");
 
   // Mes y quincena actuales, para resaltar la columna y el filtro "Ahora".
@@ -76,10 +80,10 @@ function TuHuertoPage() {
   }, [filtro, calendario, modoMes, mesActual, quincenaActual]);
 
 
-  const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), []);
+  const tagsGuias = useMemo(() => Array.from(new Set(guias.flatMap((g) => g.tags))).sort(), [guias]);
   const guiasFiltradas = useMemo(
     () => (tagGuia === "todas" ? guias : guias.filter((g) => g.tags.includes(tagGuia))),
-    [tagGuia],
+    [tagGuia, guias],
   );
 
 
@@ -319,7 +323,7 @@ function TuHuertoPage() {
               <button key={t} onClick={() => setTagGuia(t)} className={`px-4 py-1.5 rounded-full text-xs transition-all ${tagGuia === t ? "bg-primary text-primary-foreground" : "bg-secondary text-foreground/70 hover:bg-secondary/70"}`}>{t}</button>
             ))}
           </div>
-          {guiasFiltradas.length === 0 && <p className="text-sm text-muted-foreground py-12 text-center">No hay guías con esa etiqueta todavía.</p>}
+          {cargandoGuias && !guias.length ? <CargandoLinea texto="Cargando guías…" /> : guiasFiltradas.length === 0 && <p className="text-sm text-muted-foreground py-12 text-center">No hay guías con esa etiqueta todavía.</p>}
           <div className="grid md:grid-cols-2 gap-8">
             {guiasFiltradas.map((g) => (
               <article key={g.id} className="group cursor-pointer" onClick={() => setGuia(g)}>
@@ -387,7 +391,7 @@ function TuHuertoPage() {
         </>
       )}
 
-      {guia && <GuiaModal guia={guia} onClose={() => setGuia(null)} />}
+      {guia && <GuiaLectura guia={guia} onClose={() => setGuia(null)} />}
     </SiteLayout>
   );
 }
