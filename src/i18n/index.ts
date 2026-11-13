@@ -29,19 +29,23 @@ if (!i18n.isInitialized) {
     react: { useSuspense: false },
   });
 
-  if (typeof window !== "undefined") {
-    try {
-      const stored = window.localStorage.getItem("jardiper.lang");
-      const nav = window.navigator.language?.slice(0, 2);
-      const initial = (stored ?? (["en", "fr", "de", "es"].includes(nav) ? nav : "es")) as SupportedLang;
-      if (initial !== "es") void i18n.changeLanguage(initial);
-    } catch {
-      /* noop */
-    }
-  }
 }
 
 export default i18n;
+
+/** Apply browser preferences after hydration so the first render matches SSR. */
+export function restaurarIdioma() {
+  try {
+    const stored = window.localStorage.getItem("jardiper.lang");
+    const nav = window.navigator.language?.slice(0, 2);
+    const preferido = stored ?? nav;
+    const initial = SUPPORTED_LANGUAGES.find((l) => l.code === preferido)?.code ?? "es";
+    void i18n.changeLanguage(initial);
+    document.documentElement.lang = initial;
+  } catch {
+    /* Browser storage is optional. */
+  }
+}
 
 export function setLanguage(lang: SupportedLang) {
   void i18n.changeLanguage(lang);

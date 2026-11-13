@@ -359,7 +359,7 @@ export function useCargandoCms(...claves: string[]): boolean {
 
 /* ─────────── Guías de cultivo ─────────── */
 
-import { guias as guiasEstaticas, type Guia, type GuiaSection } from "@/lib/mock-data";
+import { type Guia, type GuiaSection } from "@/lib/mock-data";
 
 export type GuiaRow = {
   id: string; slug: string; titulo: string; resumen: string; minutos: number; categoria: string;

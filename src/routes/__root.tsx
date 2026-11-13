@@ -13,7 +13,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { localBusinessLd } from "../lib/business-info";
 import { activarCachePersistente } from "../lib/cache-persistente";
 import { PaginaNoEncontrada, PaginaError } from "../components/site/ErrorPages";
-import "../i18n";
+import { restaurarIdioma } from "../i18n";
 
 function NotFoundComponent() {
   return <PaginaNoEncontrada />;
@@ -96,6 +96,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => restaurarIdioma(), []);
   useEffect(() => activarCachePersistente(queryClient), [queryClient]);
 
   return (
