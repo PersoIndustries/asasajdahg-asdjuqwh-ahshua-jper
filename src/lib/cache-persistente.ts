@@ -2,7 +2,7 @@ import type { QueryClient } from "@tanstack/react-query";
 
 // Guarda en el navegador los datos públicos del catálogo (claves "cms") para
 // que la siguiente visita se muestre al instante; luego se revalida en segundo plano.
-const CLAVE = "jardiper.cache.v1";
+const CLAVE = "jardiper.cache.v2";
 const MAX_EDAD = 7 * 24 * 60 * 60 * 1000; // 7 días
 
 type Entrada = { key: unknown[]; data: unknown; updatedAt: number };

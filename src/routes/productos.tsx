@@ -585,7 +585,7 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
   const guias = useGuias();
   const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
   const filasCalendario = useFilasCalendario(planta);
-  const cargandoFicha = useCargandoCms("plantas", "calendario");
+  const cargandoFicha = useCargandoCms("plantas", "calendario", "guias");
 
   const idsGuias = planta.guiaIds?.length ? planta.guiaIds : planta.guiaId ? [planta.guiaId] : [];
   const guiasVinculadas = idsGuias

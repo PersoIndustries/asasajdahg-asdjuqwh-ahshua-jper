@@ -13,7 +13,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { localBusinessLd } from "../lib/business-info";
 import { activarCachePersistente } from "../lib/cache-persistente";
 import { PaginaNoEncontrada, PaginaError } from "../components/site/ErrorPages";
-import "../i18n";
+import { restaurarIdioma } from "../i18n";
 
 function NotFoundComponent() {
   return <PaginaNoEncontrada />;
@@ -96,6 +96,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    // Lazy route chunks can hydrate after this layout's effect. Defer the
+    // preference until the browser is idle rather than changing their HTML.
+    const timer = window.setTimeout(restaurarIdioma, 500);
+    return () => window.clearTimeout(timer);
+  }, []);
   useEffect(() => activarCachePersistente(queryClient), [queryClient]);
 
   return (

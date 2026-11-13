@@ -22,6 +22,11 @@ export const Route = createFileRoute("/blog/$slug")({
       return {
         meta: [
           { title: "Artículo no encontrado · Jardiper" },
+          { name: "description", content: "La publicación solicitada no está disponible en el blog de Jardiper." },
+          { property: "og:title", content: "Publicación no disponible · Blog Jardiper" },
+          { property: "og:description", content: "Consulta las noticias y curiosidades publicadas por Jardiper." },
+          { property: "og:type", content: "article" },
+          { name: "twitter:card", content: "summary" },
           { name: "robots", content: "noindex" },
         ],
       };

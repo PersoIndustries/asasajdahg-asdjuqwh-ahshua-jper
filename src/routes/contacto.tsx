@@ -14,6 +14,7 @@ export const Route = createFileRoute("/contacto")({
       { property: "og:description", content: "Cómo llegar, horarios y contacto directo." },
       { property: "og:url", content: "/contacto" },
       { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "/contacto" }],
     scripts: [
