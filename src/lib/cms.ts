@@ -15,6 +15,7 @@ import {
 } from "@/lib/mock-data";
 import { noticias as noticiasEstaticas, type Noticia, type NoticiaSection, type CategoriaNoticia } from "@/lib/noticias";
 import placeholder from "@/assets/placeholder/under-construction-wide.jpg";
+import { imagenCatalogo, mediaLocal } from "@/lib/media-local";
 
 /** Imagen por defecto de cualquier plaga sin foto propia. */
 export const IMAGEN_PLAGA_POR_DEFECTO = placeholder;
@@ -79,7 +80,7 @@ export function imagenDePlaga(plaga: PlagaRow, claves: string[]): string {
     if (!tag) return false;
     return objetivo.some((c) => c === tag || c.includes(tag) || tag.includes(c));
   });
-  return conTag?.imagen_url || plaga.imagen_url || imagenes[0]?.imagen_url || IMAGEN_PLAGA_POR_DEFECTO;
+  return imagenCatalogo(conTag?.imagen_url || plaga.imagen_url || imagenes[0]?.imagen_url, IMAGEN_PLAGA_POR_DEFECTO);
 }
 
 export function rowToPlant(row: PlantaRow): Plant {
@@ -107,7 +108,7 @@ export function rowToPlant(row: PlantaRow): Plant {
     categoria: (row.categoria as Plant["categoria"]) ?? "hortícola",
     // Solo la URL guardada en la base de datos; si está vacía, placeholder
     // «web en construcción».
-    imagen: row.imagen_url?.trim() || placeholder,
+    imagen: imagenCatalogo(row.imagen_url, placeholder),
 
 
     descripcion: row.descripcion ?? "",
@@ -116,7 +117,7 @@ export function rowToPlant(row: PlantaRow): Plant {
     enfermedades: (row.planta_enfermedades ?? [])
       .slice()
       .sort((a, b) => a.orden - b.orden)
-      .map((e) => ({ nombre: e.nombre, combate: e.combate, imagen: e.imagen_url ?? undefined })),
+      .map((e) => ({ nombre: e.nombre, combate: e.combate, imagen: mediaLocal(e.imagen_url) || undefined })),
     plagas,
     temporada: row.temporada ?? "",
     guiaId: row.guia_id?.split(",")[0]?.trim() || undefined,
@@ -241,7 +242,7 @@ export function rowToNoticia(row: {
     titulo: row.titulo,
     resumen: row.resumen,
     categoria: row.categoria as CategoriaNoticia,
-    imagen: row.imagen_url || estatica?.imagen || placeholder,
+    imagen: mediaLocal(row.imagen_url || estatica?.imagen) || placeholder,
     autor: row.autor,
     fecha: row.fecha,
     minutos: row.minutos,
@@ -325,7 +326,7 @@ export function useMateriales(): Record<SeccionMaterial, Material[]> {
         formato: r.formato ?? "",
         detalle: r.detalle ?? "",
         marca: r.marca ?? "",
-        imagen: r.imagen_url || placeholder,
+        imagen: imagenCatalogo(r.imagen_url, placeholder),
       })) as Material[];
     },
     placeholderData: [] as Material[],
@@ -351,7 +352,8 @@ export function useCargandoCms(...claves: string[]): boolean {
   const calendario = useIsFetching({ queryKey: ["cms", "calendario"] });
   const materiales = useIsFetching({ queryKey: ["cms", "materiales"] });
   const noticias = useIsFetching({ queryKey: ["cms", "noticias"] });
-  const mapa: Record<string, number> = { plantas, calendario, materiales, noticias };
+  const guias = useIsFetching({ queryKey: ["cms", "guias"] });
+  const mapa: Record<string, number> = { plantas, calendario, materiales, noticias, guias };
   return claves.some((c) => (mapa[c] ?? 0) > 0);
 }
 
@@ -366,12 +368,11 @@ export type GuiaRow = {
 };
 
 export function rowToGuia(row: GuiaRow): Guia {
-  const est = guiasEstaticas.find((g) => g.slug === row.slug);
   return {
     id: row.slug, slug: row.slug, titulo: row.titulo, resumen: row.resumen, minutos: row.minutos,
     categoria: row.categoria as Guia["categoria"],
-    imagen: row.imagen_url || est?.imagen || placeholder,
-    pdfUrl: row.pdf_url || est?.pdfUrl || "",
+    imagen: imagenCatalogo(row.imagen_url, placeholder),
+    pdfUrl: mediaLocal(row.pdf_url),
     contenido: row.contenido,
     secciones: (Array.isArray(row.secciones) ? row.secciones : []) as GuiaSection[],
     tags: row.tags ?? [], fechaPublicacion: row.fecha_publicacion,

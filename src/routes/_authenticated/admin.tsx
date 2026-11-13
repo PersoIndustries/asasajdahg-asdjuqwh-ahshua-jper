@@ -11,6 +11,7 @@ import { plantasDestacadas, meses } from "@/lib/mock-data";
 import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, useGuias, type PlagaRow } from "@/lib/cms";
 import { PanelGuias } from "@/components/admin/PanelGuias";
 import { PanelTextosFotos } from "@/components/admin/PanelTextosFotos";
+import { imagenCatalogo } from "@/lib/media-local";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
 import type { PlagaFicha } from "@/lib/mock-data";
 
@@ -39,7 +40,7 @@ const btn =
 /** Miniatura con respaldo: si no hay imagen (o falla) se muestra el placeholder. */
 function Miniatura({ src, alt, slug }: { src?: string | null; alt: string; slug?: string }) {
   const [fallida, setFallida] = useState<string | null>(null);
-  const actual = src?.trim() || IMAGEN_PLAGA_POR_DEFECTO;
+  const actual = imagenCatalogo(src, IMAGEN_PLAGA_POR_DEFECTO);
   const url = fallida === actual ? IMAGEN_PLAGA_POR_DEFECTO : actual;
   return (
     <img
@@ -1824,7 +1825,7 @@ function SelectorMultiple({ titulo, info, opciones, valor, onChange, vacio, plac
             <span key={o.id} className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 pl-1 pr-2 py-1 text-xs">
               {o.imagen !== undefined && (
                 <img
-                  src={o.imagen || IMAGEN_PLAGA_POR_DEFECTO}
+                  src={imagenCatalogo(o.imagen, IMAGEN_PLAGA_POR_DEFECTO)}
                   alt=""
                   className="h-5 w-5 rounded-full object-cover"
                   onError={(e) => { (e.currentTarget as HTMLImageElement).src = IMAGEN_PLAGA_POR_DEFECTO; }}
