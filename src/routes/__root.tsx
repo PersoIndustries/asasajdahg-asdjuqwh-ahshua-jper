@@ -96,7 +96,12 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
-  useEffect(() => restaurarIdioma(), []);
+  useEffect(() => {
+    // Lazy route chunks can hydrate after this layout's effect. Defer the
+    // preference until the browser is idle rather than changing their HTML.
+    const timer = window.setTimeout(restaurarIdioma, 500);
+    return () => window.clearTimeout(timer);
+  }, []);
   useEffect(() => activarCachePersistente(queryClient), [queryClient]);
 
   return (
