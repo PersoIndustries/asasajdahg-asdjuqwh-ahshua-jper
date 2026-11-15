@@ -12,3 +12,4 @@
 - Resolve CMS media through `media-local.ts` in public views and admin previews; blank product/material image fields use the construction placeholder, so external hosting and the manager show the same result.
 - Cultivation guides use the `guias` table as their content source with admin CRUD and public published-only reads; never restore deleted guides from static content.
 - Gallery descriptions live in `galerias.ts`; the manager only drafts and copies changes, keeping these texts out of the database.
+- Homepage share previews use a static 1200×630 JPEG rendition in public/media and absolute image URLs in the leaf head only, so external hosting and social crawlers can load a lightweight image without a runtime dependency.
