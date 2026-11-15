@@ -8,7 +8,7 @@ export const Route = createFileRoute("/contacto")({
   head: () => ({
     meta: [
       { title: "Contacto · Vivero Jardiper Fraga · Teléfono, mapa y horario" },
-      { name: "description", content: "Visita Jardiper en Carretera A-131 km 1,800, Fraga (Huesca). Teléfonos 974 47 21 58 y 611 32 16 20, horario L–V 8-13/16-19 y sábados 9-13, email y formulario de contacto." },
+      { name: "description", content: "Visita Jardiper en Carretera A-131 km 1,800, Fraga (Huesca). Horario de invierno: lunes a viernes 8:00–13:00 y 15:00–18:00; sábados 9:00–13:00. Teléfono 974 47 21 58." },
       { name: "keywords", content: "contacto vivero Fraga, teléfono Jardiper, cómo llegar, horario garden center Fraga" },
       { property: "og:title", content: "Contacto · Jardiper" },
       { property: "og:description", content: "Cómo llegar, horarios y contacto directo." },
@@ -117,8 +117,8 @@ function ContactoPage() {
                 <h2 className="font-serif text-xl">Horario</h2>
                 <div className="text-muted-foreground mt-1 space-y-3 text-sm">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-accent mb-1">Horario de verano</p>
-                    <p>Lunes a viernes<br />8:00 – 13:00 · 16:00 – 19:00</p>
+                    <p className="text-xs uppercase tracking-widest text-accent mb-1">Horario de invierno · Actual</p>
+                    <p>Lunes a viernes<br />8:00 – 13:00<br />15:00 – 18:00</p>
                     <p className="mt-2">Sábados<br />9:00 – 13:00</p>
                   </div>
                   <p className="text-xs">Domingos y festivos cerrado</p>

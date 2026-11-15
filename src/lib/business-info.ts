@@ -27,7 +27,7 @@ export const businessInfo = {
   ],
 } as const;
 
-// Horario actual (verano): L–V 8-13 / 16-19, sábados 9-13, domingos y festivos cerrado.
+// Horario actual de invierno: L–V 8-13 / 15-18, sábados 9-13, domingos y festivos cerrado.
 export const openingHoursSpecification = [
   {
     "@type": "OpeningHoursSpecification",
@@ -38,8 +38,8 @@ export const openingHoursSpecification = [
   {
     "@type": "OpeningHoursSpecification",
     dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-    opens: "16:00",
-    closes: "19:00",
+    opens: "15:00",
+    closes: "18:00",
   },
   {
     "@type": "OpeningHoursSpecification",
