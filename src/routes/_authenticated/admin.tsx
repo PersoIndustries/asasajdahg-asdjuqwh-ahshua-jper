@@ -10,6 +10,7 @@ import { useAuth, cerrarSesion } from "@/hooks/use-auth";
 import { plantasDestacadas, meses } from "@/lib/mock-data";
 import { IMAGEN_PLAGA_POR_DEFECTO, imagenDePlaga, useGuias, type PlagaRow } from "@/lib/cms";
 import { PanelGuias } from "@/components/admin/PanelGuias";
+import { PanelHorario } from "@/components/admin/PanelHorario";
 import { PanelTextosFotos } from "@/components/admin/PanelTextosFotos";
 import { imagenCatalogo } from "@/lib/media-local";
 import { SeccionPlagas } from "@/components/site/SeccionPlagas";
@@ -30,7 +31,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminPage,
 });
 
-type Tab = "plantas" | "calendario" | "enfermedades" | "materiales" | "blog" | "guias" | "fotos";
+type Tab = "plantas" | "calendario" | "enfermedades" | "materiales" | "blog" | "guias" | "fotos" | "horario";
 
 const input =
   "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40";
@@ -133,6 +134,7 @@ function AdminPage() {
                 ["guias", "Guías de cultivo"],
                 ["blog", "Noticias del blog"],
                 ["fotos", "Textos de fotos"],
+                ["horario", "Horario"],
               ] as [Tab, string][]
             ).map(([k, label]) => (
               <button
@@ -153,6 +155,7 @@ function AdminPage() {
           {tab === "blog" && <PanelBlog />}
           {tab === "guias" && <PanelGuias />}
           {tab === "fotos" && <PanelTextosFotos />}
+          {tab === "horario" && <PanelHorario />}
         </div>
       </section>
     </SiteLayout>

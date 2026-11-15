@@ -117,11 +117,12 @@ function ContactoPage() {
                 <h2 className="font-serif text-xl">Horario</h2>
                 <div className="text-muted-foreground mt-1 space-y-3 text-sm">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-accent mb-1">Horario de invierno · Actual</p>
-                    <p>Lunes a viernes<br />8:00 – 13:00<br />15:00 – 18:00</p>
-                    <p className="mt-2">Sábados<br />9:00 – 13:00</p>
+                    <p className="text-xs uppercase tracking-widest text-accent mb-1">{horario.titulo}</p>
+                    {horario.bloques.map((b, i) => (
+                      <p key={i} className={i ? "mt-2" : undefined}>{b.dias}{b.horas.map((x) => <span key={x}><br />{x}</span>)}</p>
+                    ))}
                   </div>
-                  <p className="text-xs">Domingos y festivos cerrado</p>
+                  {horario.nota && <p className="text-xs">{horario.nota}</p>}
                 </div>
               </div>
             </div>
