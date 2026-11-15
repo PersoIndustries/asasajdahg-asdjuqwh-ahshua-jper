@@ -71,6 +71,30 @@ export type Database = {
         }
         Relationships: []
       }
+      horario_tienda: {
+        Row: {
+          bloques: Json
+          id: string
+          nota: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          bloques?: Json
+          id?: string
+          nota?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Update: {
+          bloques?: Json
+          id?: string
+          nota?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       materiales: {
         Row: {
           created_at: string
