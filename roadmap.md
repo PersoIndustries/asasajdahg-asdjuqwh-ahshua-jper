@@ -7,6 +7,6 @@
 - [ ] Comprobar imágenes locales, años y nombres familiares; probar escritorio y móvil.
 
 # Revisión SEO y enlaces compartidos
-- [ ] Revisar todas las páginas públicas, sitemap, robots y datos estructurados.
-- [ ] Incorporar y comprobar la foto del vivero como imagen compartida de la portada.
+- [x] Revisar todas las páginas públicas, sitemap, robots y datos estructurados. La revisión básica pasa; el sitemap aún apunta a Lovable y los artículos nuevos del gestor no tienen metadatos propios en la respuesta inicial.
+- [x] Incorporar y comprobar la foto del vivero como imagen compartida de la portada (1200×630, JPEG de 190 KB, etiquetas en HTML inicial).
 - [ ] Publicar los cambios en Netlify para que la imagen esté disponible en jardiper.es (requiere despliegue externo).
