@@ -3,6 +3,7 @@ import { useState } from "react";
 import { MapPin, Phone, Clock, Mail, Check } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { localBusinessLd, businessInfo, openingHoursSpecification, postalAddressLd, geoCoordinatesLd } from "@/lib/business-info";
+import { HORARIO_POR_DEFECTO, useHorario } from "@/lib/horario";
 
 export const Route = createFileRoute("/contacto")({
   head: () => ({
@@ -78,6 +79,7 @@ export const Route = createFileRoute("/contacto")({
 });
 
 function ContactoPage() {
+  const horario = useHorario().data ?? HORARIO_POR_DEFECTO;
   const [sent, setSent] = useState(false);
   // TODO: conectar formulario a Lovable Cloud (edge function o Resend) más adelante.
   return (
