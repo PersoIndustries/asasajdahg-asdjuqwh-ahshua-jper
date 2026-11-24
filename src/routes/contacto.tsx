@@ -9,6 +9,7 @@ export const Route = createFileRoute("/contacto")({
   head: () => ({
     meta: [
       { property: "og:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
       { title: "Contacto · Vivero Jardiper Fraga · Teléfono, mapa y horario" },
       { name: "description", content: "Visita Jardiper en Carretera A-131 km 1,800, Fraga (Huesca). Horario de invierno: lunes a viernes 8:00–13:00 y 15:00–18:00; sábados 9:00–13:00. Teléfono 974 47 21 58." },
