@@ -16,6 +16,8 @@ import { GridSkeleton } from "@/components/site/Cargando";
 export const Route = createFileRoute("/blog/")({
   head: () => ({
     meta: [
+      { property: "og:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
+      { name: "twitter:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
       { title: "Blog · Noticias y curiosidades del vivero · Jardiper" },
       { name: "description", content: "Novedades del vivero Jardiper: nuevas secciones de la web, visitas a ferias del sector, plantel de temporada y curiosidades del mundo vegetal en Fraga (Huesca)." },
       { name: "keywords", content: "blog jardinería, noticias vivero Fraga, ferias jardinería, curiosidades plantas, Bajo Cinca" },
@@ -25,7 +27,7 @@ export const Route = createFileRoute("/blog/")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/blog" }],
+    links: [{ rel: "canonical", href: "https://jardiper.es/blog" }],
     scripts: [
       {
         type: "application/ld+json",

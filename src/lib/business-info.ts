@@ -3,8 +3,8 @@
 
 export const businessInfo = {
   name: "Jardiper",
-  legalName: "Horticultura Peralta S.L.",
-  url: "/",
+  legalName: "Jardiper SC",
+  url: "https://jardiper.es",
   telephone: "+34974472158",
   telephoneSecondary: "+34611321620",
   email: "correo@jardiper.es",
@@ -71,7 +71,7 @@ export const localBusinessLd = {
     "Vivero y garden center familiar en Fraga (Huesca) desde 1964. Plantas, sustratos, compost y consejo experto para el Bajo Cinca.",
   telephone: businessInfo.telephone,
   email: businessInfo.email,
-  url: "/",
+  url: "https://jardiper.es",
   address: postalAddressLd,
   geo: geoCoordinatesLd,
   areaServed: businessInfo.areaServed as unknown as string[],

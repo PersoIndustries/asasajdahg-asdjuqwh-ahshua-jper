@@ -12,7 +12,7 @@ export const Route = createFileRoute("/cookies")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/cookies" }],
+    links: [{ rel: "canonical", href: "https://jardiper.es/cookies" }],
   }),
   component: CookiesPage,
 });

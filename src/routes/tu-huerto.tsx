@@ -14,6 +14,8 @@ import { estadoEstilos, LeyendaCalendario, BotonImprimirCalendario } from "@/com
 export const Route = createFileRoute("/tu-huerto")({
   head: () => ({
     meta: [
+      { property: "og:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
+      { name: "twitter:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
       { title: "Tu Huerto · Calendario hortícola y guías de cultivo · Jardiper" },
       { name: "description", content: "Calendario hortícola semanal del Bajo Cinca (Fraga, Lleida), guías de cultivo en PDF descargables y libro de campo digital para planificar tu huerto todo el año." },
       { name: "keywords", content: "calendario hortícola Bajo Cinca, guías cultivo PDF, libro de campo, huerto Fraga, siembra Lleida, cuándo plantar" },
@@ -23,7 +25,7 @@ export const Route = createFileRoute("/tu-huerto")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/tu-huerto" }],
+    links: [{ rel: "canonical", href: "https://jardiper.es/tu-huerto" }],
     scripts: [
       {
         type: "application/ld+json",

@@ -45,7 +45,7 @@ export const Route = createFileRoute("/blog/$slug")({
         { name: "twitter:title", content: noticia.titulo },
         { name: "twitter:description", content: noticia.resumen },
       ],
-      links: [{ rel: "canonical", href: `/blog/${params.slug}` }],
+      links: [{ rel: "canonical", href: `https://jardiper.es/blog/${params.slug}` }],
       scripts: [
         {
           type: "application/ld+json",

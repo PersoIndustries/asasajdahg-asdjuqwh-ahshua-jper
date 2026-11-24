@@ -12,7 +12,7 @@ export const Route = createFileRoute("/privacidad")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/privacidad" }],
+    links: [{ rel: "canonical", href: "https://jardiper.es/privacidad" }],
   }),
   component: PrivacidadPage,
 });

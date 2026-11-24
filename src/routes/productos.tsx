@@ -28,6 +28,8 @@ import macetas3d from "@/assets/material/macetas-3d.jpg";
 export const Route = createFileRoute("/productos")({
   head: () => ({
     meta: [
+      { property: "og:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
+      { name: "twitter:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
       { title: "Productos · Plantas, sustratos, compost y macetas · Jardiper Fraga" },
       { name: "description", content: "Catálogo Jardiper: plantas hortícolas y ornamentales, sustratos Suliflor, compost ECO Liett Ibérica, piedras decorativas y macetas de todos los tamaños en Fraga, Huesca." },
       { name: "keywords", content: "plantas hortícolas Fraga, plantas ornamentales, sustratos Suliflor, compost ECO, big bag compost, piedras decorativas, macetas, vivero al por mayor Bajo Cinca" },
@@ -37,7 +39,7 @@ export const Route = createFileRoute("/productos")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
-    links: [{ rel: "canonical", href: "/productos" }],
+    links: [{ rel: "canonical", href: "https://jardiper.es/productos" }],
     scripts: [
       {
         type: "application/ld+json",

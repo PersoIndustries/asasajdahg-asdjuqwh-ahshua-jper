@@ -30,7 +30,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
       { name: "twitter:image:alt", content: "Vista aérea del vivero Jardiper en Fraga" },
     ],
-    links: [{ rel: "canonical", href: "/" }],
+    links: [{ rel: "canonical", href: "https://jardiper.es/" }],
     scripts: [
       {
         type: "application/ld+json",

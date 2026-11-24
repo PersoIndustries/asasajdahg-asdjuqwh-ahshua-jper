@@ -12,7 +12,7 @@ export const Route = createFileRoute("/aviso-legal")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
-    links: [{ rel: "canonical", href: "/aviso-legal" }],
+    links: [{ rel: "canonical", href: "https://jardiper.es/aviso-legal" }],
   }),
   component: AvisoLegalPage,
 });
