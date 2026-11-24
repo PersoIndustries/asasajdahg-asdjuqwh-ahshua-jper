@@ -159,7 +159,7 @@ export function imprimirCalendario(titulo: string, filas: FilaCal[]) {
           }),
         )
         .join("");
-      const nombre = fila.ciclo ? `${fila.planta}<br><small>${fila.ciclo}</small>` : fila.planta;
+      const nombre = fila.ciclo ? `${escHtml(fila.planta)}<br><small>${escHtml(fila.ciclo)}</small>` : escHtml(fila.planta);
       return `<tr><th class="planta">${nombre}</th>${celdas}</tr>`;
     })
     .join("");
@@ -168,7 +168,7 @@ export function imprimirCalendario(titulo: string, filas: FilaCal[]) {
     .map((l) => `<span><i style="background:${estadoEstilos[l.codigo].hex}"></i>${l.codigo} · ${l.etiqueta}</span>`)
     .join("");
 
-  const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${titulo}</title>
+  const html = `<!doctype html><html lang="es"><head><meta charset="utf-8"><title>${escHtml(titulo)}</title>
 <style>
   @page { size: A4 landscape; margin: 12mm; }
   body { font-family: Georgia, "Times New Roman", serif; color: #24302a; margin: 0; }
@@ -184,7 +184,7 @@ export function imprimirCalendario(titulo: string, filas: FilaCal[]) {
   .leyenda i { display: inline-block; width: 14px; height: 9px; border: 1px solid #b9b9b9; margin-right: 4px; vertical-align: -1px; }
   .pie { margin-top: 8px; font-family: Arial, sans-serif; font-size: 8px; color: #8a978d; }
 </style></head><body>
-  <h1>${titulo}</h1>
+  <h1>${escHtml(titulo)}</h1>
   <p class="sub">Jardiper · Bajo Cinca (Fraga, Huesca) — cada mes se divide en 1ª y 2ª quincena</p>
   <table><thead><tr><th class="planta">Planta</th>${cabecera}</tr></thead><tbody>${cuerpo}</tbody></table>
   <div class="leyenda">${leyenda}</div>
@@ -209,4 +209,8 @@ export function BotonImprimirCalendario({ titulo, filas, className = "" }: { tit
       <Printer className="h-3.5 w-3.5" /> Exportar PDF
     </button>
   );
+}
+
+function escHtml(v: unknown): string {
+  return String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] as string);
 }
