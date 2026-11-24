@@ -26,6 +26,8 @@ import sustratos from "@/assets/tierras/sustratos.jpg";
 import macetas3d from "@/assets/material/macetas-3d.jpg";
 
 export const Route = createFileRoute("/productos")({
+  validateSearch: (search: Record<string, unknown>): { planta?: string } =>
+    typeof search["planta"] === "string" && search["planta"] ? { planta: search["planta"] } : {},
   head: () => ({
     meta: [
       { property: "og:image", content: "https://jardiper.es/media/home/jardiper-vivero-compartir.jpg" },
@@ -68,7 +70,11 @@ function ProductosPage() {
   const { sustratos: sustratosSuliflor, compost: composts, piedras, macetas } = useMateriales();
   const [busqueda, setBusqueda] = useState("");
   const [catFiltro, setCatFiltro] = useState<string>("todas");
-  const [ficha, setFicha] = useState<Plant | null>(null);
+  // La ficha abierta vive en la URL (?planta=id) para poder compartirla y volver atrás.
+  const { planta: plantaId } = Route.useSearch();
+  const navigate = Route.useNavigate();
+  const setFicha = (p: Plant | null) =>
+    navigate({ search: p ? { planta: p.id } : {}, replace: false, resetScroll: false });
   // Filtro por mes / rango de meses del calendario de cultivo
   const [filtroMesActivo, setFiltroMesActivo] = useState(false);
   const [mesDesde, setMesDesde] = useState(MES_ACTUAL);
@@ -78,6 +84,7 @@ function ProductosPage() {
   // Catálogo: contenido estático + lo publicado desde el gestor de la web.
   const todasLasPlantas = usePlantas();
   const filasCalendarioBd = useCalendario();
+  const ficha = plantaId ? todasLasPlantas.find((p) => p.id === plantaId) ?? null : null;
   // Loaders: mientras Supabase responde mostramos esqueletos en lugar de listas vacías.
   const cargandoCatalogo = useCargandoCms("plantas", "calendario") && todasLasPlantas.length === 0;
   const cargandoMateriales = useCargandoCms("materiales");

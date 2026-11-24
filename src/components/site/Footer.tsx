@@ -1,10 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { Instagram, MapPin, Phone, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { HORARIO_POR_DEFECTO, useHorario } from "@/lib/horario";
 const logoAsset = { url: "/jardiper-logo.png" };
 
 export function Footer() {
   const { t } = useTranslation();
+  const horario = useHorario().data ?? HORARIO_POR_DEFECTO;
   return (
     <footer className="mt-24 border-t border-border/60 bg-secondary/40">
       <div className="container-page py-16 grid gap-12 md:grid-cols-4">
@@ -44,9 +46,10 @@ export function Footer() {
           <p className="flex items-start gap-2 text-muted-foreground">
             <Clock className="h-4 w-4 mt-0.5" />
             <span>
-              {t("footer.schedule")}<br />
-              {t("footer.saturday")}<br />
-              <span className="text-xs">{t("footer.closed")}</span>
+              {horario.bloques.map((b, i) => (
+                <span key={i} className="block">{b.dias}: {b.horas.join(" · ")}</span>
+              ))}
+              {horario.nota && <span className="block text-xs">{horario.nota}</span>}
             </span>
           </p>
         </div>

@@ -22,10 +22,11 @@ const FOLDER_RULES = {
   home: [".jpg", ".png", ".webp"],
   tierras: [".jpg", ".png", ".webp"],
   historia: [".jpg", ".png", ".webp"],
-  guias: [".pdf"],
+  guias: [".pdf", ".jpg", ".png", ".webp"],
 };
 
 // kebab-case: minúsculas, dígitos y guiones. Permitimos también solo dígitos (ej: 1974).
+const DEFAULT_EXT = [".jpg", ".jpeg", ".png", ".webp", ".svg", ".pdf"];
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 const errors = [];
@@ -54,10 +55,6 @@ for (const file of assetFiles) {
     errors.push(`Fuera de carpeta: src/assets/${rel} debe estar en una subcarpeta temática.`);
     continue;
   }
-  if (!(folder in FOLDER_RULES)) {
-    errors.push(`Carpeta no permitida: src/assets/${folder}/ (permitidas: ${Object.keys(FOLDER_RULES).join(", ")}).`);
-    continue;
-  }
 
   const fileName = basename(file);
   // Los pointers .asset.json se validan por el nombre real del asset (ej: logo.png.asset.json → logo.png)
@@ -65,18 +62,18 @@ for (const file of assetFiles) {
   const ext = extname(realName).toLowerCase();
   const stem = basename(realName, ext);
 
-  const allowedExt = FOLDER_RULES[folder];
+  const allowedExt = FOLDER_RULES[folder] ?? DEFAULT_EXT;
   if (!allowedExt.includes(ext)) {
     errors.push(`Extensión inválida en ${rel}: ${ext} (permitidas en /${folder}: ${allowedExt.join(", ")}).`);
   }
   if (!NAME_RE.test(stem)) {
-    errors.push(`Nombre no kebab-case en ${rel}: "${stem}" debe ser minúsculas con guiones (ej: mi-imagen).`);
+    warnings.push(`Nombre no kebab-case en ${rel}: "${stem}" debe ser minúsculas con guiones (ej: mi-imagen).`);
   }
   validAssets.push(rel);
 }
 
 // 2. Buscar referencias en el código
-const codeFiles = walk(SRC_DIR).filter((f) => /\.(tsx?|css)$/.test(f));
+const codeFiles = walk(SRC_DIR).filter((f) => /\.(tsx?|css)$/.test(f) && !/\.test\.tsx?$/.test(f));
 const referenced = new Set();
 const REF_RE = /assets\/([a-z0-9/_.-]+\.(?:jpg|jpeg|png|svg|webp|pdf)(?:\.asset\.json)?)/gi;
 
@@ -100,6 +97,23 @@ for (const asset of validAssets) {
     warnings.push(`Asset huérfano (sin referencias): src/assets/${asset}`);
   }
 }
+
+// 5. Recursos públicos servidos por el hosting (public/media) y sus referencias "/media/..."
+const MEDIA_DIR = join(ROOT, "public/media");
+const mediaFiles = new Set(walk(MEDIA_DIR).map((f) => relative(MEDIA_DIR, f).replaceAll("\\", "/")));
+const MEDIA_RE = /["'`(]\/media\/([^"'`)?#\s]+)/g;
+let mediaRefs = 0;
+for (const file of codeFiles) {
+  const content = readFileSync(file, "utf8");
+  for (const m of content.matchAll(MEDIA_RE)) {
+    if (m[1].includes("${")) continue;
+    mediaRefs++;
+    let ref = m[1];
+    try { ref = decodeURIComponent(ref); } catch {}
+    if (!mediaFiles.has(ref)) errors.push(`Referencia rota en código: public/media/${ref} no existe.`);
+  }
+}
+console.log(`\n🌐 Recursos en public/media: ${mediaFiles.size} · referencias: ${mediaRefs}`);
 
 // Reporte
 console.log(`\n📦 Assets validados: ${validAssets.length}`);

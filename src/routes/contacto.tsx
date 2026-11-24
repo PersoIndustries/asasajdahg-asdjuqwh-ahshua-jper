@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { MapPin, Phone, Clock, Mail, Check } from "lucide-react";
+import { MapPin, Phone, Clock, Mail } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { localBusinessLd, businessInfo, openingHoursSpecification, postalAddressLd, geoCoordinatesLd } from "@/lib/business-info";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HORARIO_POR_DEFECTO, useHorario } from "@/lib/horario";
 
 export const Route = createFileRoute("/contacto")({
@@ -161,15 +162,7 @@ function ContactoPage() {
           <div className="rounded-2xl bg-card border border-border p-8 md:p-10 h-fit">
             <h2 className="font-serif text-3xl">Escríbenos</h2>
             <p className="text-muted-foreground mt-2 text-sm">Te contestamos en 24-48h laborables.</p>
-            {sent ? (
-              <div className="mt-8 rounded-xl bg-primary/10 p-8 text-center">
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground mb-4">
-                  <Check className="h-6 w-6" />
-                </div>
-                <p className="font-serif text-xl">¡Mensaje enviado!</p>
-                <p className="text-sm text-muted-foreground mt-2">Te contactaremos pronto. (versión demo)</p>
-              </div>
-            ) : (
+            {(
               <form
                 className="mt-6 space-y-4"
                 onSubmit={(e) => {
@@ -195,6 +188,21 @@ function ContactoPage() {
                 </button>
               </form>
             )}
+            <Dialog open={sent} onOpenChange={setSent}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="font-serif text-2xl">Formulario en construcción</DialogTitle>
+                  <DialogDescription>
+                    De momento el formulario todavía no envía mensajes: estamos trabajando en ello. Mientras tanto,
+                    llámanos al {businessInfo.telephone.replace("+34", "")}, escríbenos por WhatsApp o a {businessInfo.email}.
+                  </DialogDescription>
+                </DialogHeader>
+                <DialogFooter className="gap-2 sm:gap-2">
+                  <a href={`mailto:${businessInfo.email}`} className="rounded-full border border-border px-5 py-2 text-sm text-center">Enviar email</a>
+                  <a href={`tel:${businessInfo.telephone}`} className="rounded-full bg-primary text-primary-foreground px-5 py-2 text-sm text-center">Llamar</a>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </section>
