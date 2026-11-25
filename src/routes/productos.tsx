@@ -81,7 +81,7 @@ function ProductosPage() {
   const [mesHasta, setMesHasta] = useState(MES_ACTUAL);
   const [actividades, setActividades] = useState<Actividad[]>([]);
 
-  // Catálogo: contenido estático + lo publicado desde el gestor de la web.
+  // Catálogo publicado desde el gestor de la web.
   const todasLasPlantas = usePlantas();
   const filasCalendarioBd = useCalendario();
   const ficha = plantaId ? todasLasPlantas.find((p) => p.id === plantaId) ?? null : null;
@@ -350,7 +350,7 @@ function ProductosPage() {
             {listaFiltrada.map((p) => {
               const acts = filtroCalendarioActivo ? actividadesEnRango(p, mesDesde, mesHasta, filasCalendarioBd.length ? filasCalendarioBd : undefined) : [];
               return (
-                <button key={p.id} onClick={() => setFicha(p)} className="text-left group">
+                <Link key={p.id} to="/productos" search={{ planta: p.id }} resetScroll={false} className="text-left group">
                   <div className="aspect-square overflow-hidden rounded-2xl bg-muted mb-3">
                     <img src={p.imagen} alt={p.nombre} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
@@ -365,7 +365,7 @@ function ProductosPage() {
                       ))}
                     </div>
                   )}
-                </button>
+                </Link>
               );
             })}
           </div>
@@ -616,9 +616,9 @@ function FichaModal({ planta, onClose }: { planta: Plant; onClose: () => void })
       <div className="bg-background rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
         <button onClick={onClose} aria-label="Cerrar ficha" className="absolute top-4 right-4 p-2 rounded-full bg-background/80 hover:bg-muted z-10"><X className="h-4 w-4" /></button>
         <img src={planta.imagen} alt={planta.nombre} className="w-full h-64 object-cover" />
-        <div className="p-8">
+        <div className="p-5 sm:p-8">
           <p className="text-xs uppercase tracking-widest text-accent capitalize">{planta.categoria}</p>
-          <div className="mt-2 flex items-start justify-between gap-4">
+          <div className="mt-2 flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
               <h3 className="font-serif text-3xl">{planta.nombre}</h3>
               <p className="text-sm italic text-muted-foreground">{planta.nombreCientifico}</p>

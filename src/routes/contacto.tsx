@@ -5,6 +5,7 @@ import { SiteLayout } from "@/components/site/SiteLayout";
 import { localBusinessLd, businessInfo, openingHoursSpecification, postalAddressLd, geoCoordinatesLd } from "@/lib/business-info";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { HORARIO_POR_DEFECTO, useHorario } from "@/lib/horario";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/contacto")({
   head: () => ({
@@ -84,7 +85,6 @@ export const Route = createFileRoute("/contacto")({
 function ContactoPage() {
   const horario = useHorario().data ?? HORARIO_POR_DEFECTO;
   const [sent, setSent] = useState(false);
-  // TODO: conectar formulario a Lovable Cloud (edge function o Resend) más adelante.
   return (
     <SiteLayout>
       <section className="pt-20 pb-12">
@@ -161,7 +161,7 @@ function ContactoPage() {
 
           <div className="rounded-2xl bg-card border border-border p-8 md:p-10 h-fit">
             <h2 className="font-serif text-3xl">Escríbenos</h2>
-            <p className="text-muted-foreground mt-2 text-sm">Te contestamos en 24-48h laborables.</p>
+            <p className="text-muted-foreground mt-2 text-sm">Estamos trabajando en el formulario. Por ahora, contacta por teléfono, WhatsApp o email.</p>
             {(
               <form
                 className="mt-6 space-y-4"
@@ -171,21 +171,21 @@ function ContactoPage() {
                 }}
               >
                 <div className="grid md:grid-cols-2 gap-4">
-                  <input required placeholder="Nombre" className="rounded-lg border border-input bg-background px-4 py-3 text-sm" />
-                  <input required placeholder="Apellidos" className="rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+                  <input required aria-label="Nombre" autoComplete="given-name" placeholder="Nombre" className="min-w-0 rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+                  <input required aria-label="Apellidos" autoComplete="family-name" placeholder="Apellidos" className="min-w-0 rounded-lg border border-input bg-background px-4 py-3 text-sm" />
                 </div>
-                <input required type="email" placeholder="Email" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
-                <input placeholder="Teléfono (opcional)" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
-                <select className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm">
+                <input required aria-label="Email" autoComplete="email" type="email" placeholder="Email" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+                <input aria-label="Teléfono (opcional)" autoComplete="tel" type="tel" placeholder="Teléfono (opcional)" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+                <select aria-label="Motivo de la consulta" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm">
                   <option>Consulta general</option>
                   <option>Pedido de plantas</option>
                   <option>Sustratos al por mayor</option>
                   <option>Consejo técnico</option>
                 </select>
-                <textarea required rows={5} placeholder="Cuéntanos…" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
-                <button className="w-full rounded-full bg-primary text-primary-foreground py-3 text-sm font-medium hover:bg-primary/90 transition-colors">
+                <textarea required aria-label="Mensaje" rows={5} placeholder="Cuéntanos…" className="w-full rounded-lg border border-input bg-background px-4 py-3 text-sm" />
+                <Button type="submit" className="w-full h-11 rounded-full">
                   Enviar mensaje
-                </button>
+                </Button>
               </form>
             )}
             <Dialog open={sent} onOpenChange={setSent}>
@@ -194,12 +194,12 @@ function ContactoPage() {
                   <DialogTitle className="font-serif text-2xl">Formulario en construcción</DialogTitle>
                   <DialogDescription>
                     De momento el formulario todavía no envía mensajes: estamos trabajando en ello. Mientras tanto,
-                    llámanos al {businessInfo.telephone.replace("+34", "")}, escríbenos por WhatsApp o a {businessInfo.email}.
+                    llámanos al 974 47 21 58, escríbenos por WhatsApp o a {businessInfo.email}.
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter className="gap-2 sm:gap-2">
-                  <a href={`mailto:${businessInfo.email}`} className="rounded-full border border-border px-5 py-2 text-sm text-center">Enviar email</a>
-                  <a href={`tel:${businessInfo.telephone}`} className="rounded-full bg-primary text-primary-foreground px-5 py-2 text-sm text-center">Llamar</a>
+                  <Button asChild variant="outline" className="rounded-full"><a href={`mailto:${businessInfo.email}`}>Enviar email</a></Button>
+                  <Button asChild className="rounded-full"><a href={`tel:${businessInfo.telephone}`}>Llamar</a></Button>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

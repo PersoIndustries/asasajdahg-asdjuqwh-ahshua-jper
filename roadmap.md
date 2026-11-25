@@ -1,4 +1,5 @@
 # Mejoras pendientes
+- [ ] Verificar el aviso de contacto y las fichas enlazables en escritorio y móvil; cerrar esta continuación de producto y UX.
 - [ ] Editor de guías: crear, editar, borrar y publicar desde Supabase; enlazar en Tu Huerto y productos.
 - [ ] Verificar imagen por defecto en productos y materiales del gestor.
 - [ ] Mostrar la nueva foto en «Ven a pasear entre plantas» y comprobar descarga de fechas en móvil.
